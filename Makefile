@@ -16,6 +16,12 @@ HDR = $(wildcard *.h)
 
 OBJ = $(patsubst %.c, obj/%.o, $(SRC))
 
+#
+# TODO: build the files properly and make sure all files are getting build..
+# for now the truth is that this aint in a good state (linker errors) but i go
+# vacatione!!
+#
+#
 # DEP_DIRS 	+= include/cmsis_device_g0/Include \
 # 			include/stm32g0xx_hal_driver/Inc
 DEP_DIRS	:= include/stm32g0xx_hal_driver/Inc
