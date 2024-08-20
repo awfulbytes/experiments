@@ -24,8 +24,8 @@ OBJ = $(patsubst %.c, obj/%.o, $(SRC))
 #
 # DEP_DIRS 	+= include/cmsis_device_g0/Include \
 # 			include/stm32g0xx_hal_driver/Inc
-DEP_DIRS	:= include/stm32g0xx_hal_driver/Inc
-DEP_SRCS	:= include/stm32g0xx_hal_driver/Src
+DEP_DIRS	:= ventor/stm32g0xx_hal_driver/Inc
+DEP_SRCS	:= ventor/stm32g0xx_hal_driver/Src
 
 
 
@@ -55,7 +55,7 @@ default: $(TARGET)
 $(TARGET): $(OBJ)
 	$(CC) -o $@ $? -I$(DEP_DIRS) -mcpu=$(CPU) -T"$(LINKER)" $(FLAGS)
 
-obj/%.o: %.c  $(all_libs)
+obj/%.o: src/%.c  $(all_libs)
 	$(CC) -c $< -I$(DEP_DIRS) -mcpu=$(CPU) -T"$(LINKER)" $(FLAGS) -g -o $@
 
 all_libs: $(DEP_SRCS)/*.c
