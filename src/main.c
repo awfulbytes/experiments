@@ -1,7 +1,6 @@
 /* #include "include/stm32g0xx_hal_driver/Inc/stm32g0xx.h" */
-#include "include/stm32g0xx_hal_driver/Inc/stm32g0xx_hal_cortex.h"
 /* #include <stdio.h> */
-/* #include <stdlib.h> */
+#include "../include/main.h"
 
 /* void SysInit(void) { */
 /* } */

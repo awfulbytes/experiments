@@ -55,7 +55,7 @@ default: $(TARGET)
 $(TARGET): $(OBJ)
 	$(CC) -o $@ $? -I$(DEP_DIRS) -mcpu=$(CPU) -T"$(LINKER)" $(FLAGS)
 
-obj/%.o: src/%.c  $(all_libs)
+obj/%.o: src/%.c $(all_libs)
 	$(CC) -c $< -I$(DEP_DIRS) -mcpu=$(CPU) -T"$(LINKER)" $(FLAGS) -g -o $@
 
 all_libs: $(DEP_SRCS)/*.c
