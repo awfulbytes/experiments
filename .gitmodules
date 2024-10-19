@@ -1,9 +1,9 @@
-[submodule "include/include"]
-	path = include/include
-	url = https://github.com/STMicroelectronics/stm32g0xx_hal_driver.git
 [submodule "include/stm32g0xx_hal_driver"]
 	path = ventor/stm32g0xx_hal_driver
 	url = https://github.com/STMicroelectronics/stm32g0xx_hal_driver.git
 [submodule "include/cmsis_device_g0"]
 	path = ventor/cmsis_device_g0
 	url = https://github.com/STMicroelectronics/cmsis_device_g0.git
+[submodule "ventor/cmsis-core"]
+	path = ventor/cmsis-core
+	url = https://github.com/STMicroelectronics/cmsis-core.git

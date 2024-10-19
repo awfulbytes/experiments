@@ -4,3 +4,4 @@ obj
 *.core
 *.log
 compile_commands*
+builddir
