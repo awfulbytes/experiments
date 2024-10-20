@@ -7,5 +7,7 @@
 
 void handle_it(void);
 
+
+void DAC_Ch1_TriangleConfig(void);
 /* void Error_Handler(void); */
 #endif

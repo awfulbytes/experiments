@@ -7,12 +7,15 @@ project('tryC', 'c',
 # Include directories
 # Source files
 src_files = files(
+  'drivers/dac.c',
+  'drivers/timx.c',
   'src/main.c',
   'src/startup_stm32g071xx.s',
   'src/system_stm32g0xx.c',
+  'src/stm32g0xx_nucleo.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_adc.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_adc_ex.c',
+  'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_adc.c',
+  'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_adc_ex.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_cec.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_comp.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_cortex.c',
@@ -50,7 +53,7 @@ src_files = files(
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_smartcard_ex.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_smbus.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_smbus_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_spi.c',
+  'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_spi.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_spi_ex.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_tim.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_timebase_rtc_alarm_template.c',
@@ -82,7 +85,7 @@ src_files = files(
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_ucpd.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_usart.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_usb.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_utils.c',
+  'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_utils.c',
 )
 inc_dir = include_directories('include')
 core_inc_dir = include_directories('include/Core/Include')
@@ -99,24 +102,36 @@ lib_dirs = [core_inc_dir, hal_dev_inc, cmsis_dev_inc]  # Adjust paths based on y
 
 # Executable target
 elf = executable('testershit', src_files,
-  include_directories : lib_dirs + inc_dir,
-  link_args : ['-nostdlib', '-nostartfiles', '-nodefaultlibs'],
-  override_options : ['c_args=-Os', 'c_link_args=-Wl,--gc-sections'],
-  build_by_default: true
-)
+                 include_directories : lib_dirs + inc_dir,
+                 link_args : ['-nostdlib', '-nostartfiles', '-nodefaultlibs'],
+                 override_options : ['c_args=-Os', 'c_link_args=-Wl,--gc-sections'],
+                 build_by_default: true
+                )
 
 # Custom target to generate the binary and hex files
 objcopy = find_program('arm-none-eabi-objcopy')
 custom_target('stm32_app.bin',
-  input : elf,
-  output : 'stm32_app.bin',
-  command : [objcopy, '-O', 'binary', '@INPUT@', '@OUTPUT@'],
-  build_by_default: true
-)
-
+              input : elf,
+              output : 'stm32_app.bin',
+              command : [objcopy, '-O', 'binary', '@INPUT@', '@OUTPUT@'],
+              build_by_default: true
+             )
 custom_target('stm32_app.hex',
-  input : elf,
-  output : 'stm32_app.hex',
-  command : [objcopy, '-O', 'ihex', '@INPUT@', '@OUTPUT@'],
-  build_by_default: true
-)
+              input : elf,
+              output : 'stm32_app.hex',
+              command : [objcopy, '-O', 'ihex', '@INPUT@', '@OUTPUT@'],
+              build_by_default: true
+             )
+strip = find_program('arm-none-eabi-strip')
+striper = custom_target('stripped-binary',
+              input: elf,
+              output: 'stripped.elf',
+              command: [strip, '--strip-all', '@INPUT@', '-o', '@OUTPUT@'],
+              # build_by_default: true
+             )
+custom_target('stm32.bin',
+              input: striper,
+              output: 'striper.bin',
+              command : [objcopy, '-O', 'binary', '@INPUT@', '@OUTPUT@'],
+              # build_by_default: true
+             )

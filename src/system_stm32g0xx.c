@@ -74,8 +74,8 @@
   * @{
   */
 
-#include "../ventor/cmsis_device_g0/Include/stm32g0xx.h"
-#include "../ventor/cmsis_device_g0/Include/stm32g071xx.h"
+#include "stm32g0xx.h"
+/* #include "stm32g071xx.h" */
 
 #if !defined  (HSE_VALUE)
 #define HSE_VALUE    (8000000UL)    /*!< Value of the External oscillator in Hz */
