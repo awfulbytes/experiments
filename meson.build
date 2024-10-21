@@ -13,6 +13,7 @@ src_files = files(
   'src/startup_stm32g071xx.s',
   'src/system_stm32g0xx.c',
   'src/stm32g0xx_nucleo.c',
+  # 'src/hal_config.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_adc.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_adc_ex.c',
@@ -135,3 +136,9 @@ custom_target('stm32.bin',
               command : [objcopy, '-O', 'binary', '@INPUT@', '@OUTPUT@'],
               # build_by_default: true
              )
+
+flash = find_program('st-flash')
+run_target(
+  'sendit',
+  command: [flash, 'write', 'stm32_app.bin', '0x08000000'],
+)
