@@ -6,8 +6,9 @@
 #define INC_MAIN_H_
 
 void handle_it(void);
+void handle_it(void);
 
 
-void DAC_Ch1_TriangleConfig(void);
+void Error_Handler(void);
 /* void Error_Handler(void); */
 #endif
