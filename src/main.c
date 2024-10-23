@@ -9,8 +9,9 @@
 #include "stm32g0xx_hal_dac.h"
 #include "hal_config.c"
 /* #include "stm32g0xx_hal_dma.h" */
-#include "stm32g0xx_hal_gpio.h"
+/* #include "stm32g0xx_hal_gpio.h" */
 #include "stm32g0xx_hal_rcc.h"
+#include "stm32g0xx_hal_tim.h"
 #include "stm32g0xx_ll_utils.h"
 #include "timx.h"
 #include "stm32g0xx_nucleo.h"
@@ -20,7 +21,7 @@ TIM_HandleTypeDef htim6;
 
 DMA_HandleTypeDef dmac1;
 
-void DAC_Ch1_TriangleConfig(DAC_HandleTypeDef);
+void DAC_Ch1_TriangleConfig(void);
 
 void sys_clock_config(void);
 
@@ -34,10 +35,6 @@ void dma_init(void);
 void gpio_init(void);
 
 void SysInit(void) {
-}
-
-void main() {
-  /* dac_init_analog(hdac1_c1, dmac1); */
   HAL_Init();
   /* hal_config_init(); */
 
@@ -47,15 +44,21 @@ void main() {
   tim_init(2, htim6);
   dac_init();
   /* timx_init(htim6); */
+  HAL_TIM_Base_Start(&htim6);
 
   BSP_LED_Init(LED4);
+}
+
+void main() {
+  /* dac_init_analog(hdac1_c1, dmac1); */
+  SysInit();
   while (1) {
     /* HAL_Delay(1000); // 1-second delay */
     /* HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_4); */
-    BSP_LED_Toggle(LED4);
-    HAL_Delay(200);
+    /* BSP_LED_Toggle(LED4); */
+    /* HAL_Delay(4000); */
     /* LL_mDelay(200); */
-    /* DAC_Ch1_TriangleConfig(hdac1_c1); */
+    DAC_Ch1_TriangleConfig();
   }
 }
 
@@ -121,9 +124,9 @@ void tim_init
 (uint8_t freq_divider, TIM_HandleTypeDef htimx){
   TIM_MasterConfigTypeDef master_conf = {0};
   htimx.Instance = TIM6;
-  htimx.Init.Prescaler = 0x050;
+  htimx.Init.Prescaler = 0x00;
   htimx.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htimx.Init.Period = 0x7ff;
+  htimx.Init.Period = 0xff;
   htimx.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htimx) != HAL_OK) {
     handle_it_enter();
@@ -143,14 +146,14 @@ void gpio_init(void){
 void handle_it_enter(void){
   while(1) {
     BSP_LED_Toggle(LED4);
-    LL_mDelay(200);
+    LL_mDelay(3000);
   }
 }
 
 void handle_it(void){
   while(1) {
     BSP_LED_Toggle(LED4);
-    LL_mDelay(100);
+    LL_mDelay(2000);
   }
 }
 
@@ -159,26 +162,33 @@ void handle_it(void){
  * FIXME::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
  *******************************************************************************
 */
-void DAC_Ch1_TriangleConfig(DAC_HandleTypeDef dac1){
+void DAC_Ch1_TriangleConfig(void){
   BSP_LED_Off(LED4);
 
+  /*##-3- Enable DAC Channel1 ################################################*/
+  if (HAL_DAC_Start(&hdac1_c1, DAC_CHANNEL_1) != HAL_OK)
+  {
+    /* Start Error */
+    Error_Handler();
+  }
+
   /*##-2- DAC channel2 Triangle Wave generation configuration ################*/
-  if (HAL_DACEx_TriangleWaveGenerate(&dac1, DAC_CHANNEL_1, 4095) != HAL_OK)
+  if (HAL_DACEx_TriangleWaveGenerate(&hdac1_c1, DAC_CHANNEL_1, DAC_TRIANGLEAMPLITUDE_4095) != HAL_OK)
   {
     /* Triangle wave generation Error */
     handle_it();
   }
 
 /*   /\*##-4- Set DAC channel1 DHR12RD register ################################################*\/ */
-/*   if (HAL_DAC_SetValue(&dac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 0x1000) != HAL_OK) { */
-/*     /\* Setting value Error *\/ */
-/*     handle_it(); */
-/*   } */
+  /* if (HAL_DAC_SetValue(&hdac1_c1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 0x1000) != HAL_OK) { */
+  /*   /\* Setting value Error *\/ */
+  /*   handle_it(); */
+  /* } */
 }
 
 void Error_Handler(void){
   while(1) {
     BSP_LED_Toggle(LED4);
-    LL_mDelay(1000);
+    LL_mDelay(4000);
   }
 }
