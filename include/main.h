@@ -6,7 +6,7 @@
 #define INC_MAIN_H_
 
 void handle_it(void);
-void handle_it(void);
+void handle_it_enter(void);
 
 
 void Error_Handler(void);
