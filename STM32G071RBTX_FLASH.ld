@@ -50,15 +50,15 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
-  .init :
-  {
-    KEEP(*(.init))
-  } > FLASH
+  /* .init : */
+  /* { */
+  /*   KEEP(*(.init)) */
+  /* } > FLASH */
 
-  .fini :
-  {
-    KEEP(*(.fini))
-  } > FLASH
+  /* .fini : */
+  /* { */
+  /*   KEEP(*(.fini)) */
+  /* } > FLASH */
 
   /* The program code and other data into "FLASH" Rom type memory */
   .text :
@@ -173,12 +173,12 @@ SECTIONS
   } >RAM
 
   /* Remove information from the compiler libraries */
-  /DISCARD/ :
-  {
-    libc.a ( * )
-    libm.a ( * )
-    libgcc.a ( * )
-  }
+  /* /DISCARD/ : */
+  /* { */
+  /*   libc.a ( * ) */
+  /*   libm.a ( * ) */
+  /*   libgcc.a ( * ) */
+  /* } */
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 }

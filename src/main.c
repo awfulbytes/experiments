@@ -4,16 +4,10 @@
 #include "main.h"     // Do i need this to be here or i can put all of them in main.h.... mooooore files more kBits...
 
 #include "dac.h"
-/* #include "stm32_hal_legacy.h" */
-#include "stm32g0xx_hal.h"
-#include "stm32g0xx_hal_dac.h"
 #include "hal_config.c"
-/* #include "stm32g0xx_hal_dma.h" */
-/* #include "stm32g0xx_hal_gpio.h" */
-#include "stm32g0xx_hal_rcc.h"
-#include "stm32g0xx_hal_tim.h"
-#include "stm32g0xx_ll_utils.h"
-#include "timx.h"
+#include "msp_init.c"
+
+// NOTE:: These should go in automagicaly from macro expantion...
 #include "stm32g0xx_nucleo.h"
 
 DAC_HandleTypeDef hdac1_c1;
@@ -21,44 +15,60 @@ TIM_HandleTypeDef htim6;
 
 DMA_HandleTypeDef dmac1;
 
-void DAC_Ch1_TriangleConfig(void);
-
-void sys_clock_config(void);
-
-void dac_init
-(void);
-
-void tim_init
-(uint8_t freq_devider, TIM_HandleTypeDef);
-
-void dma_init(void);
-void gpio_init(void);
-
-void SysInit(void) {
-  HAL_Init();
-  /* hal_config_init(); */
-
-  sys_clock_config();
-  gpio_init();
-  /* dma_init(); */
-  tim_init(2, htim6);
-  dac_init();
-  /* timx_init(htim6); */
-  HAL_TIM_Base_Start(&htim6);
-
-  BSP_LED_Init(LED4);
-}
+void sys_clock_config (void);
+static void DAC_Ch1_TriangleConfig();
+static void dac_init (void);
+static void tim_init (uint32_t freq_divider);
+static void gpio_init(void);
 
 void main() {
+
   /* dac_init_analog(hdac1_c1, dmac1); */
-  SysInit();
+  HAL_Init();
+  hal_config_init();
+
+  sys_clock_config();
+  dac_init();
+
+  /* HAL_DAC_MspInit(&hdac1_c1); */
+  /* HAL_TIM_Base_MspInit(&htim6); */
+  /* HAL_DAC_Init(&hdac1_c1); */
+  tim_init(0);
+  /* HAL_TIM_Base_Init(&htim6); */
+  BSP_LED_Init(LED4);
+
+  /* HAL_DAC_Start(&hdac1_c1, DAC1_CHANNEL_1); */
+  HAL_TIM_Base_Start(&htim6);
+
+  if (HAL_DAC_Start(&hdac1_c1, DAC_CHANNEL_1) != HAL_OK)
+  {
+    /* Start Error */
+    Error_Handler();
+  }
+
   while (1) {
-    /* HAL_Delay(1000); // 1-second delay */
+     /* if (__HAL_RCC_DMA1_IS_CLK_ENABLED()) { */
+     /*   BSP_LED_Toggle(LED4); */
+     /*   HAL_Delay(1000); */
+     /* } */
+    /* timx_start_clk(htim6); */
+    if (__HAL_RCC_DAC1_IS_CLK_ENABLED()){
+      /* HAL_DAC_DeInit(&hdac1_c1); */
+      DAC_Ch1_TriangleConfig();
+      /* handle_it_enter(); */
+      /* BSP_LED_Toggle(LED4); */
+      /* HAL_Delay(1000); // 1-second delay */
+    }
+    else {
+      BSP_LED_Toggle(LED4);
+      HAL_Delay(100);
+    }
+    /* HAL_Delay(100); // 1-second delay */
     /* HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_4); */
-    /* BSP_LED_Toggle(LED4); */
-    /* HAL_Delay(4000); */
     /* LL_mDelay(200); */
-    DAC_Ch1_TriangleConfig();
+    /* timx_stop_clk(htim6); */
+    /* HAL_Delay(3000); */
+    /* DAC_Ch1_TriangleConfig(); */
   }
 }
 
@@ -95,14 +105,14 @@ void sys_clock_config
 
 // TODO:: use the dma to save CPU cycles to make more noise !!
 // HACK:: could be used to benefit on processing...
-void dma_init(void){
-  __HAL_RCC_DMA1_CLK_ENABLE();
+/* void dma_init(void){ */
+/*   __HAL_RCC_DMA1_CLK_ENABLE(); */
 
-  /* HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 0, 0); */
-  HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
-}
+/*   HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 0, 0); */
+/*   HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn); */
+/* } */
 
-void dac_init
+static void dac_init
 (void){
   DAC_ChannelConfTypeDef dac_conf = {0};
 
@@ -120,40 +130,39 @@ void dac_init
   }
 }
 
-void tim_init
-(uint8_t freq_divider, TIM_HandleTypeDef htimx){
+static void tim_init
+(uint32_t freq_divider){
   TIM_MasterConfigTypeDef master_conf = {0};
-  htimx.Instance = TIM6;
-  htimx.Init.Prescaler = 0x00;
-  htimx.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htimx.Init.Period = 0xff;
-  htimx.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htimx) != HAL_OK) {
+  htim6.Instance = TIM6;
+  htim6.Init.Prescaler = freq_divider;
+  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim6.Init.Period = 1000;
+  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim6) != HAL_OK) {
     handle_it_enter();
   }
-
   master_conf.MasterOutputTrigger = TIM_TRGO_UPDATE;
   master_conf.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htimx, &master_conf) != HAL_OK) {
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &master_conf) != HAL_OK) {
     handle_it();
   }
 }
 
-void gpio_init(void){
+static void gpio_init(void){
   __HAL_RCC_GPIOA_CLK_ENABLE();
 }
 
 void handle_it_enter(void){
   while(1) {
     BSP_LED_Toggle(LED4);
-    LL_mDelay(3000);
+    HAL_Delay(3000);
   }
 }
 
 void handle_it(void){
   while(1) {
     BSP_LED_Toggle(LED4);
-    LL_mDelay(2000);
+    HAL_Delay(2000);
   }
 }
 
@@ -162,17 +171,11 @@ void handle_it(void){
  * FIXME::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
  *******************************************************************************
 */
-void DAC_Ch1_TriangleConfig(void){
+static void DAC_Ch1_TriangleConfig(void){
   BSP_LED_Off(LED4);
 
   /*##-3- Enable DAC Channel1 ################################################*/
-  if (HAL_DAC_Start(&hdac1_c1, DAC_CHANNEL_1) != HAL_OK)
-  {
-    /* Start Error */
-    Error_Handler();
-  }
-
-  /*##-2- DAC channel2 Triangle Wave generation configuration ################*/
+  /* ##-2- DAC channel2 Triangle Wave generation configuration ################ */
   if (HAL_DACEx_TriangleWaveGenerate(&hdac1_c1, DAC_CHANNEL_1, DAC_TRIANGLEAMPLITUDE_4095) != HAL_OK)
   {
     /* Triangle wave generation Error */
@@ -180,7 +183,7 @@ void DAC_Ch1_TriangleConfig(void){
   }
 
 /*   /\*##-4- Set DAC channel1 DHR12RD register ################################################*\/ */
-  /* if (HAL_DAC_SetValue(&hdac1_c1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 0x1000) != HAL_OK) { */
+  /* if (HAL_DAC_SetValue(&hdac1_c1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 0x100) != HAL_OK) { */
   /*   /\* Setting value Error *\/ */
   /*   handle_it(); */
   /* } */
@@ -189,6 +192,6 @@ void DAC_Ch1_TriangleConfig(void){
 void Error_Handler(void){
   while(1) {
     BSP_LED_Toggle(LED4);
-    LL_mDelay(4000);
+    HAL_Delay(4000);
   }
 }

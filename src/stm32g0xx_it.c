@@ -1,4 +1,5 @@
-#include "int_handlers.h"
+#include "stm32g0xx_it.h"
+#include "stm32g0xx_hal_dma.h"
 extern DMA_HandleTypeDef dmac1;
 
 
@@ -13,6 +14,5 @@ void SysTick_Handler(void){
 void DMA1_Channel2_3_IRQHandler(void){
     HAL_DMA_IRQHandler(&dmac1);
 }
-void EXTI4_15_IRQHandler(TIM_HandleTypeDef *htimx){
-    HAL_TIM_IRQHandler(htimx);
+void EXTI4_15_IRQHandler(void){
 }

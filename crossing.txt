@@ -9,9 +9,14 @@ objdump = 'arm-none-eabi-objdump'
 strip = 'arm-none-eabi-strip'
 
 [built-in options]
-c_args = ['-mcpu=cortex-m0', '-mthumb', '-ffreestanding',
-            '-DSTM32G071xx', '-DUSE_HAL_DRIVER']
-c_link_args = ['-T', '/home/toro/personal/tryC/STM32G071RBTX_FLASH.ld', '-mcpu=cortex-m0', '-mthumb']
+c_args = ['-mcpu=cortex-m0', '-ffreestanding', '-Os',
+            '-DSTM32G071xx', '-DUSE_HAL_DRIVER', '-ffunction-sections',
+            '-fdata-sections', '-Wall', '-fstack-usage', '-MMD', '-MP',
+            '-fno-exceptions', '-g3'
+            ]
+c_link_args = ['-T', '/home/toro/personal/tryC/STM32G071RBTX_FLASH.ld',
+                '-mfloat-abi=soft', '-g3', '-Os', '-std=gnu11', '-MT',
+                '-mcpu=cortex-m0', '-mthumb', '-lc', '-lgcc', '-static']
 
 [host_machine]
 system = 'baremetal'
