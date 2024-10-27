@@ -2,68 +2,87 @@
 /* #include <stdio.h> */
 /* #include "system_stm32g0xx.c" */
 #include "main.h"     // Do i need this to be here or i can put all of them in main.h.... mooooore files more kBits...
+#include "stm32g0xx_hal.h"
+#include "stm32g0xx_hal_dac.h"
+#include "stm32g0xx_hal_dac_ex.h"
+#include "stm32g0xx_hal_rcc.h"
+#include "stm32g0xx_nucleo.h"
 
-#include "dac.h"
+/* #include "drivers/dac.c" */
+/* #include "drivers/timx.c" */
+#include "system_stm32g0xx.h"
 #include "timx.h"
+#include "dac.h"
 #include "hal_config.c"
-#include "msp_init.c"
 #include "sysclk.c"
+#include <stdint.h>
 
-// NOTE:: These should go in automagicaly from macro expantion...
-
+RCC_OscInitTypeDef rcc_osc;
+RCC_ClkInitTypeDef rcc_clk;
 DAC_HandleTypeDef hdac1_c1;
 TIM_HandleTypeDef htim6;
 
 DMA_HandleTypeDef dmac1;
 
+// NOTE:: These should go in automagicaly from macro expantion...
+TIM_MasterConfigTypeDef master_conf = {0};
+#define TRIANGLE_RESOLUTION 0xfff               /* Define an appropriate resolution based on your requirement */
+
+static uint32_t triangle_wave[TRIANGLE_RESOLUTION];
+#define SQUARE_RESOLUTION 0xfff
+
+static uint32_t square_wave[SQUARE_RESOLUTION];
+
+
 void sys_clock_config (void);
-static void DAC_Ch1_TriangleConfig();
+static uint32_t* Generate_TriangleWave(void);
+static uint32_t* Generate_SquareWave(void);
 
 void main() {
 
-  /* dac_init_analog(hdac1_c1, dmac1); */
   HAL_Init();
-  /* hal_config_init(); */
+  hal_config_init();
 
   sys_clock_config();
-  dac_init();
+  /* dma_init(); */
+  /* dac_init_analog(&hdac1_c1); */
+  gpio_init();
 
-  tim_init(0);
-  /* HAL_TIM_Base_Init(&htim6); */
   BSP_LED_Init(LED4);
-
-  /* HAL_DAC_Start(&hdac1_c1, DAC1_CHANNEL_1); */
-  ;
-
-  if ((HAL_DAC_Start(&hdac1_c1, DAC_CHANNEL_1) ||
-       HAL_TIM_Base_Start(&htim6)) != HAL_OK) {
-    /* Start Error */
-    Error_Handler();
+  if ((tim_init(64) || dac_init()) == HAL_ERROR){
+    BSP_LED_Toggle(LED4);
+    /* HAL_Delay(300); */
+    BSP_LED_Toggle(LED4);
+    /* HAL_Delay(600); */
+    BSP_LED_Toggle(LED4);
+    /* HAL_Delay(300); */
   }
 
+  /* HAL_DAC_Start(&hdac1_c1, DAC1_CHANNEL_1); */
+  /* if (HAL_DAC_Start(&hdac1_c1, DAC_CHANNEL_1) != HAL_OK) { */
+  /*   /\* Start Error *\/ */
+  /*   handle_it(); */
+  /* } */
+  /* Generate_TriangleWave(); */
+  Generate_SquareWave();
+  if (HAL_DAC_Start_DMA(&hdac1_c1, DAC_CHANNEL_1,
+                        square_wave,
+                        TRIANGLE_RESOLUTION,
+                        DAC_ALIGN_12B_R) == HAL_OK) {
+    BSP_LED_Toggle(LED4);
+    /* HAL_Delay(600); */
+  }
+  /* Start_DAC_DMA_TriangleWave(); */
   while (1) {
-     /* if (__HAL_RCC_DMA1_IS_CLK_ENABLED()) { */
-     /*   BSP_LED_Toggle(LED4); */
-     /*   HAL_Delay(1000); */
-     /* } */
-    /* timx_start_clk(htim6); */
-    if (__HAL_RCC_DAC1_IS_CLK_ENABLED()){
-      /* HAL_DAC_DeInit(&hdac1_c1); */
-      DAC_Ch1_TriangleConfig();
-      /* handle_it_enter(); */
-      /* BSP_LED_Toggle(LED4); */
-      /* HAL_Delay(1000); // 1-second delay */
-    }
-    else {
+    if (__HAL_RCC_DMA1_IS_CLK_ENABLED() && __HAL_RCC_DAC1_IS_CLK_ENABLED()) {
+      /* DAC_Ch1_TriangleConfig(); */
       BSP_LED_Toggle(LED4);
       HAL_Delay(100);
     }
-    /* HAL_Delay(100); // 1-second delay */
-    /* HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_4); */
-    /* LL_mDelay(200); */
-    /* timx_stop_clk(htim6); */
+    /* timx_start_clk(htim6); */
+    /* handle_it_enter(); */
+    /* BSP_LED_Toggle(LED4); */
     /* HAL_Delay(3000); */
-    /* DAC_Ch1_TriangleConfig(); */
   }
 }
 
@@ -80,41 +99,36 @@ void gpio_init(void){
   __HAL_RCC_GPIOA_CLK_ENABLE();
 }
 
-void handle_it_enter(void){
-  while(1) {
-    BSP_LED_Toggle(LED4);
-    HAL_Delay(3000);
-  }
+static uint32_t* Generate_TriangleWave(void) {
+    uint32_t i;
+    uint32_t half_res = TRIANGLE_RESOLUTION / 2;
+    uint32_t increment = half_res; // Increment per step
+    // Rising slope of the triangle
+    for (i = 0; i < half_res; i++) {
+        triangle_wave[i] = i * increment;
+    }
+    // Falling slope of the triangle
+    for (; i < TRIANGLE_RESOLUTION - 1; i++) {
+        triangle_wave[i] = TRIANGLE_RESOLUTION - ((i - half_res) * increment);
+    }
+   // Ensure the last value is exactly zero to avoid minor rounding errors
+    triangle_wave[TRIANGLE_RESOLUTION - 1] = 0;
+
+    return triangle_wave;
 }
+static uint32_t* Generate_SquareWave(void) {
+    uint32_t i;
+    uint32_t half_res = SQUARE_RESOLUTION / 2;
 
-void handle_it(void){
-  while(1) {
-    BSP_LED_Toggle(LED4);
-    HAL_Delay(2000);
-  }
-}
+    // Fill the first half of the array with the maximum value (1)
+    for (i = 0; i < half_res; i++) {
+        square_wave[i] = 1; // Representing high state
+    }
 
-static void DAC_Ch1_TriangleConfig(void){
-  BSP_LED_Off(LED4);
+    // Fill the second half of the array with the minimum value (0)
+    for (; i < SQUARE_RESOLUTION - 1; i++) {
+        square_wave[i] = 0; // Representing low state
+    }
 
-  /*##-3- Enable DAC Channel1 ################################################*/
-  /* ##-2- DAC channel2 Triangle Wave generation configuration ################ */
-  if (HAL_DACEx_TriangleWaveGenerate(&hdac1_c1, DAC_CHANNEL_1, DAC_TRIANGLEAMPLITUDE_4095) != HAL_OK)
-  {
-    /* Triangle wave generation Error */
-    handle_it();
-  }
-
-/*   /\*##-4- Set DAC channel1 DHR12RD register ################################################*\/ */
-  /* if (HAL_DAC_SetValue(&hdac1_c1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 0x100) != HAL_OK) { */
-  /*   /\* Setting value Error *\/ */
-  /*   handle_it(); */
-  /* } */
-}
-
-void Error_Handler(void){
-  while(1) {
-    BSP_LED_Toggle(LED4);
-    HAL_Delay(4000);
-  }
+    return square_wave; // Return the pointer to the square wave array
 }

@@ -11,8 +11,8 @@ src_files = files(
   'src/startup_stm32g071xx.s',
   'src/system_stm32g0xx.c',
   'src/stm32g0xx_nucleo.c',
-  'src/int_handlers.c',
-  'src/msp_init.c'
+  'src/stm32g0xx_it.c',
+  # 'src/msp_init.c'
   )
 src_deps = files(
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal.c',
@@ -83,9 +83,16 @@ src_deps = files(
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_usb.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_utils.c',
 )
+arm_sources = []
+arm_sources += files(
+  'ventor/cmsis-core/DSP/Source/FastMathFunctions/FastMathFunctions.c',
+  'ventor/cmsis-core/DSP/Source/CommonTables/arm_common_tables.c',
+)
 inc_dir = include_directories('include')
 core_inc_dir = include_directories('include/Core/Include')
-cmsis_dev_inc = include_directories('ventor/cmsis_device_g0/Include')
+cmsis_dev_inc = include_directories('ventor/cmsis_device_g0/Include',
+                                   'ventor/cmsis-core/DSP/Include',
+                                   )
 hal_dev_inc = include_directories('ventor/stm32g0xx_hal_driver/Inc',
                                   'ventor/stm32g0xx_hal_driver/Inc/Legacy')
 
@@ -114,7 +121,7 @@ size = find_program('arm-none-eabi-size')
 custom_target('stm32_app.bin',
               input : elf,
               output : 'stm32_app.bin',
-              command : [objcopy, '-S', '-O', 'binary', '@INPUT@', '@OUTPUT@'],
+              command : [objcopy, '-O', 'binary', '@INPUT@', '@OUTPUT@'],
               build_by_default: true
              )
 striper = custom_target('stripped-binary',
