@@ -65,6 +65,9 @@ void main() {
   /* } */
   /* Generate_TriangleWave(); */
   Generate_SquareWave();
+  // NOTE:: make this more clear... i dont know if this starts something or not..
+  //         gdb says yes to this but no to the dma... i need to test the dma handler
+  //         and start the appropriate functions... see linked notes for more info..
   if (HAL_DAC_Start_DMA(&hdac1_c1, DAC_CHANNEL_1,
                         square_wave,
                         TRIANGLE_RESOLUTION,

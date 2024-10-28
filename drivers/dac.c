@@ -6,7 +6,10 @@
 
 extern DAC_HandleTypeDef hdac1_c1;
 extern DMA_HandleTypeDef dmac1;
-extern DAC_ChannelConfTypeDef dac_conf;
+// NOTE:: This should not be here i think... overrites the
+//         value of the channel config while there is no other place
+//         needing this... need to check in more depth
+/* extern DAC_ChannelConfTypeDef dac_conf; */
 
 // TODO:: Configuration issues...
 //         i need to check how the other binary is configured
@@ -38,15 +41,22 @@ HAL_StatusTypeDef dac_init_analog
     dmac1.Init.Mode = DMA_CIRCULAR;
     dmac1.Init.Priority = DMA_PRIORITY_HIGH;
 
+    // NOTE:: i think i have to make this somehow starting the dma also...
+    //         there is nothing indicating that i start the dma before the dac
+    //         in main...
     if (HAL_DMA_Init(&dmac1) != HAL_OK) {
-      return HAL_ERROR;
+      goto error;
     } else {
       __HAL_LINKDMA(dac1, DMA_Handle1, dmac1);
       HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 0, 0);
       HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
       return HAL_OK;
     }
+  } else {
+    goto error;
   }
+  error:
+  return HAL_ERROR;
 }
 
 HAL_StatusTypeDef dac_init
