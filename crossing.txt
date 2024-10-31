@@ -10,13 +10,14 @@ strip = 'arm-none-eabi-strip'
 
 [built-in options]
 c_args = ['-mcpu=cortex-m0plus', '-ffreestanding', '-O0',
-            '-DSTM32G071xx', '-DUSE_HAL_DRIVER', '-ffunction-sections',
+            '-DSTM32G071xx', '-DUSE_FULL_LL_DRIVER',
+            '-ffunction-sections',
             '-fdata-sections', '-Wall', '-fstack-usage', '-MMD', '-MP',
             '-fno-exceptions', '-g3'
             ]
 c_link_args = ['-T', '/home/toro/personal/tryC/STM32G071RBTX_FLASH.ld',
                 '-mfloat-abi=soft', '-g3', '-O0', '-std=gnu11', '-MT',
-                '-mcpu=cortex-m0plus', '-mthumb', '-lc', '-lgcc', '-static']
+                '-mcpu=cortex-m0plus', '-mthumb', '-lc', '-lm', '-lgcc', '-static']
 
 [host_machine]
 system = 'baremetal'
