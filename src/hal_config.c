@@ -4,6 +4,7 @@
 /*
  * This is for the low level hal to enable clocks.
  * All is used here are __HAL_RCC_XXX_CLK_Enable...
+ * TO OVERWRITE THE FUCKING MSP WEAK FUN_XXX_y
  ** @param None
  ** @return None
  */

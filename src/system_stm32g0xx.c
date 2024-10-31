@@ -75,22 +75,23 @@
   */
 
 #include "stm32g0xx.h"
+/* #include "stm32g0xx_hal_conf.h" */
 /* #include "stm32g071xx.h" */
 
 #if !defined  (HSE_VALUE)
-#define HSE_VALUE    (8000000UL)    /*!< Value of the External oscillator in Hz */
+#define HSE_VALUE    (8000000U)    /*!< Value of the External oscillator in Hz */
 #endif /* HSE_VALUE */
 
 #if !defined  (HSI_VALUE)
-  #define HSI_VALUE  (16000000UL)   /*!< Value of the Internal oscillator in Hz*/
+  #define HSI_VALUE  (16000000U)   /*!< Value of the Internal oscillator in Hz*/
 #endif /* HSI_VALUE */
 
 #if !defined  (LSI_VALUE)
- #define LSI_VALUE   (32000UL)     /*!< Value of LSI in Hz*/
+ #define LSI_VALUE   (32000U)     /*!< Value of LSI in Hz*/
 #endif /* LSI_VALUE */
 
 #if !defined  (LSE_VALUE)
-  #define LSE_VALUE  (32768UL)      /*!< Value of LSE in Hz*/
+  #define LSE_VALUE  (32768U)      /*!< Value of LSE in Hz*/
 #endif /* LSE_VALUE */
 
 /**
@@ -117,22 +118,22 @@
      remap of boot address selected */
 /* #define USER_VECT_TAB_ADDRESS */
 
-#if defined(USER_VECT_TAB_ADDRESS)
-/*!< Uncomment the following line if you need to relocate your vector Table
-     in Sram else user remap will be done in Flash. */
-/* #define VECT_TAB_SRAM */
-#if defined(VECT_TAB_SRAM)
-#define VECT_TAB_BASE_ADDRESS   SRAM_BASE       /*!< Vector Table base address field.
-                                                     This value must be a multiple of 0x200. */
-#define VECT_TAB_OFFSET         0x00000000U     /*!< Vector Table base offset field.
-                                                     This value must be a multiple of 0x200. */
-#else
-#define VECT_TAB_BASE_ADDRESS   FLASH_BASE      /*!< Vector Table base address field.
-                                                     This value must be a multiple of 0x200. */
-#define VECT_TAB_OFFSET         0x00000000U     /*!< Vector Table base offset field.
-                                                     This value must be a multiple of 0x200. */
-#endif /* VECT_TAB_SRAM */
-#endif /* USER_VECT_TAB_ADDRESS */
+/* #if defined(USER_VECT_TAB_ADDRESS) */
+/* /\*!< Uncomment the following line if you need to relocate your vector Table */
+/*      in Sram else user remap will be done in Flash. *\/ */
+/* /\* #define VECT_TAB_SRAM *\/ */
+/* #if defined(VECT_TAB_SRAM) */
+/* #define VECT_TAB_BASE_ADDRESS   SRAM_BASE       /\*!< Vector Table base address field. */
+/*                                                      This value must be a multiple of 0x200. *\/ */
+/* #define VECT_TAB_OFFSET         0x00000000U     /\*!< Vector Table base offset field. */
+/*                                                      This value must be a multiple of 0x200. *\/ */
+/* #else */
+/* #define VECT_TAB_BASE_ADDRESS   FLASH_BASE      /\*!< Vector Table base address field. */
+/*                                                      This value must be a multiple of 0x200. *\/ */
+/* #define VECT_TAB_OFFSET         0x00000000U     /\*!< Vector Table base offset field. */
+/*                                                      This value must be a multiple of 0x200. *\/ */
+/* #endif /\* VECT_TAB_SRAM *\/ */
+/* #endif /\* USER_VECT_TAB_ADDRESS *\/ */
 /******************************************************************************/
 /**
   * @}
@@ -145,6 +146,7 @@
 /**
   * @}
   */
+#define VECT_TAB_OFFSET 0x00
 
 /** @addtogroup STM32G0xx_System_Private_Variables
   * @{
@@ -157,10 +159,10 @@
                is no need to call the 2 first functions listed above, since SystemCoreClock
                variable is updated automatically.
   */
-  uint32_t SystemCoreClock = 16000000UL;
+uint32_t SystemCoreClock = HSI_VALUE;
 
-  const uint32_t AHBPrescTable[16UL] = {0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 1UL, 2UL, 3UL, 4UL, 6UL, 7UL, 8UL, 9UL};
-  const uint32_t APBPrescTable[8UL] =  {0UL, 0UL, 0UL, 0UL, 1UL, 2UL, 3UL, 4UL};
+const uint32_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
+const uint32_t APBPrescTable[8] =  {0, 0, 0, 0, 1, 2, 3, 4};
 
 /**
   * @}
@@ -186,8 +188,10 @@
 void SystemInit(void)
 {
   /* Configure the Vector Table location -------------------------------------*/
-#if defined(USER_VECT_TAB_ADDRESS)
+#if defined(VECT_TAB_SRAM)
   SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET; /* Vector Table Relocation */
+#else
+  SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET;
 #endif /* USER_VECT_TAB_ADDRESS */
 }
 
