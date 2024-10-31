@@ -18,23 +18,3 @@ void main() {
   while (1) {
   }
 }
-
-// TODO:: use the dma to save CPU cycles to make more noise !!
-// HACK:: could be used to benefit on processing...
-/* void dma_init(void){ */
-/*   __HAL_RCC_DMA1_CLK_ENABLE(); */
-
-/*   HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 0, 0); */
-/*   HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn); */
-/* } */
-
-/* void gpio_init(void){ */
-/*   __HAL_RCC_GPIOA_CLK_ENABLE(); */
-
-/*   GPIO_InitTypeDef gpio_dac1_c1 = {0}; */
-/*   gpio_dac1_c1.Pin = GPIO_PIN_4; */
-/*   gpio_dac1_c1.Mode = GPIO_MODE_ANALOG; */
-/*   gpio_dac1_c1.Pull = GPIO_NOPULL; */
-/*   HAL_GPIO_Init(GPIOA, &gpio_dac1_c1); */
-/* } */
-
