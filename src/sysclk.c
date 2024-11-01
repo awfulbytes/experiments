@@ -25,9 +25,9 @@ void sys_clock_config
   LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
   LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
 
-  LL_Init1msTick(56000000);
+  LL_Init1msTick(64000000);
   /* Update the SystemCoreClock variable (required for the LL library to know the system clock frequency) */
-  LL_SetSystemCoreClock(56000000);
+  LL_SetSystemCoreClock(64000000);
 
   /* Configure SysTick for 1 ms interrupts */
 }
