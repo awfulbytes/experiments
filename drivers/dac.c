@@ -1,13 +1,14 @@
 #include "dac.h"
 /* #include "stm32g0xx.h" */
+#include "stm32g071xx.h"
 #include "system_stm32g0xx.h"
 #include <stdint.h>
 
 #include "gpio.c"
-extern uint32_t *square_wave;
 
 
-void dac_config(void){
+void dac_config
+(void){
   gpio_init();
   NVIC_SetPriority(TIM6_DAC_LPTIM1_IRQn, 0);
   NVIC_EnableIRQ(TIM6_DAC_LPTIM1_IRQn);
@@ -41,7 +42,8 @@ void dac_config(void){
 
 }
 
-void dac_act(void){
+void dac_act
+(void){
   __IO uint32_t wait_idx = 0;
   LL_DAC_Enable(DAC1, LL_DAC_CHANNEL_1);
   wait_idx = (LL_DAC_DELAY_STARTUP_VOLTAGE_SETTLING_US * (SystemCoreClock / 200000)) / 10;

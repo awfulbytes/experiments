@@ -10,9 +10,11 @@
 
 
 void main() {
+  timer_settings_t tim6_settings;
   sys_clock_config();
+  tim6_settings = timer_init_settings(&tim6_settings);
+  tim_init(&tim6_settings);
   dma_config();
-  tim_init();
   dac_config();
   dac_act();
   while (1) {

@@ -5,7 +5,7 @@
 /* HAL_StatusTypeDef dac_init_analog */
 /* (DAC_HandleTypeDef *dac1); */
 
-#define WAVEFORM_SAMPLES_SIZE       (sizeof (WaveformSine_12bits_32samples) / sizeof (uint16_t))
+#define WAVEFORM_SAMPLES_SIZE       (sizeof (sin) / sizeof (uint16_t))
 void dma_config(void);
 void dac_config(void);
 void dac_act(void);

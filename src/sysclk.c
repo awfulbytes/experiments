@@ -1,16 +1,33 @@
 #include "errors.c"
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_bus.h"
-/* extern RCC_OscInitTypeDef rcc_osc; */
-/* extern RCC_ClkInitTypeDef rcc_clk; */
+#include "stm32g0xx_ll_system.h"
+#include <stdint.h>
+
+typedef struct sysclk {
+  uint32_t clk_source;
+  uint32_t pllm;
+  uint32_t plln;
+  uint32_t pllr;
+}sysclk_t;
+
+void clk_config_settings(sysclk_t *clk){
+  clk->clk_source = LL_RCC_PLLSOURCE_HSI;
+  clk->pllm = LL_RCC_PLLM_DIV_5;
+  clk->plln = 64;
+  clk->pllr = LL_RCC_PLLR_DIV_5;
+}
 
 void sys_clock_config
 (void){
+  LL_FLASH_SetLatency(LL_FLASH_LATENCY_0);
   LL_RCC_HSI_Enable();
   while (LL_RCC_HSI_IsReady() != 1);
 
-  /* Configure PLL */
-  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLLM_DIV_4, 70, LL_RCC_PLLR_DIV_5);
+  sysclk_t my_clk;
+  clk_config_settings(&my_clk);
+
+  LL_RCC_PLL_ConfigDomain_SYS(my_clk.clk_source, my_clk.pllm, my_clk.plln, my_clk.pllr);
 
   /* Enable PLL and wait for it to stabilize */
   LL_RCC_PLL_Enable();

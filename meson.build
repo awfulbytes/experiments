@@ -1,5 +1,5 @@
 project('tryC', 'c',
-  version : '0.1',
+  version : '0.0.1',
   meson_version : '>=0.60.0')
 
 # Include directories
@@ -15,53 +15,6 @@ src_files = files(
   # 'src/msp_init.c'
   )
 src_deps = files(
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_adc.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_adc_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_cec.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_comp.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_cortex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_crc.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_crc_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_dac.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_dac_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_dma.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_dma_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_exti.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_flash.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_flash_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_gpio.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_hcd.c', HACK:: check this out (G4)
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_i2c.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_i2c_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_i2s.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_irda.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_iwdg.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_lptim.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_msp_template.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_pwr.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_pwr_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_rcc.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_rcc_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_rng.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_rtc.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_rtc_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_smartcard.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_smartcard_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_smbus.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_smbus_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_spi.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_spi_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_tim.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_timebase_rtc_alarm_template.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_timebase_rtc_wakeup_template.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_timebase_tim_template.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_tim_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_uart.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_uart_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_usart.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_usart_ex.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_wwdg.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_adc.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_comp.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_crc.c',
@@ -149,6 +102,10 @@ run_target(
   command: [size, '--format=GNU', '-t', 'testershit', 'stripped.elf'],
 )
 flash = find_program('st-flash')
+run_target(
+  'resetstm',
+  command: [flash, 'reset', '&&', flash, 'erase'],
+)
 run_target(
   'sendit',
   command: [flash, 'write', 'stm32_app.bin', '0x08000000'],
