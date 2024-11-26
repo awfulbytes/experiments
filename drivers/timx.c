@@ -51,6 +51,8 @@ void tim_init
   } else {
   }
 
+  /* TODO:: Should make a test with gdb and a calculator for these values and then be sure
+   *              how are setted inside the setted `struct' */
   setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000) + 1;
   setted->timx_settings.Autoreload =
       __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE);
