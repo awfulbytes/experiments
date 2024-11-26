@@ -51,13 +51,6 @@ void tim_init
   } else {
   }
 
-  /* TODO:: Test this calculation...
-   *      currently i get 977 and 3 for each val respectevely
-   *      this is not sure it produces the right clock and may be the issue
-   *      for the more frequency i get
-   */
-  /* setted->prescaler = ((setted->tim_clk_freq) / (WAVEFORM_TIMER_PR_MAX_VAL * WAVEFORM_TIMER_FREQUENCY_RANGE_MIN)) + 1; */
-  /* setted->tim_reload = (setted->tim_clk_freq / (setted->prescaler * wave_tim_freq)) + 1; */
   setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000) + 1;
   setted->timx_settings.Autoreload =
       __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE);
