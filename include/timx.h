@@ -4,6 +4,7 @@
 #ifdef USE_FULL_LL_DRIVER
 #define TIMER TIM6
 #include "stm32g0xx_ll_bus.h"
+#include "stm32g0xx_ll_tim.h"
 #include "stm32g0xx_ll_dma.h"
 #include "stm32g0xx_ll_dmamux.h"
 #include "stm32g0xx_ll_rcc.h"
@@ -23,10 +24,18 @@ typedef struct timer_settings {
     volatile uint32_t tim_reload;
 }timer_settings_t;
 
+typedef struct timer {
+  TIM_TypeDef *timx;
+  LL_TIM_InitTypeDef timx_settings;
+  uint32_t timx_clk_freq;
+}timer_t;
+
+
 timer_settings_t timer_init_settings (timer_settings_t *settings);
+timer_t timx_init(timer_t *timer);
 
 /*
  * One should pass this from the initiator function to initialize default configs...
  * @ref: timer_init_settings
 */
-void tim_init (timer_settings_t *setted);
+void tim_init (timer_t *setted);

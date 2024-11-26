@@ -1,17 +1,32 @@
 #include "timx.h"
+#include "stm32g071xx.h"
+#include "stm32g0xx.h"
+#include "stm32g0xx_ll_rcc.h"
+#include "stm32g0xx_ll_tim.h"
 #include "system_stm32g0xx.h"
 #include "../src/wave.c"
-#include "stm32g0xx_ll_tim.h"
+/* #include "stm32g0xx_ll_tim.h" */
 #include "stm32g0xx_ll_bus.h"
 
 /* #define WAVEFORM_TIMER_FREQUENCY                (WAVEFORM_FREQUENCY * WAVEFORM_SAMPLES_SIZE) */
 #define WAVEFORM_TIMER_PR_MAX_VAL               ((uint32_t)0xFFFF-1)
 #define WAVEFORM_TIMER_FREQUENCY_RANGE_MIN      ((uint32_t)    1)
 
-uint32_t wave_tim_freq;
-wave_t my_wave;
-uint32_t amp = 3300;
-uint32_t fre = 120;
+/* uint32_t wave_tim_freq; */
+/* wave_t my_wave; */
+
+timer_t timx_init(timer_t *timer) {
+  timer->timx = TIM6;
+  timer->timx_clk_freq = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock, LL_RCC_GetAPB1Prescaler());
+  timer->timx_settings.Prescaler = 0;  // __LL_TIM_CALC_PSC(timer->timx_clk_freq, 1000000);
+  timer->timx_settings.Autoreload = 0; // __LL_TIM_CALC_ARR(timer->timx_clk_freq, LL_RCC_GetAPB1Prescaler(), 250);
+  timer->timx_settings.CounterMode = LL_TIM_COUNTERMODE_UP;
+  return *timer;
+}
+
+/* uint32_t amp = 3300;
+ * uint32_t fre = 120;
+ */
 
 timer_settings_t timer_init_settings
 (timer_settings_t *settings){
@@ -23,22 +38,37 @@ timer_settings_t timer_init_settings
 }
 
 void tim_init
-(timer_settings_t *setted){
+(timer_t *setted){
 
-  wave_tim_freq = 500 * DATA_SIZE / 2;
+  /* HACK:: This should not be devided by 2..
+   *              The idea is that here the frequency is multiplied with the
+   *              data size in number of samples but i get the double freq on
+   *              the osciloscope...
+   *
+   * NOT_SURE_WHY_THE F_XXX
+   */
+  /* wave_tim_freq = 500 * DATA_SIZE / 2; */
 
   if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_1){
   } else {
-    setted->tim_clk_freq *= 2;
+    setted->timx_clk_freq *= 2;
   }
 
-  setted->prescaler = ((setted->tim_clk_freq) / (WAVEFORM_TIMER_PR_MAX_VAL * WAVEFORM_TIMER_FREQUENCY_RANGE_MIN)) + 1;
-  setted->tim_reload = (setted->tim_clk_freq / (setted->prescaler * wave_tim_freq)) + 1;
+  /* TODO:: Test this calculation...
+   *      currently i get 977 and 3 for each val respectevely
+   *      this is not sure it produces the right clock and may be the issue
+   *      for the more frequency i get
+   */
+  /* setted->prescaler = ((setted->tim_clk_freq) / (WAVEFORM_TIMER_PR_MAX_VAL * WAVEFORM_TIMER_FREQUENCY_RANGE_MIN)) + 1; */
+  /* setted->tim_reload = (setted->tim_clk_freq / (setted->prescaler * wave_tim_freq)) + 1; */
+  setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000);
+  setted->timx_settings.Autoreload =
+      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, 250 * DATA_SIZE / 2);
 
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
-  LL_TIM_SetPrescaler(setted->timx, setted->prescaler - 1);
-  LL_TIM_SetAutoReload(setted->timx,  setted->tim_reload - 1);
-  LL_TIM_SetCounterMode(setted->timx, LL_TIM_COUNTERMODE_UP);
+  LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler - 1);
+  LL_TIM_SetAutoReload(setted->timx,  setted->timx_settings.Autoreload - 1);
+  LL_TIM_SetCounterMode(setted->timx, setted->timx_settings.CounterMode);
 
   LL_TIM_SetTriggerOutput(setted->timx, LL_TIM_TRGO_UPDATE);
   LL_TIM_EnableCounter(setted->timx);
