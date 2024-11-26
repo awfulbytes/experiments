@@ -43,29 +43,12 @@ extern "C" {
 /**
   * @brief LED4
   */
-#define USER_BUTTON_EXTI_LINE                   LL_EXTI_LINE_13
-#define USER_BUTTON_EXTI_IRQn                   EXTI4_15_IRQn
-#define USER_BUTTON_EXTI_LINE_ENABLE()          LL_EXTI_EnableIT_0_31(USER_BUTTON_EXTI_LINE)
-#define USER_BUTTON_EXTI_FALLING_TRIG_ENABLE()  LL_EXTI_EnableFallingTrig_0_31(USER_BUTTON_EXTI_LINE)
-#define USER_BUTTON_SYSCFG_SET_EXTI()           do {                                                                     \
-                                                  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTC, LL_EXTI_CONFIG_LINE13);  \
-                                                } while(0)
-#define USER_BUTTON_IRQHANDLER                  EXTI4_15_IRQHandler
-
-
-void UserButton_Callback(void);
 void DacUnderrunError_Callback(void);
 
 
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define USER_BUTTON_Pin LL_GPIO_PIN_13
-#define USER_BUTTON_GPIO_Port GPIOC
-#define USER_BUTTON_EXTI_IRQn EXTI4_15_IRQn
-#define LED4_Pin LL_GPIO_PIN_5
-#define LED4_GPIO_Port GPIOA
-
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

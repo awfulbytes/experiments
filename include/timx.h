@@ -25,12 +25,13 @@ typedef struct timer_settings {
 }timer_settings_t;
 
 /**
- * A struct to represent all timer nessessary shit.
- *
- * @param *timx          Timer identifier.
- * @param timx_settings Low level settings struct.
- * @param timx_clk_freq Timer clock frequency
- * */
+  * A struct to represent all timer nessessary shit.
+  *
+  * @param *timx          Timer identifier.
+  * @param timx_settings Low level settings struct.
+  * @param timx_clk_freq Timer clock frequency
+  *
+  */
 struct timer {
   TIM_TypeDef *timx;
   LL_TIM_InitTypeDef timx_settings;
@@ -43,10 +44,11 @@ timer_settings_t timer_init_settings (timer_settings_t *settings);
  * @brief Initialize a timer.
  * @param *timer A struct to represent all timer related info.
  * */
-struct timer timx_set(struct timer *timer);
+struct timer* timx_set(struct timer *timer);
 
 /*
  * One should pass this from the initiator function to initialize default configs...
  * @ref: timer_init_settings
 */
-void tim_init (struct timer *setted, uint32_t out_freq);
+void tim_init (struct timer *setted, uint32_t out_freq, const uint16_t *data);
+ErrorStatus dma_change_wave (const uint16_t *data, struct timer *timer);

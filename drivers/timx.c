@@ -1,10 +1,11 @@
 #include "timx.h"
 #include "stm32g071xx.h"
 #include "stm32g0xx.h"
+#include "stm32g0xx_ll_dma.h"
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_tim.h"
 #include "system_stm32g0xx.h"
-#include "../src/wave.c"
+#include "wave.h"
 /* #include "stm32g0xx_ll_tim.h" */
 #include "stm32g0xx_ll_bus.h"
 
@@ -15,13 +16,13 @@
 /* uint32_t wave_tim_freq; */
 /* wave_t my_wave; */
 
-struct timer timx_set(struct timer *timer) {
+struct timer* timx_set(struct timer *timer) {
   timer->timx = TIM6;
   timer->timx_clk_freq = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock, LL_RCC_GetAPB1Prescaler());
   timer->timx_settings.Prescaler = 0;  // __LL_TIM_CALC_PSC(timer->timx_clk_freq, 1000000);
   timer->timx_settings.Autoreload = 0; // __LL_TIM_CALC_ARR(timer->timx_clk_freq, LL_RCC_GetAPB1Prescaler(), 250);
   timer->timx_settings.CounterMode = LL_TIM_COUNTERMODE_UP;
-  return *timer;
+  return timer;
 }
 
 /* uint32_t amp = 3300;
@@ -38,7 +39,7 @@ timer_settings_t timer_init_settings
 }
 
 void tim_init
-(struct timer *setted, uint32_t output_freq){
+(struct timer *setted, uint32_t output_freq, const uint16_t *data){
 
   if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_2){
     setted->timx_clk_freq *= 2;
@@ -48,8 +49,12 @@ void tim_init
   /* TODO:: Should make a test with gdb and a calculator for these values and then be sure
    *              how are setted inside the setted `struct' */
   setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000) + 1;
+  /* FIXME:: this seems to fuck the hole wave issue but for now static and perma setting is
+   * what is happening here. The reason is that this way i can plot all waveforms on scope
+   * but when trying to change via deinit/reinit the =DAC= does not get the correct data...
+   * */
   setted->timx_settings.Autoreload =
-      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE);
+      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE(data));
 
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
   LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler - 1);
@@ -85,8 +90,29 @@ void dma_config
                                                LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
                          LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
-  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE);
+  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE(scaled_sin));
 
   LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
   LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
+}
+
+ErrorStatus dma_change_wave
+(const uint16_t *data, struct timer *timer){
+  if ((LL_DMA_DeInit(DMA1, LL_DMA_CHANNEL_3) || LL_TIM_DeInit(timer->timx)) != SUCCESS) {
+    return ERROR;
+  } else {
+    tim_init(timer, 250, data);
+    LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
+                           (uint32_t) data,
+                           LL_DAC_DMA_GetRegAddr(DAC1,
+                                                 LL_DAC_CHANNEL_1,
+                                                 LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
+                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE(&data));
+
+    LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
+  }
+  return SUCCESS;
 }

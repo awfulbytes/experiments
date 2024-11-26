@@ -1,3 +1,4 @@
+#include <stdint.h>
 #define TIMER TIM6
 #include "stm32g0xx_ll_bus.h"
 #include "stm32g0xx_ll_dac.h"
@@ -5,8 +6,15 @@
 /* HAL_StatusTypeDef dac_init_analog */
 /* (DAC_HandleTypeDef *dac1); */
 
-#define WAVEFORM_SAMPLES_SIZE       (sizeof (sin) / sizeof (uint16_t))
+struct dac {
+  DAC_TypeDef *dacx;
+  LL_DAC_InitTypeDef dacx_settings;
+  uint32_t channel;
+};
+
+
 void dma_config(void);
-void dac_config(void);
-void dac_act(void);
+void dac_default_init(struct dac *dacx);
+void dac_config(struct dac *gdac);
+void dac_act(struct dac *gdac);
 /* HAL_StatusTypeDef dac_init (void); */
