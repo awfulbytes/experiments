@@ -38,4 +38,4 @@ timer_t timx_init(timer_t *timer);
  * One should pass this from the initiator function to initialize default configs...
  * @ref: timer_init_settings
 */
-void tim_init (timer_t *setted);
+void tim_init (timer_t *setted, uint32_t out_freq);

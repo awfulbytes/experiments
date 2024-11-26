@@ -13,7 +13,7 @@ void main() {
   timer_t tim6_settings;
   sys_clock_config();
   tim6_settings = timx_init(&tim6_settings);
-  tim_init(&tim6_settings);
+  tim_init(&tim6_settings, 666);
   dma_config();
   dac_config();
   dac_act();

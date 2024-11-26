@@ -38,20 +38,17 @@ timer_settings_t timer_init_settings
 }
 
 void tim_init
-(timer_t *setted){
+(timer_t *setted, uint32_t output_freq){
 
-  /* HACK:: This should not be devided by 2..
-   *              The idea is that here the frequency is multiplied with the
-   *              data size in number of samples but i get the double freq on
-   *              the osciloscope...
-   *
-   * NOT_SURE_WHY_THE F_XXX
+  /* TODO:: This should not be multiplied to an extraneus number.
+   *              i will regreat this at some point but dont care for now.
    */
-  /* wave_tim_freq = 500 * DATA_SIZE / 2; */
-
-  if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_1){
+  if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_2){
+    /* HACK:: this will be a bancrupcy reason at some point.
+     * fix this asap
+     */
+    setted->timx_clk_freq *= 4;
   } else {
-    setted->timx_clk_freq *= 2;
   }
 
   /* TODO:: Test this calculation...
@@ -61,9 +58,9 @@ void tim_init
    */
   /* setted->prescaler = ((setted->tim_clk_freq) / (WAVEFORM_TIMER_PR_MAX_VAL * WAVEFORM_TIMER_FREQUENCY_RANGE_MIN)) + 1; */
   /* setted->tim_reload = (setted->tim_clk_freq / (setted->prescaler * wave_tim_freq)) + 1; */
-  setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000);
+  setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000) + 1;
   setted->timx_settings.Autoreload =
-      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, 250 * DATA_SIZE / 2);
+      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE);
 
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
   LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler - 1);
