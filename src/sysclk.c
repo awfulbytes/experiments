@@ -13,7 +13,7 @@ typedef struct sysclk {
 
 void clk_config_settings(sysclk_t *clk){
   clk->clk_source = LL_RCC_PLLSOURCE_HSI;
-  clk->pllm = LL_RCC_PLLM_DIV_5;
+  clk->pllm = LL_RCC_PLLM_DIV_4;
   clk->plln = 64;
   clk->pllr = LL_RCC_PLLR_DIV_5;
 }
