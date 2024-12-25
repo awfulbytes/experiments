@@ -15,7 +15,7 @@
 /* uint32_t wave_tim_freq; */
 /* wave_t my_wave; */
 
-timer_t timx_init(timer_t *timer) {
+struct timer timx_set(struct timer *timer) {
   timer->timx = TIM6;
   timer->timx_clk_freq = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock, LL_RCC_GetAPB1Prescaler());
   timer->timx_settings.Prescaler = 0;  // __LL_TIM_CALC_PSC(timer->timx_clk_freq, 1000000);
@@ -38,7 +38,7 @@ timer_settings_t timer_init_settings
 }
 
 void tim_init
-(timer_t *setted, uint32_t output_freq){
+(struct timer *setted, uint32_t output_freq){
 
   /* TODO:: This should not be multiplied to an extraneus number.
    *              i will regreat this at some point but dont care for now.

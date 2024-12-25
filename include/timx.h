@@ -24,18 +24,29 @@ typedef struct timer_settings {
     volatile uint32_t tim_reload;
 }timer_settings_t;
 
-typedef struct timer {
+/**
+ * A struct to represent all timer nessessary shit.
+ *
+ * @param *timx          Timer identifier.
+ * @param timx_settings Low level settings struct.
+ * @param timx_clk_freq Timer clock frequency
+ * */
+struct timer {
   TIM_TypeDef *timx;
   LL_TIM_InitTypeDef timx_settings;
   uint32_t timx_clk_freq;
-}timer_t;
+};
 
 
 timer_settings_t timer_init_settings (timer_settings_t *settings);
-timer_t timx_init(timer_t *timer);
+/**
+ * @brief Initialize a timer.
+ * @param *timer A struct to represent all timer related info.
+ * */
+struct timer timx_set(struct timer *timer);
 
 /*
  * One should pass this from the initiator function to initialize default configs...
  * @ref: timer_init_settings
 */
-void tim_init (timer_t *setted, uint32_t out_freq);
+void tim_init (struct timer *setted, uint32_t out_freq);
