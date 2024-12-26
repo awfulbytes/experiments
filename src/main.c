@@ -15,18 +15,19 @@ void UserButton_Init();
 void main() {
   struct timer tim6_settings;
   sys_clock_config();
-  tim6_settings = timx_set(&tim6_settings);
+  tim6_settings = *timx_set(&tim6_settings);
   tim_init(&tim6_settings, 250);
   UserButton_Init();
+
   dma_config();
   dac_config();
   dac_act();
   while (1) {
-    WaitForUserButtonPress();
-    if (ubButtonPress == 1) {
-      LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-      LL_mDelay(LED_BLINK_SLOW);
-    }
+    /* WaitForUserButtonPress(); */
+    /* if (ubButtonPress == 1) { */
+    LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
+    LL_mDelay(LED_BLINK_SLOW);
+    /* } */
   }
 }
 

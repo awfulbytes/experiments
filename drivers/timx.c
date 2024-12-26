@@ -15,13 +15,13 @@
 /* uint32_t wave_tim_freq; */
 /* wave_t my_wave; */
 
-struct timer timx_set(struct timer *timer) {
+struct timer* timx_set(struct timer *timer) {
   timer->timx = TIM6;
   timer->timx_clk_freq = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock, LL_RCC_GetAPB1Prescaler());
   timer->timx_settings.Prescaler = 0;  // __LL_TIM_CALC_PSC(timer->timx_clk_freq, 1000000);
   timer->timx_settings.Autoreload = 0; // __LL_TIM_CALC_ARR(timer->timx_clk_freq, LL_RCC_GetAPB1Prescaler(), 250);
   timer->timx_settings.CounterMode = LL_TIM_COUNTERMODE_UP;
-  return *timer;
+  return timer;
 }
 
 /* uint32_t amp = 3300;
