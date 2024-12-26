@@ -55,7 +55,7 @@ void tim_init
    *              how are setted inside the setted `struct' */
   setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000) + 1;
   setted->timx_settings.Autoreload =
-      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE);
+      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
 
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
   LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler - 1);
@@ -91,7 +91,7 @@ void dma_config
                                                LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
                          LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
-  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE);
+  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE(scaled_sin));
 
   LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
   LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
