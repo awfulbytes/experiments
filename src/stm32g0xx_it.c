@@ -1,4 +1,5 @@
-#include "main.h"
+/* #include "main.h" */
+#include "gpio.h"
 /* #include "stm32g0xx_ll_dac.h" */
 /* #include "stm32g0xx_ll_exti.h" */
 /* #include "stm32g0xx_it.h" */
@@ -74,18 +75,18 @@ void EXTI4_15_IRQHandler(void)
   * @param  None
   * @retval None
   */
-void TIM6_DAC_LPTIM1_IRQHandler(void)
-{
-  /* Check whether DAC channel1 underrun caused the DAC interruption */
-  if(LL_DAC_IsActiveFlag_DMAUDR1(DAC1) != 0)
-  {
-    /* Clear flag DAC channel1 underrun */
-    LL_DAC_ClearFlag_DMAUDR1(DAC1);
+/* void TIM6_DAC_LPTIM1_IRQHandler(void) */
+/* { */
+/*   /\* Check whether DAC channel1 underrun caused the DAC interruption *\/ */
+/*   if(LL_DAC_IsActiveFlag_DMAUDR1(DAC1) != 0) */
+/*   { */
+/*     /\* Clear flag DAC channel1 underrun *\/ */
+/*     LL_DAC_ClearFlag_DMAUDR1(DAC1); */
 
-    /* Call interruption treatment function */
-    DacUnderrunError_Callback();
-  }
-}
+/*     /\* Call interruption treatment function *\/ */
+/*     DacUnderrunError_Callback(); */
+/*   } */
+/* } */
 
 
 /* USER CODE END 1 */
