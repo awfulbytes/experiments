@@ -9,7 +9,6 @@
 
 void dac_config
 (void){
-  gpio_init();
   NVIC_SetPriority(TIM6_DAC_LPTIM1_IRQn, 0);
   NVIC_EnableIRQ(TIM6_DAC_LPTIM1_IRQn);
 
