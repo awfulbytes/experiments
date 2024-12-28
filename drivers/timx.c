@@ -40,14 +40,8 @@ timer_settings_t timer_init_settings
 void tim_init
 (struct timer *setted, uint32_t output_freq){
 
-  /* TODO:: This should not be multiplied to an extraneus number.
-   *              i will regreat this at some point but dont care for now.
-   */
   if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_2){
-    /* HACK:: this will be a bancrupcy reason at some point.
-     * fix this asap
-     */
-    setted->timx_clk_freq *= 4;
+    setted->timx_clk_freq *= 2;
   } else {
   }
 
