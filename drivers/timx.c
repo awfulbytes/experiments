@@ -4,7 +4,7 @@
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_tim.h"
 #include "system_stm32g0xx.h"
-#include "../src/wave.c"
+#include "wave.h"
 /* #include "stm32g0xx_ll_tim.h" */
 #include "stm32g0xx_ll_bus.h"
 
@@ -38,7 +38,7 @@ timer_settings_t timer_init_settings
 }
 
 void tim_init
-(struct timer *setted, uint32_t output_freq){
+(struct timer *setted, uint32_t output_freq, const uint16_t *data){
 
   /* TODO:: This should not be multiplied to an extraneus number.
    *              i will regreat this at some point but dont care for now.
@@ -55,7 +55,7 @@ void tim_init
    *              how are setted inside the setted `struct' */
   setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000) + 1;
   setted->timx_settings.Autoreload =
-      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
+      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE(&data));
 
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
   LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler - 1);
@@ -75,7 +75,7 @@ void dma_init
 }
 
 void dma_config
-(void){
+(const uint16_t *data){
   dma_init();
   LL_DMA_ConfigTransfer(DMA1, LL_DMA_CHANNEL_3,
                         LL_DMA_DIRECTION_MEMORY_TO_PERIPH | LL_DMA_MODE_CIRCULAR
@@ -85,13 +85,13 @@ void dma_config
 
   LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_3, LL_DMAMUX_REQ_DAC1_CH1);
   LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
-                         (uint32_t) &scaled_sin,
+                         (uint32_t) &data,
                          LL_DAC_DMA_GetRegAddr(DAC1,
                                                LL_DAC_CHANNEL_1,
                                                LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
                          LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
-  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE(scaled_sin));
+  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE(&data));
 
   LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
   LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);

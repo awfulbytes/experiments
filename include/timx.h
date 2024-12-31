@@ -50,4 +50,4 @@ struct timer* timx_set(struct timer *timer);
  * One should pass this from the initiator function to initialize default configs...
  * @ref: timer_init_settings
 */
-void tim_init (struct timer *setted, uint32_t out_freq);
+void tim_init (struct timer *setted, uint32_t out_freq, const uint16_t *data);

@@ -4,31 +4,37 @@
 #include "main.h"     // Do i need this to be here or i can put all of them in main.h.... mooooore files more kBits...
 #include "gpio.h"
 #include "dac.h"
+#include "forms.h"
 #include "timx.h"
 #include "sysclk.c"
 #include <stddef.h>
 #include <stdint.h>
 
-__IO uint8_t ubButtonPress = 0;
+void WaitForUserButtonPress(struct button *button);
+
 void UserButton_Init();
 
 void main() {
-  struct timer tim6_settings;
+  struct timer tim6_settings = {0};
+  struct button ubButtonPress = {0};
+  ubButtonPress.state = 0;
   sys_clock_config();
   tim6_settings = *timx_set(&tim6_settings);
-  tim_init(&tim6_settings, 250);
+  tim_init(&tim6_settings, 250, sawdn);
   /* UserButton_Init(); */
 
-  dma_config();
+  struct dac dac_settings = {0};
+
+  dma_config(sawdn);
   gpio_init();
-  dac_config();
-  dac_act();
+  dac_config(&dac_settings);
+  dac_act(&dac_settings);
+  WaitForUserButtonPress(&ubButtonPress);
   while (1) {
-    WaitForUserButtonPress();
-    if (ubButtonPress == 1) {
+    /* if (ubButtonPress.state == 1) { */
       LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-      LL_mDelay(LED_BLINK_SLOW);
-    }
+      LL_mDelay(3000);
+    /* } */
   }
 }
 
@@ -58,10 +64,9 @@ void main() {
   * @param  None
   * @retval None
   */
-void WaitForUserButtonPress(void)
+void WaitForUserButtonPress(struct button *button)
 {
-  ubButtonPress = 0;
-  while (ubButtonPress == 0)
+  while (button->state == 0)
   {
     LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
     LL_mDelay(LED_BLINK_SLOW);
@@ -74,14 +79,14 @@ void WaitForUserButtonPress(void)
   * @param  None
   * @retval None
   */
-void UserButton_Callback(void)
+void UserButton_Callback(struct button *button)
 {
   /* On the first press on user button, update only user button variable      */
   /* to manage waiting function.                                              */
-  if(ubButtonPress == 0)
-  {
+  if(button->state == 0) {
     /* Update User push-button variable : to be checked in waiting loop in main program */
-    ubButtonPress = 1;
+    button->state = !button->state;
+    /* button = 1; */
   } else
-    ubButtonPress = 0;
+    button->state = 0;
 }

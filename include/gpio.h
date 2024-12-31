@@ -2,7 +2,7 @@
 
 #define LED4_PIN                           LL_GPIO_PIN_5
 #define LED4_GPIO_PORT                     GPIOA
-#define LED4_GPIO_CLK_ENABLE()             LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA)
+/* #define LED4_GPIO_CLK_ENABLE()             LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA) */
 
 /**
   * @brief Toggle periods for various blinking modes
@@ -28,9 +28,13 @@
 #define USER_BUTTON_IRQHANDLER                  EXTI4_15_IRQHandler
 
 
-void UserButton_Callback(void);
 
 #define USER_BUTTON_EXTI_IRQn EXTI4_15_IRQn
 
+struct button {
+  volatile uint8_t state;
+};
 
 void gpio_init(void);
+
+void UserButton_Callback(struct button *abut);

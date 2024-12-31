@@ -1,5 +1,6 @@
 /* #include "main.h" */
 #include "gpio.h"
+extern struct button ubButtonPress;
 /* #include "stm32g0xx_ll_dac.h" */
 /* #include "stm32g0xx_ll_exti.h" */
 /* #include "stm32g0xx_it.h" */
@@ -60,7 +61,7 @@ void EXTI4_15_IRQHandler(void)
     LL_EXTI_ClearFallingFlag_0_31(LL_EXTI_LINE_13);
     /* USER CODE BEGIN LL_EXTI_LINE_13_FALLING */
     /* Call interruption treatment function */
-    UserButton_Callback();
+    UserButton_Callback(&ubButtonPress);
     /* USER CODE END LL_EXTI_LINE_13_FALLING */
   }
   /* USER CODE BEGIN EXTI4_15_IRQn 1 */

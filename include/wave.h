@@ -1,11 +1,12 @@
 #include "stm32g0xx_ll_dac.h"
-#include "forms.h"
+/* #include "forms.h" */
 #define VDDA_APPLI                       ((uint32_t)3300)
 #define DIGITAL_SCALE_12BITS             (__LL_DAC_DIGITAL_SCALE(LL_DAC_RESOLUTION_12B))
 #define WAVEFORM_AMPLITUDE               (VDDA_APPLI)
 /* #define WAVEFORM_FREQUENCY               ((uint32_t)440) /\* NOTE:: 2.5 Hz acctualy *\/ */
 /* #define WAVEFORM_SAMPLES_SIZE            (sizeof (base.form) / sizeof (uint16_t)) /\* HACK:: may work*\/ */
 
+#define DATA_SIZE(wave)         (uint32_t) sizeof(wave)/sizeof(wave[0])
 #define __WAVEFORM_AMPLITUDE_SCALING(__DATA_12BITS__)                                     \
   (__DATA_12BITS__                                                                        \
    * __LL_DAC_CALC_VOLTAGE_TO_DATA(VDDA_APPLI, WAVEFORM_AMPLITUDE, LL_DAC_RESOLUTION_12B) \

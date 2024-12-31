@@ -3,7 +3,6 @@
 #include "stm32g0xx_ll_bus.h"
 /* #include "stm32g0xx_nucleo.h" */
 void gpio_init(void){
-  USER_BUTTON_GPIO_CLK_ENABLE();
   LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA |
                           LL_IOP_GRP1_PERIPH_GPIOC);
 

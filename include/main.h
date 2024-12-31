@@ -43,7 +43,6 @@ extern "C" {
 /**
   * @brief LED4
   */
-void WaitForUserButtonPress(void);
 void DacUnderrunError_Callback(void);
 
 
