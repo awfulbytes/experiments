@@ -13,7 +13,7 @@ struct dac {
 };
 
 
-void dma_config(const uint16_t *data);
+void dma_config(void);
 void dac_default_init(struct dac *dacx);
 void dac_config(struct dac *gdac);
 void dac_act(struct dac *gdac);

@@ -51,3 +51,4 @@ struct timer* timx_set(struct timer *timer);
  * @ref: timer_init_settings
 */
 void tim_init (struct timer *setted, uint32_t out_freq, const uint16_t *data);
+ErrorStatus dma_change_wave (const uint16_t *data, struct timer *timer);

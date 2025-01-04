@@ -54,8 +54,12 @@ void tim_init
   /* TODO:: Should make a test with gdb and a calculator for these values and then be sure
    *              how are setted inside the setted `struct' */
   setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000) + 1;
+  /* FIXME:: this seems to fuck the hole wave issue but for now static and perma setting is
+   * what is happening here. The reason is that this way i can plot all waveforms on scope
+   * but when trying to change via deinit/reinit the =DAC= does not get the correct data...
+   * */
   setted->timx_settings.Autoreload =
-      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE(&data));
+      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE(data));
 
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
   LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler - 1);
