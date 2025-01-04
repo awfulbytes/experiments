@@ -5,6 +5,10 @@
 #include "gpio.h"
 #include "dac.h"
 #include "forms.h"
+#include "stm32g0xx.h"
+#include "stm32g0xx_hal_gpio.h"
+#include "stm32g0xx_ll_gpio.h"
+#include "stm32g0xx_ll_utils.h"
 #include "timx.h"
 #include "sysclk.c"
 #include <stddef.h>
@@ -25,16 +29,27 @@ void main() {
 
   struct dac dac_settings = {0};
 
-  dma_config(sawdn);
+  dma_config();
   gpio_init();
+  dac_default_init(&dac_settings);
   dac_config(&dac_settings);
   dac_act(&dac_settings);
-  WaitForUserButtonPress(&ubButtonPress);
+  /* WaitForUserButtonPress(&ubButtonPress); */
   while (1) {
-    /* if (ubButtonPress.state == 1) { */
-      LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-      LL_mDelay(3000);
+    /* if (dma_change_wave(sawdn, &tim6_settings) == SUCCESS){ */
+    /*   LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN); */
+    /*   LL_mDelay(200); */
+    /* } else { */
+    /*   LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN); */
+    /*   LL_mDelay(LED_BLINK_ERROR); */
     /* } */
+    if (ubButtonPress.state != 1) {
+      LL_mDelay(3000);
+      LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
+    } else {
+      LL_mDelay(100);
+      LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
+    }
   }
 }
 
@@ -61,7 +76,7 @@ void main() {
 
 /**
   * @brief  Wait for User push-button press to start transfer.
-  * @param  None
+  * @param  *button A button with a state and other information.
   * @retval None
   */
 void WaitForUserButtonPress(struct button *button)
@@ -83,10 +98,23 @@ void UserButton_Callback(struct button *button)
 {
   /* On the first press on user button, update only user button variable      */
   /* to manage waiting function.                                              */
-  if(button->state == 0) {
-    /* Update User push-button variable : to be checked in waiting loop in main program */
-    button->state = !button->state;
-    /* button = 1; */
-  } else
-    button->state = 0;
+  LL_mDelay(20);
+  switch (button->state) {
+    case 0x0:
+      button->state = 0x1;
+      break;
+    case 0x1:
+      button->state = 0x0;
+      break;
+    default:
+      button->state = 0;
+      break;
+  }
+
+  /* if(button->state == 0) { */
+  /*   /\* Update User push-button variable : to be checked in waiting loop in main program *\/ */
+  /*   button->state = 1; */
+  /*   /\* button = 1; *\/ */
+  /* } else */
+  /*   button->state = 0; */
 }

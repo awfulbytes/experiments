@@ -1,6 +1,7 @@
 #include "timx.h"
 #include "stm32g071xx.h"
 #include "stm32g0xx.h"
+#include "stm32g0xx_ll_dma.h"
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_tim.h"
 #include "system_stm32g0xx.h"
@@ -79,7 +80,7 @@ void dma_init
 }
 
 void dma_config
-(const uint16_t *data){
+(void){
   dma_init();
   LL_DMA_ConfigTransfer(DMA1, LL_DMA_CHANNEL_3,
                         LL_DMA_DIRECTION_MEMORY_TO_PERIPH | LL_DMA_MODE_CIRCULAR
@@ -89,14 +90,35 @@ void dma_config
 
   LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_3, LL_DMAMUX_REQ_DAC1_CH1);
   LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
-                         (uint32_t) &data,
+                         (uint32_t) &scaled_sin,
                          LL_DAC_DMA_GetRegAddr(DAC1,
                                                LL_DAC_CHANNEL_1,
                                                LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
                          LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
-  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE(&data));
+  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE(scaled_sin));
 
   LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
   LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
+}
+
+ErrorStatus dma_change_wave
+(const uint16_t *data, struct timer *timer){
+  if ((LL_DMA_DeInit(DMA1, LL_DMA_CHANNEL_3) || LL_TIM_DeInit(timer->timx)) != SUCCESS) {
+    return ERROR;
+  } else {
+    tim_init(timer, 250, data);
+    LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
+                           (uint32_t) data,
+                           LL_DAC_DMA_GetRegAddr(DAC1,
+                                                 LL_DAC_CHANNEL_1,
+                                                 LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
+                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE(&data));
+
+    LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
+  }
+  return SUCCESS;
 }
