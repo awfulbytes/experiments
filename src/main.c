@@ -35,26 +35,27 @@ void main() {
   dac_act(&dac_settings);
   WaitForUserButtonPress(&ubButtonPress);
   while (1) {
-    if (ubButtonPress.state == 0x0) {
-      dma_change_wave(sin, &tim6_settings);
-      LL_mDelay(3000);
-      LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-    } else if (ubButtonPress.state == 0x1){
-      if (dma_change_wave(sawdn, &tim6_settings) == SUCCESS){
-        /* LL_DAC_Enable(DAC1, LL_DAC_CHANNEL_1); */
+    switch (ubButtonPress.state) {
+      case 0x0:
+        dma_change_wave(sin, &tim6_settings);
+        LL_mDelay(400);
         LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-        LL_mDelay(200);
-      } else {
-        LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-        LL_mDelay(LED_BLINK_ERROR);
-      }
-      LL_mDelay(100);
-      LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-    } else if (ubButtonPress.state == 0x2){
-      if(dma_change_wave(sawup, &tim6_settings) == SUCCESS){
-        LL_mDelay(500);
-        LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);}
+        break;
+      case 0x1:
+        if (dma_change_wave(sawdn, &tim6_settings) == SUCCESS){
+          LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
+          LL_mDelay(200);}
+        break;
+      case 0x2:
+        if(dma_change_wave(sawup, &tim6_settings) == SUCCESS){
+          LL_mDelay(500);
+          LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);}
+        break;
     }
+    /* if (ubButtonPress.state == 0x0) { */
+    /* } else if (ubButtonPress.state == 0x1){ */
+    /* } else if (ubButtonPress.state == 0x2){ */
+    /* } */
     /* UserButton_Callback(&ubButtonPress); */
   }
 }
