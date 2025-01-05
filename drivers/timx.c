@@ -1,6 +1,7 @@
 #include "timx.h"
 #include "stm32g071xx.h"
 #include "stm32g0xx.h"
+#include "stm32g0xx_ll_dac.h"
 #include "stm32g0xx_ll_dma.h"
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_tim.h"
@@ -54,7 +55,7 @@ void tim_init
    * but when trying to change via deinit/reinit the =DAC= does not get the correct data...
    * */
   setted->timx_settings.Autoreload =
-      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE(data));
+      __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
 
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
   LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler - 1);
@@ -98,10 +99,9 @@ void dma_config
 
 ErrorStatus dma_change_wave
 (const uint16_t *data, struct timer *timer){
-  if ((LL_DMA_DeInit(DMA1, LL_DMA_CHANNEL_3) || LL_TIM_DeInit(timer->timx)) != SUCCESS) {
-    return ERROR;
-  } else {
-    tim_init(timer, 250, data);
+    LL_TIM_DisableCounter(timer->timx);
+    LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_3);
+    /* tim_init(timer, 250, data); */
     LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
                            (uint32_t) data,
                            LL_DAC_DMA_GetRegAddr(DAC1,
@@ -109,10 +109,9 @@ ErrorStatus dma_change_wave
                                                  LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
                            LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
-    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE(&data));
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, 120);
 
-    LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
-  }
+    LL_TIM_EnableCounter(timer->timx);
   return SUCCESS;
 }
