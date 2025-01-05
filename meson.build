@@ -11,7 +11,7 @@ src_files = files(
   'src/startup_stm32g071xx.s',
   'src/system_stm32g0xx.c',
   # 'src/stm32g0xx_nucleo.c',
-  # 'src/stm32g0xx_it.c',
+  'src/stm32g0xx_it.c',
   # 'src/msp_init.c'
   )
 src_deps = files(
@@ -35,6 +35,8 @@ src_deps = files(
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_usart.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_usb.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_utils.c',
+  'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_gpio.c',
+  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_cortex.c',
 )
 arm_sources = []
 arm_sources += files(

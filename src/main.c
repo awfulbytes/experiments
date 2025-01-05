@@ -14,27 +14,26 @@
 #include <stddef.h>
 #include <stdint.h>
 
+struct button ubButtonPress = {.state=0};
 void WaitForUserButtonPress(struct button *button);
 
 void UserButton_Init();
 
 void main() {
   struct timer tim6_settings = {0};
-  struct button ubButtonPress = {0};
-  ubButtonPress.state = 0;
   sys_clock_config();
-  tim6_settings = *timx_set(&tim6_settings);
-  tim_init(&tim6_settings, 250, sawdn);
+  /* tim6_settings = *timx_set(&tim6_settings); */
+  /* tim_init(&tim6_settings, 250, sawdn); */
   /* UserButton_Init(); */
 
   struct dac dac_settings = {0};
 
-  dma_config();
+  /* dma_config(); */
   gpio_init();
-  dac_default_init(&dac_settings);
-  dac_config(&dac_settings);
-  dac_act(&dac_settings);
-  /* WaitForUserButtonPress(&ubButtonPress); */
+  /* dac_default_init(&dac_settings); */
+  /* dac_config(&dac_settings); */
+  /* dac_act(&dac_settings); */
+  WaitForUserButtonPress(&ubButtonPress);
   while (1) {
     /* if (dma_change_wave(sawdn, &tim6_settings) == SUCCESS){ */
     /*   LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN); */
@@ -46,10 +45,14 @@ void main() {
     if (ubButtonPress.state != 1) {
       LL_mDelay(3000);
       LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-    } else {
+    } else if (ubButtonPress.state == 0x1){
       LL_mDelay(100);
       LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
+    } else if (ubButtonPress.state == 0x2){
+      LL_mDelay(500);
+      LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
     }
+    /* UserButton_Callback(&ubButtonPress); */
   }
 }
 
@@ -79,12 +82,12 @@ void main() {
   * @param  *button A button with a state and other information.
   * @retval None
   */
-void WaitForUserButtonPress(struct button *button)
-{
-  while (button->state == 0)
-  {
+void WaitForUserButtonPress
+(struct button *button) {
+  while (button->state == 0) {
     LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
     LL_mDelay(LED_BLINK_SLOW);
+    /* UserButton_Callback(button); */
   }
 }
 
@@ -94,27 +97,31 @@ void WaitForUserButtonPress(struct button *button)
   * @param  None
   * @retval None
   */
-void UserButton_Callback(struct button *button)
-{
-  /* On the first press on user button, update only user button variable      */
-  /* to manage waiting function.                                              */
-  LL_mDelay(20);
-  switch (button->state) {
-    case 0x0:
-      button->state = 0x1;
-      break;
-    case 0x1:
-      button->state = 0x0;
-      break;
-    default:
-      button->state = 0;
-      break;
-  }
-
-  /* if(button->state == 0) { */
-  /*   /\* Update User push-button variable : to be checked in waiting loop in main program *\/ */
-  /*   button->state = 1; */
-  /*   /\* button = 1; *\/ */
-  /* } else */
-  /*   button->state = 0; */
-}
+/* void UserButton_Callback */
+/* (struct button *button) { */
+/*   /\* On the first press on user button, update only user button variable      *\/ */
+/*   /\* to manage waiting function.                                              *\/ */
+/*   /\* LL_mDelay(20); *\/ */
+/*   volatile uint8_t gpio_read_button_pin; // HAL_GPIO_ReadPin(USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN); */
+/*   /\* gpio_read_button_pin = HAL_GPIO_ReadPin(USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN); *\/ */
+/*   switch (button->state) { */
+/*     case 0x0: */
+/*       if (gpio_read_button_pin == 0x1) */
+/*         button->state = gpio_read_button_pin; */
+/*       else */
+/*         button->state = 0x0; */
+/*       break; */
+/*     case 0x1: */
+/*       button->state = gpio_read_button_pin; */
+/*       break; */
+/*     case 0x2: */
+/*       button->state = 0x0; */
+/*       break; */
+/*   } */
+/*   /\* if(button->state == 0) { *\/ */
+/*   /\*   /\\* Update User push-button variable : to be checked in waiting loop in main program *\\/ *\/ */
+/*   /\*   button->state = 1; *\/ */
+/*   /\*   /\\* button = 1; *\\/ *\/ */
+/*   /\* } else *\/ */
+/*   /\*   button->state = 0; *\/ */
+/* } */

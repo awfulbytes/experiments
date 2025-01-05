@@ -1,7 +1,6 @@
 /*
  * * Interrupt routines
  */
-#include "stm32g0xx_hal.h"
 /* #include "stm32g0xx_hal_dma.h" */
 /* #include "stm32g0xx_hal_tim.h" */
 /* #include "stm32g0xx_hal_tim.h" */
