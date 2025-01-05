@@ -59,8 +59,6 @@ void EXTI4_15_IRQHandler(void)
   /* USER CODE END EXTI4_15_IRQn 0 */
   if (LL_EXTI_IsActiveFallingFlag_0_31(LL_EXTI_LINE_13) == SET) {
     LL_EXTI_ClearFallingFlag_0_31(LL_EXTI_LINE_13);
-    ubButtonPress.state = 1;
-  } else {
-    ubButtonPress.state = 0;
+    UserButton_Callback(&ubButtonPress);
   }
 }
