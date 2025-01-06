@@ -98,10 +98,10 @@ void dma_config
 }
 
 ErrorStatus dma_change_wave
-(const uint16_t *data, struct timer *timer){
+(const uint16_t *data, const uint16_t output_freq, struct timer *timer){
     LL_TIM_DisableCounter(timer->timx);
     LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_3);
-    /* tim_init(timer, 250, data); */
+    tim_init(timer, output_freq, data);
     LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
                            (uint32_t) data,
                            LL_DAC_DMA_GetRegAddr(DAC1,
