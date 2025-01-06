@@ -33,6 +33,7 @@
 
 struct button {
   volatile uint8_t state;
+  volatile uint8_t flag;
 };
 
 void gpio_init(void);

@@ -14,17 +14,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-struct button ubButtonPress = {.state=0};
+struct button ubButtonPress = {.state=0, .flag='D'};
 void WaitForUserButtonPress(struct button *button);
 
-void UserButton_Init();
 
 void main() {
   struct timer tim6_settings = {0};
   sys_clock_config();
   tim6_settings = *timx_set(&tim6_settings);
   tim_init(&tim6_settings, 250, sawdn);
-  /* UserButton_Init(); */
 
   struct dac dac_settings = {0};
 
@@ -35,51 +33,32 @@ void main() {
   dac_act(&dac_settings);
   WaitForUserButtonPress(&ubButtonPress);
   while (1) {
-    switch (ubButtonPress.state) {
-      case 0x0:
-        dma_change_wave(sin, &tim6_settings);
-        LL_mDelay(400);
-        LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-        break;
-      case 0x1:
-        if (dma_change_wave(sawdn, &tim6_settings) == SUCCESS){
+    if (ubButtonPress.flag == 'S') {
+      switch (ubButtonPress.state) {
+        case 0x0:
+          dma_change_wave(sin, 250, &tim6_settings);
+          LL_mDelay(400);
           LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-          LL_mDelay(200);}
-        break;
-      case 0x2:
-        if(dma_change_wave(sawup, &tim6_settings) == SUCCESS){
-          LL_mDelay(500);
-          LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);}
-        break;
+          break;
+        case 0x1:
+          if (dma_change_wave(sawdn, 200, &tim6_settings) == SUCCESS){
+            LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
+            LL_mDelay(200);
+          }
+          break;
+        case 0x2:
+          if(dma_change_wave(sawup, 100, &tim6_settings) == SUCCESS){
+            LL_mDelay(500);
+            LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
+          }
+          break;
+      }
+      ubButtonPress.flag = 'D';
+    } else {
+      continue;
     }
-    /* if (ubButtonPress.state == 0x0) { */
-    /* } else if (ubButtonPress.state == 0x1){ */
-    /* } else if (ubButtonPress.state == 0x2){ */
-    /* } */
-    /* UserButton_Callback(&ubButtonPress); */
   }
 }
-
-/**
-  * @brief  Configures User push-button in EXTI Line Mode.
-  * @param  None
-  * @retval None
-  */
-/* void UserButton_Init */
-/* (void) { */
-/*   /\* Enable the BUTTON Clock *\/ */
-/*   USER_BUTTON_GPIO_CLK_ENABLE(); */
-/*   /\* Configure GPIO for BUTTON *\/ */
-/*   LL_GPIO_SetPinMode(USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN, LL_GPIO_MODE_INPUT); */
-/*   LL_GPIO_SetPinPull(USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN, LL_GPIO_PULL_NO); */
-/*   /\* Connect External Line to the GPIO *\/ */
-/*   USER_BUTTON_SYSCFG_SET_EXTI(); */
-/*   /\* Enable a rising trigger EXTI line 13 Interrupt *\/ */
-/*   USER_BUTTON_EXTI_LINE_ENABLE(); */
-/*   USER_BUTTON_EXTI_FALLING_TRIG_ENABLE(); */
-/*   /\* Configure NVIC for USER_BUTTON_EXTI_IRQn *\/ */
-/* } */
-
 
 /**
   * @brief  Wait for User push-button press to start transfer.

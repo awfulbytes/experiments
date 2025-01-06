@@ -60,5 +60,6 @@ void EXTI4_15_IRQHandler(void)
   if (LL_EXTI_IsActiveFallingFlag_0_31(LL_EXTI_LINE_13) == SET) {
     LL_EXTI_ClearFallingFlag_0_31(LL_EXTI_LINE_13);
     UserButton_Callback(&ubButtonPress);
+    ubButtonPress.flag = 'S';
   }
 }
