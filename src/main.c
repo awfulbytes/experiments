@@ -5,6 +5,7 @@
 #include "gpio.h"
 #include "dac.h"
 #include "forms.h"
+#include "stm32g071xx.h"
 #include "stm32g0xx.h"
 #include "stm32g0xx_hal_gpio.h"
 #include "stm32g0xx_ll_gpio.h"
@@ -70,21 +71,11 @@ void WaitForUserButtonPress
   while (button->state == 0) {
     LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
     LL_mDelay(LED_BLINK_SLOW);
-    /* UserButton_Callback(button); */
   }
 }
 
-
-/**
-  * @brief  Function to manage IRQ Handler
-  * @param  None
-  * @retval None
-  */
 void UserButton_Callback
 (struct button *button) {
-  /* On the first press on user button, update only user button variable      */
-  /* to manage waiting function.                                              */
-  /* LL_mDelay(20); */
   switch (button->state) {
     case 0x0:
       button->state = 0x1;
@@ -97,9 +88,3 @@ void UserButton_Callback
       break;
   }
 }
-/*   /\* if(button->state == 0) { *\/ */
-/*   /\*   /\\* Update User push-button variable : to be checked in waiting loop in main program *\\/ *\/ */
-/*   /\*   button->state = 1; *\/ */
-/*   /\*   /\\* button = 1; *\\/ *\/ */
-/*   /\* } else *\/ */
-/*   /\*   button->state = 0; *\/ */
