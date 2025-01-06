@@ -10,7 +10,7 @@ src_files = files(
   'src/main.c',
   'src/startup_stm32g071xx.s',
   'src/system_stm32g0xx.c',
-  # 'src/stm32g0xx_nucleo.c',
+  'src/ui.c',
   'src/stm32g0xx_it.c',
   # 'src/msp_init.c'
   )

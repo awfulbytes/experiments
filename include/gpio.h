@@ -1,4 +1,6 @@
 #include "stm32g0xx_ll_exti.h"
+#include "stm32g0xx_ll_gpio.h"
+#include "stm32g0xx_ll_utils.h"
 
 #define LED4_PIN                           LL_GPIO_PIN_5
 #define LED4_GPIO_PORT                     GPIOA
