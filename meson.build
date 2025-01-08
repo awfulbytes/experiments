@@ -105,7 +105,7 @@ run_target(
 )
 flash = find_program('st-flash')
 run_target(
-  'resetstm',
+  'nuke',
   command: [flash, 'reset', '&&', flash, 'erase'],
 )
 run_target(
