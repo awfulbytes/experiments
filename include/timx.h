@@ -10,19 +10,6 @@
 #include "stm32g0xx_ll_rcc.h"
 #include "system_stm32g0xx.h"
 #endif
-/* HAL_StatusTypeDef tim6_init(TIM_HandleTypeDef* htim_base); */
-/* void tim_init(uint32_t); */
-typedef struct timx_init_status {
-    ErrorStatus tim_ok;
-    ErrorStatus tim_err;
-}tim_init_status_t;
-
-typedef struct timer_settings {
-    TIM_TypeDef *timx;
-    uint32_t tim_clk_freq;
-    volatile uint32_t prescaler;
-    volatile uint32_t tim_reload;
-}timer_settings_t;
 
 /**
   * A struct to represent all timer nessessary shit.
@@ -39,7 +26,6 @@ struct timer {
 };
 
 
-timer_settings_t timer_init_settings (timer_settings_t *settings);
 /**
  * @brief Initialize a timer.
  * @param *timer A struct to represent all timer related info.
