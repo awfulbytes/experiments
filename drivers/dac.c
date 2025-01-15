@@ -23,32 +23,13 @@ void dac_config
 
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_DAC1);
 
-    /* Set the mode for the selected DAC channel */
-    // LL_DAC_SetMode(DAC1, LL_DAC_CHANNEL_1, LL_DAC_MODE_NORMAL_OPERATION);
-
     LL_DAC_SetTriggerSource(gdac->dacx, gdac->channel, LL_DAC_TRIG_EXT_TIM6_TRGO);
 
     LL_DAC_ConfigOutput(gdac->dacx, gdac->channel, gdac->dacx_settings.OutputMode,
                         gdac->dacx_settings.OutputBuffer,
                         gdac->dacx_settings.OutputConnection);
-
-    /* NOTE: DAC channel output configuration can also be done using            */
-    /*       LL unitary functions:                                              */
-    // LL_DAC_SetOutputMode(DAC1, LL_DAC_CHANNEL_1, LL_DAC_OUTPUT_MODE_NORMAL);
-    // LL_DAC_SetOutputBuffer(DAC1, LL_DAC_CHANNEL_1, LL_DAC_OUTPUT_BUFFER_ENABLE);
-    // LL_DAC_SetOutputConnection(DAC1, LL_DAC_CHANNEL_1, LL_DAC_OUTPUT_CONNECT_GPIO);
-
-    /* Set DAC mode sample-and-hold timings */
-    // LL_DAC_SetSampleAndHoldSampleTime (DAC1, LL_DAC_CHANNEL_1, 0x3FF);
-    // LL_DAC_SetSampleAndHoldHoldTime   (DAC1, LL_DAC_CHANNEL_1, 0x3FF);
-    // LL_DAC_SetSampleAndHoldRefreshTime(DAC1, LL_DAC_CHANNEL_1, 0xFF);
-
-    /* Enable DAC channel DMA request */
     LL_DAC_EnableDMAReq(gdac->dacx, gdac->channel);
-
-    /* Enable interruption DAC channel1 underrun */
     LL_DAC_EnableIT_DMAUDR1(gdac->dacx);
-
 }
 
 void dac_act

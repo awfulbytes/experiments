@@ -17,8 +17,8 @@
 struct timer* timx_set(struct timer *timer) {
     timer->timx = TIM6;
     timer->timx_clk_freq = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock, LL_RCC_GetAPB1Prescaler());
-    timer->timx_settings.Prescaler = 0;  // __LL_TIM_CALC_PSC(timer->timx_clk_freq, 1000000);
-    timer->timx_settings.Autoreload = 0; // __LL_TIM_CALC_ARR(timer->timx_clk_freq, LL_RCC_GetAPB1Prescaler(), 250);
+    timer->timx_settings.Prescaler = 0;
+    timer->timx_settings.Autoreload = 0;
     timer->timx_settings.CounterMode = LL_TIM_COUNTERMODE_UP;
     return timer;
 }
@@ -31,8 +31,6 @@ void tim_init
     } else {
     }
 
-    /* TODO:: Should make a test with gdb and a calculator for these values and then be sure
-     *              how are setted inside the setted `struct' */
     setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000) + 1;
     /* FIXME:: this seems to fuck the hole wave issue but for now static and perma setting is
      * what is happening here. The reason is that this way i can plot all waveforms on scope
@@ -48,11 +46,12 @@ void tim_init
 
     LL_TIM_SetTriggerOutput(setted->timx, LL_TIM_TRGO_UPDATE);
     LL_TIM_EnableCounter(setted->timx);
+    LL_TIM_EnableUpdateEvent(setted->timx);
 }
 
 void dma_init
 (void){
-    NVIC_SetPriority(DMA1_Channel2_3_IRQn, 1); /* DMA IRQ lower priority than DAC IRQ */
+    NVIC_SetPriority(DMA1_Channel2_3_IRQn, 2); /* DMA IRQ lower priority than DAC IRQ */
     NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
 
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
@@ -65,7 +64,7 @@ void dma_config
                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH | LL_DMA_MODE_CIRCULAR
                           | LL_DMA_PERIPH_NOINCREMENT       | LL_DMA_MEMORY_INCREMENT
                           | LL_DMA_PDATAALIGN_HALFWORD      | LL_DMA_MDATAALIGN_HALFWORD
-                          | LL_DMA_PRIORITY_HIGH);
+                          | LL_DMA_PRIORITY_MEDIUM);
 
     LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_3, LL_DMAMUX_REQ_DAC1_CH1);
     LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
@@ -83,19 +82,17 @@ void dma_config
 
 ErrorStatus dma_change_wave
 (const uint16_t *data, const uint16_t output_freq, struct timer *timer){
-    LL_TIM_DisableCounter(timer->timx);
+    timer->timx_settings.Autoreload =
+        __LL_TIM_CALC_ARR(timer->timx_clk_freq, timer->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
+    LL_TIM_SetAutoReload(timer->timx,
+                         timer->timx_settings.Autoreload - 1);
     LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_3);
-    tim_init(timer, output_freq, data);
     LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
                            (uint32_t) data,
                            LL_DAC_DMA_GetRegAddr(DAC1,
                                                  LL_DAC_CHANNEL_1,
                                                  LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
                            LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-
-    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, 120);
-
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
-    LL_TIM_EnableCounter(timer->timx);
     return SUCCESS;
 }

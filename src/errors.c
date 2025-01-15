@@ -1,16 +1,16 @@
-#include "stm32g0xx_ll_utils.h"
-
+#include "errors.h"
 
 void handle_it_enter(void){
-  while(1) {
-    /* BSP_LED_Toggle(LED4); */
-    LL_mDelay(4000);
-  }
+    while(1) {
+        LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
+        LL_mDelay(4000);
+        break;
+    }
 }
 
 void handle_it(void){
-  while(1) {
-    /* BSP_LED_Toggle(LED4); */
-    LL_mDelay(200);
-  }
+    while(1) {
+        LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
+        LL_mDelay(200);
+    }
 }

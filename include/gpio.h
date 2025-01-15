@@ -1,3 +1,4 @@
+#pragma once
 #include "stm32g0xx_ll_exti.h"
 #include "stm32g0xx_ll_gpio.h"
 #include "stm32g0xx_ll_utils.h"
@@ -40,4 +41,3 @@ struct button {
 
 void gpio_init(void);
 
-void UserButton_Callback(struct button *abut);

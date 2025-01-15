@@ -5,7 +5,9 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 #include "gpio.h"
+#include "ui.h"
 #include "dac.h"
+#include "adc.h"
 #include "forms.h"
 #include "stm32g0xx.h"
 /* #include "stm32g0xx_ll_gpio.h" */
@@ -46,7 +48,7 @@
 /**
   * @brief LED4
   */
-void WaitForUserButtonPress(struct button *button);
+/* void WaitForUserButtonPress(struct button *button); */
 void DacUnderrunError_Callback(void);
 
 

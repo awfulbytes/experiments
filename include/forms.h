@@ -1,4 +1,5 @@
 #include <stdint.h>
+enum waves {SINE, SAWU, SAWD, WAVE_CTR};
 const uint16_t sine_wave[] = {
  2047, 2154, 2261, 2367, 2473, 2577, 2680, 2781,
  2880, 2976, 3070, 3162, 3250, 3335, 3417, 3494,

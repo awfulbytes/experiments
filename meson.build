@@ -7,6 +7,7 @@ project('tryC', 'c',
 src_files = files(
   'drivers/dac.c',
   'drivers/timx.c',
+  'drivers/adc.c',
   'src/main.c',
   'src/startup_stm32g071xx.s',
   'src/system_stm32g0xx.c',
@@ -15,7 +16,7 @@ src_files = files(
   # 'src/msp_init.c'
   )
 src_deps = files(
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_adc.c',
+  'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_adc.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_comp.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_crc.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_crs.c',
@@ -35,7 +36,7 @@ src_deps = files(
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_usart.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_usb.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_utils.c',
-  'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_gpio.c',
+  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_gpio.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_cortex.c',
 )
 arm_sources = []
@@ -106,7 +107,7 @@ run_target(
 flash = find_program('st-flash')
 run_target(
   'nuke',
-  command: [flash, 'reset', '&&', flash, 'erase'],
+  command: [flash, 'erase', '&&', flash, 'reset'],
 )
 run_target(
   'sendit',

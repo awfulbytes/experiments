@@ -17,8 +17,10 @@ void gpio_init(void){
 
     USER_BUTTON_EXTI_LINE_ENABLE();
     /* NOTE:: You set and then enable bro... */
-    NVIC_SetPriority(USER_BUTTON_EXTI_IRQn, 0x02);
+    NVIC_SetPriority(USER_BUTTON_EXTI_IRQn, 0x05);
     NVIC_EnableIRQ(USER_BUTTON_EXTI_IRQn);
 
     LL_GPIO_SetPinMode(GPIOA, LED4_PIN, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_0, LL_GPIO_MODE_ANALOG);
+    LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_0, LL_GPIO_PULL_NO);
 }

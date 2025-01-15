@@ -2,48 +2,48 @@
 /* #include <stdio.h> */
 /* #include "system_stm32g0xx.c" */
 #include "main.h"     // Do i need this to be here or i can put all of them in main.h.... mooooore files more kBits...
+#include "stm32g0xx_ll_utils.h"
 #include "sysclk.c"
 #include <stddef.h>
 #include <stdint.h>
-
+volatile uint16_t adc_value = 0xff;
+volatile uint16_t prev_value = 1;
+struct adc adc = {.data = &adc_value, .roof='D'};
 struct button ubButtonPress = {.state=0, .flag='D'};
+const uint16_t *waves_bank[] = {sine_wave, sawup, sawdn};
 
 
 void main() {
-  struct timer tim6_settings = {0};
-  sys_clock_config();
-  tim6_settings = *timx_set(&tim6_settings);
-  tim_init(&tim6_settings, 250, sine_wave);
+    struct timer tim6_settings = {0};
+    struct dac dac_settings = {0};
 
-  struct dac dac_settings = {0};
+    sys_clock_config();
+    tim6_settings = *timx_set(&tim6_settings);
+    tim_init(&tim6_settings, 250, sine_wave);
 
-  dma_config();
-  gpio_init();
-  dac_default_init(&dac_settings);
-  dac_config(&dac_settings);
-  dac_act(&dac_settings);
-  WaitForUserButtonPress(&ubButtonPress);
-  while (1) {
-      if (ubButtonPress.flag == 0x69) {
-          switch (ubButtonPress.state) {
-              case 0x0:
-                  dma_change_wave(sine_wave, 250, &tim6_settings);
-                  LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-                  break;
-              case 0x1:
-                  if (dma_change_wave(sawdn, 200, &tim6_settings) == SUCCESS){
-                      LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-                  }
-                  break;
-              case 0x2:
-                  if(dma_change_wave(sawup, 100, &tim6_settings) == SUCCESS){
-                      LL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
-                  }
-                  break;
-          }
-          ubButtonPress.flag = 'D';
-      } else {
-          continue;
-      }
-  }
+
+    dma_config();
+    gpio_init();
+    ADC_DMA_Config(&adc);
+    dac_default_init(&dac_settings);
+    dac_config(&dac_settings);
+    dac_act(&dac_settings);
+    WaitForUserButtonPress(&ubButtonPress);
+    while (1) {
+        if (ubButtonPress.flag == 0x69 || LL_DMA_IsActiveFlag_TC1(DMA1) == SET) {
+            LL_DMA_ClearFlag_TC1(DMA1);
+            int32_t diff = prev_value - *adc.data;
+            if (((diff < 0) ? -diff : diff) > 5){
+                prev_value = map_12bit_osc_freq(*adc.data);
+                Start_ADC_Conversion();
+                LL_mDelay(2);
+            }
+            const uint16_t *tmp = waves_bank[ubButtonPress.state % WAVE_CTR];
+            dma_change_wave(tmp, prev_value, &tim6_settings);
+        } else {
+            continue;
+        }
+        ubButtonPress.flag = 'D';
+        adc.roof = 'D';
+    }
 }

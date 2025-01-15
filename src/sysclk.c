@@ -1,15 +1,5 @@
-#include "errors.c"
+#include "sysclk.h"
 #include "stm32g0xx_ll_rcc.h"
-#include "stm32g0xx_ll_bus.h"
-#include "stm32g0xx_ll_system.h"
-#include <stdint.h>
-
-typedef struct sysclk {
-    uint32_t clk_source;
-    uint32_t pllm;
-    uint32_t plln;
-    uint32_t pllr;
-}sysclk_t;
 
 void clk_config_settings(sysclk_t *clk){
     clk->clk_source = LL_RCC_PLLSOURCE_HSI;
@@ -41,4 +31,5 @@ void sys_clock_config
 
     LL_Init1msTick(56000000);
     LL_SetSystemCoreClock(56000000);
+    __enable_irq();
 }
