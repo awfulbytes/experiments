@@ -31,7 +31,7 @@ void tim_init
     } else {
     }
 
-    setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000) + 1;
+    setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000);
     /* FIXME:: this seems to fuck the hole wave issue but for now static and perma setting is
      * what is happening here. The reason is that this way i can plot all waveforms on scope
      * but when trying to change via deinit/reinit the =DAC= does not get the correct data...
@@ -40,8 +40,8 @@ void tim_init
         __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
 
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
-    LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler - 1);
-    LL_TIM_SetAutoReload(setted->timx,  setted->timx_settings.Autoreload - 1);
+    LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler + 1);
+    LL_TIM_SetAutoReload(setted->timx,  setted->timx_settings.Autoreload + 1);
     LL_TIM_SetCounterMode(setted->timx, setted->timx_settings.CounterMode);
 
     LL_TIM_SetTriggerOutput(setted->timx, LL_TIM_TRGO_UPDATE);
@@ -85,7 +85,7 @@ ErrorStatus dma_change_wave
     timer->timx_settings.Autoreload =
         __LL_TIM_CALC_ARR(timer->timx_clk_freq, timer->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
     LL_TIM_SetAutoReload(timer->timx,
-                         timer->timx_settings.Autoreload - 1);
+                         timer->timx_settings.Autoreload);
     LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_3);
     LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
                            (uint32_t) data,
