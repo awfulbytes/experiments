@@ -31,12 +31,11 @@ void main() {
     WaitForUserButtonPress(&ubButtonPress);
     while (1) {
         int32_t diff = prev_value - *adc.data;
-        /* if (*adc.data < 5 ) continue; */
-        if ((((diff < 0) ? -diff : diff) > 2) && (*adc.data >= 5)){
+        if ((((diff < 0) ? -diff : diff) > 5) && (*adc.data >= 5)){
             adc.roof = 'i';
             prev_value = map_12bit_osc_freq(*adc.data);
             Start_ADC_Conversion();
-            LL_mDelay(4); // HACK:: to be removed
+            LL_mDelay(2); // HACK:: to be removed
         }
         if (LL_DMA_IsActiveFlag_TC1(DMA1) == SET && adc.roof == 0x69){
             LL_DMA_ClearFlag_TC1(DMA1);

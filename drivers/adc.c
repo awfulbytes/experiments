@@ -10,7 +10,7 @@ extern volatile uint16_t adc_value;
 
 uint16_t map_12bit_osc_freq(uint16_t _value) {
     uint16_t min = 109;
-    uint16_t max = 208;
+    uint16_t max = 414;
     return min + (_value * (max - min)) / 0xfff;
     /* return min + (_value * (max - min)) / (0xfff - min); */
 }
@@ -49,7 +49,7 @@ void ADC_DMA_Config(struct adc *adc) {
     while (!LL_ADC_IsActiveFlag_CCRDY(ADC1)) {}
 
     LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_0,
-                                  LL_ADC_SAMPLINGTIME_160CYCLES_5);
+                                  LL_ADC_SAMPLINGTIME_39CYCLES_5);
 
     /* Configure DMA for ADC */
     DMA_InitStruct.PeriphRequest = LL_DMAMUX_REQ_ADC1;
