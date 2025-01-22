@@ -9,8 +9,8 @@
 extern volatile uint16_t adc_value;
 
 uint16_t map_12bit_osc_freq(uint16_t _value) {
-    uint16_t min = 100;
-    uint16_t max = 800;
+    uint16_t min = 109;
+    uint16_t max = 208;
     return min + (_value * (max - min)) / 0xfff;
     /* return min + (_value * (max - min)) / (0xfff - min); */
 }
