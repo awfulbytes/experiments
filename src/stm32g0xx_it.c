@@ -1,5 +1,6 @@
 #include "stm32g0xx_it.h"
 #include "errors.h"
+#include "gpio.h"
 #include "stm32g0xx_ll_dma.h"
 #include <stdint.h>
 /* extern volatile uint16_t adc_value; */
@@ -28,8 +29,8 @@ void DMA1_Channel1_IRQHandler(void) {
 }
 
 void EXTI4_15_IRQHandler(void) {
-    if (LL_EXTI_IsActiveFallingFlag_0_31(LL_EXTI_LINE_13) == SET) {
-        LL_EXTI_ClearFallingFlag_0_31(LL_EXTI_LINE_13);
+    if (LL_EXTI_IsActiveFallingFlag_0_31(BUTTON_EXTI_LINE) == SET) {
+        LL_EXTI_ClearFallingFlag_0_31(BUTTON_EXTI_LINE);
         UserButton_Callback(&ubButtonPress);
         ubButtonPress.flag = 'i';
     }

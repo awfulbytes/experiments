@@ -7,6 +7,7 @@
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_utils.h"
 extern volatile uint16_t adc_value;
+extern struct adc adc;
 
 uint16_t map_12bit_osc_freq(uint16_t _value) {
     uint16_t min = 109;
@@ -86,4 +87,6 @@ void Start_ADC_Conversion(void) {
     // Wait for DMA transfer to complete
     while (!LL_DMA_IsActiveFlag_TC1(DMA1)); // Wait for transfer complete
     LL_DMA_ClearFlag_TC1(DMA1); // Clear transfer complete flag
+    adc.roof = 'i';
+    LL_mDelay(2); // HACK:: to be removed
 }

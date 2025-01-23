@@ -17,16 +17,16 @@
 /**
   * @brief Key push-button
   */
-#define USER_BUTTON_PIN                         LL_GPIO_PIN_13
+#define USER_BUTTON_PIN                         LL_GPIO_PIN_10
 #define USER_BUTTON_GPIO_PORT                   GPIOC
 /* #define USER_BUTTON_GPIO_CLK_ENABLE()           LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOC) */
 
-#define USER_BUTTON_EXTI_LINE                   LL_EXTI_LINE_13
+#define BUTTON_EXTI_LINE                        LL_EXTI_LINE_10
 #define USER_BUTTON_EXTI_IRQn                   EXTI4_15_IRQn
-#define USER_BUTTON_EXTI_LINE_ENABLE()          LL_EXTI_EnableIT_0_31(USER_BUTTON_EXTI_LINE)
-#define USER_BUTTON_EXTI_FALLING_TRIG_ENABLE()  LL_EXTI_EnableFallingTrig_0_31(USER_BUTTON_EXTI_LINE)
+#define USER_BUTTON_EXTI_LINE_ENABLE()          LL_EXTI_EnableIT_0_31(BUTTON_EXTI_LINE)
+#define USER_BUTTON_EXTI_FALLING_TRIG_ENABLE()  LL_EXTI_EnableFallingTrig_0_31(BUTTON_EXTI_LINE)
 #define USER_BUTTON_SYSCFG_SET_EXTI()           do {                                                                     \
-                                                  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTC, LL_EXTI_CONFIG_LINE13);  \
+                                                  LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTC, LL_EXTI_CONFIG_LINE10);  \
                                                 } while(0)
 #define USER_BUTTON_IRQHANDLER                  EXTI4_15_IRQHandler
 

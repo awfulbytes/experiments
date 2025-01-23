@@ -31,19 +31,17 @@ void main() {
     WaitForUserButtonPress(&ubButtonPress);
     while (1) {
         int32_t diff = prev_value - *adc.data;
-        if ((((diff < 0) ? -diff : diff) > 5) && (*adc.data >= 5)){
-            adc.roof = 'i';
+        if ((((diff < 0) ? -diff : diff) > 30) && (*adc.data >= 3)){
             prev_value = map_12bit_osc_freq(*adc.data);
             Start_ADC_Conversion();
-            LL_mDelay(2); // HACK:: to be removed
         }
-        if (LL_DMA_IsActiveFlag_TC1(DMA1) == SET && adc.roof == 0x69){
-            LL_DMA_ClearFlag_TC1(DMA1);
+        if (adc.roof == 0x69){
             alter_wave_frequency(prev_value, &tim6_settings);
         } else {
             continue;
         }
         if (ubButtonPress.flag == 0x69) {
+            LL_mDelay(2);
             const uint16_t *tmp = waves_bank[ubButtonPress.state];
             dma_change_wave(tmp);
         }
