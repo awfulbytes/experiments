@@ -24,7 +24,7 @@
 #define BUTTON_EXTI_LINE                        LL_EXTI_LINE_10
 #define USER_BUTTON_EXTI_IRQn                   EXTI4_15_IRQn
 #define USER_BUTTON_EXTI_LINE_ENABLE()          LL_EXTI_EnableIT_0_31(BUTTON_EXTI_LINE)
-#define USER_BUTTON_EXTI_FALLING_TRIG_ENABLE()  LL_EXTI_EnableFallingTrig_0_31(BUTTON_EXTI_LINE)
+#define USER_BUTTON_EXTI_FALLING_TRIG_ENABLE()  LL_EXTI_EnableRisingTrig_0_31(BUTTON_EXTI_LINE)
 #define USER_BUTTON_SYSCFG_SET_EXTI()           do {                                                                     \
                                                   LL_EXTI_SetEXTISource(LL_EXTI_CONFIG_PORTC, LL_EXTI_CONFIG_LINE10);  \
                                                 } while(0)

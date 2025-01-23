@@ -15,20 +15,12 @@ void WaitForUserButtonPress
 
 void UserButton_Callback
 (struct button *abut) {
-
-    /* LL_mDelay(6); // HACK:: dont do this */
     switch (abut->state) {
-        /* case 0x0: */
-        /*     abut->state = 0x1; */
-        /*     break; */
-        /* case 0x1: */
-        /*     abut->state = 0x2; */
-        /*     break; */
         case 0x2:
             abut->state >>= abut->state;
             break;
         default:
-            abut->state += 1;
+            abut->state++;
             break;
     }
 }

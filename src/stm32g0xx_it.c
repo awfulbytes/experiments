@@ -29,9 +29,9 @@ void DMA1_Channel1_IRQHandler(void) {
 }
 
 void EXTI4_15_IRQHandler(void) {
-    if (LL_EXTI_IsActiveFallingFlag_0_31(BUTTON_EXTI_LINE) == SET) {
-        LL_EXTI_ClearFallingFlag_0_31(BUTTON_EXTI_LINE);
+    if (LL_EXTI_IsActiveRisingFlag_0_31(BUTTON_EXTI_LINE) == SET) {
         UserButton_Callback(&ubButtonPress);
+        LL_EXTI_ClearRisingFlag_0_31(BUTTON_EXTI_LINE);
         ubButtonPress.flag = 'i';
     }
 }
