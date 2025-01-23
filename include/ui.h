@@ -1,3 +1,3 @@
 #include "gpio.h"
-void UserButton_Callback(struct button *abut);
+void wave_button_callback(struct button *abut);
 void WaitForUserButtonPress (struct button *button);

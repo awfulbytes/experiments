@@ -5,6 +5,7 @@
  * @param  *button A button with a state and other information.
  * @retval None
  */
+// DEPRECATED:: This should be in debug flag
 void WaitForUserButtonPress
 (struct button *button) {
     while (button->state == 0) {
@@ -13,8 +14,9 @@ void WaitForUserButtonPress
     }
 }
 
-void UserButton_Callback
+void wave_button_callback
 (struct button *abut) {
+    // NOTE:: need some more work but elswhere..
     switch (abut->state) {
         case 0x2:
             abut->state >>= abut->state;

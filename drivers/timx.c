@@ -9,12 +9,13 @@
 #include "wave.h"
 /* #include "stm32g0xx_ll_tim.h" */
 #include "stm32g0xx_ll_bus.h"
+extern struct timer tim6_settings;
 
 /* #define WAVEFORM_TIMER_FREQUENCY                (WAVEFORM_FREQUENCY * WAVEFORM_SAMPLES_SIZE) */
 #define WAVEFORM_TIMER_PR_MAX_VAL               ((uint32_t)0xFFFF-1)
 #define WAVEFORM_TIMER_FREQUENCY_RANGE_MIN      ((uint32_t)    1)
 
-struct timer* timx_set(struct timer *timer) {
+static struct timer* timx_set(struct timer *timer) {
     timer->timx = TIM6;
     timer->timx_clk_freq = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock, LL_RCC_GetAPB1Prescaler());
     timer->timx_settings.Prescaler = 1;
@@ -24,21 +25,18 @@ struct timer* timx_set(struct timer *timer) {
 }
 
 void tim_init
-(struct timer *setted, uint32_t output_freq, const uint16_t *data){
+(uint32_t output_freq){
+    struct timer *setted = timx_set(&tim6_settings);
 
     if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_2){
         setted->timx_clk_freq *= 2;
     } else {
     }
 
-    /* setted->timx_settings.Prescaler = __LL_TIM_CALC_PSC(setted->timx_clk_freq, 1000000); */
-    /* FIXME:: this seems to fuck the hole wave issue but for now static and perma setting is
-     * what is happening here. The reason is that this way i can plot all waveforms on scope
-     * but when trying to change via deinit/reinit the =DAC= does not get the correct data...
-     * */
     setted->timx_settings.Autoreload =
-        /* 22; */
-        __LL_TIM_CALC_ARR(setted->timx_clk_freq, setted->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
+        __LL_TIM_CALC_ARR(setted->timx_clk_freq,
+                          setted->timx_settings.Prescaler,
+                          output_freq * DATA_SIZE(scaled_sin));
 
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
     LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler);
@@ -50,7 +48,7 @@ void tim_init
     LL_TIM_EnableUpdateEvent(setted->timx);
 }
 
-void dma_init
+static void dma_init
 (void){
     NVIC_SetPriority(DMA1_Channel2_3_IRQn, 2); /* DMA IRQ lower priority than DAC IRQ */
     NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
@@ -85,8 +83,7 @@ ErrorStatus alter_wave_frequency
 (const uint16_t output_freq, struct timer *timer){
     timer->timx_settings.Autoreload =
         __LL_TIM_CALC_ARR(timer->timx_clk_freq, timer->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
-    LL_TIM_SetAutoReload(timer->timx,
-                         timer->timx_settings.Autoreload);
+    LL_TIM_SetAutoReload(timer->timx, timer->timx_settings.Autoreload);
     return SUCCESS;
 }
 ErrorStatus dma_change_wave

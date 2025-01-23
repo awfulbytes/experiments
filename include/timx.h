@@ -26,16 +26,10 @@ struct timer {
 };
 
 
-/**
- * @brief Initialize a timer.
- * @param *timer A struct to represent all timer related info.
- * */
-struct timer* timx_set(struct timer *timer);
-
 /*
  * One should pass this from the initiator function to initialize default configs...
  * @ref: timer_init_settings
 */
-void tim_init (struct timer *setted, uint32_t out_freq, const uint16_t *data);
+void tim_init (uint32_t out_freq);
 ErrorStatus alter_wave_frequency(const uint16_t out_freq, struct timer *timer);
 ErrorStatus dma_change_wave (const uint16_t *data);
