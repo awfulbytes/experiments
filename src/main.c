@@ -18,20 +18,20 @@ void main() {
     struct dac dac_settings = {0};
 
     sys_clock_config();
+    gpio_init();
+    dma_config();
     tim6_settings = *timx_set(&tim6_settings);
     tim_init(&tim6_settings, 250, sine_wave);
-
-
-    dma_config();
-    gpio_init();
     ADC_DMA_Config(&adc);
+
+
     dac_default_init(&dac_settings);
     dac_config(&dac_settings);
     dac_act(&dac_settings);
-    WaitForUserButtonPress(&ubButtonPress);
+    // WaitForUserButtonPress(&ubButtonPress);
     while (1) {
         int32_t diff = prev_value - *adc.data;
-        if ((((diff < 0) ? -diff : diff) > 30) && (*adc.data >= 3)){
+        if ((((diff < 0) ? -diff : diff) > 3)){
             prev_value = map_12bit_osc_freq(*adc.data);
             Start_ADC_Conversion();
         }
@@ -42,8 +42,7 @@ void main() {
         }
         if (ubButtonPress.flag == 0x69) {
             LL_mDelay(2);
-            const uint16_t *tmp = waves_bank[ubButtonPress.state];
-            dma_change_wave(tmp);
+            dma_change_wave(waves_bank[ubButtonPress.state]);
         }
         ubButtonPress.flag = 'D';
         adc.roof = 'D';
