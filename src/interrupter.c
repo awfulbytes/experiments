@@ -1,15 +1,16 @@
 /* #include "include/stm32g0xx_hal_driver/Inc/stm32g0xx.h" */
 /* #include <stdio.h> */
 /* #include "system_stm32g0xx.c" */
-#include "main.h"     // Do i need this to be here or i can put all of them in main.h.... mooooore files more kBits...
+#include "interrupter.h"     // Do i need this to be here or i can put all of them in main.h.... mooooore files more kBits...
 #include "stm32g0xx.h"
+#include "stm32g0xx_ll_tim.h"
 #include "sysclk.c"
 volatile uint16_t adc_value = 0xff;
 volatile uint16_t prev_value = 1;
 
-struct timer tim6_settings = {0};
-struct dac dac_settings = {0};
-struct adc adcx = {.data = &adc_value, .channel = 0, .roof='D', .settings={0}, .reg_settings={0}};
+struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
+struct dac dac_ch1_settings = {0};
+struct adc adcx = {.data = &adc_value, .channel=0, .roof='D', .settings={0}, .reg_settings={0}};
 struct button wave_choise_but = {.state=0, .flag='D', .exti={0}, .pin={0}};
 struct gpio led, adc_pin = {0};
 const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn};
@@ -23,9 +24,9 @@ void main() {
     adc_init_settings(&adcx);
 
 
-    dac_default_init(&dac_settings);
-    dac_config(&dac_settings);
-    dac_act(&dac_settings);
+    dac_ch1_init(&dac_ch1_settings);
+    dac_config(&dac_ch1_settings);
+    dac_act(&dac_ch1_settings);
     // DEPRECATED:: see ./ui.c
     // WaitForUserButtonPress(&ubButtonPress);
     while (1) {

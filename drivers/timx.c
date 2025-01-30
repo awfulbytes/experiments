@@ -15,8 +15,7 @@ extern struct timer tim6_settings;
 #define WAVEFORM_TIMER_PR_MAX_VAL               ((uint32_t)0xFFFF-1)
 #define WAVEFORM_TIMER_FREQUENCY_RANGE_MIN      ((uint32_t)    1)
 
-static struct timer* timx_set(struct timer *timer, TIM_TypeDef *tim) {
-    timer->timx = tim;
+static struct timer* timx_set(struct timer *timer) {
     timer->timx_clk_freq = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock, LL_RCC_GetAPB1Prescaler());
     timer->timx_settings.Prescaler = 1;
     timer->timx_settings.Autoreload = 0;
@@ -26,7 +25,7 @@ static struct timer* timx_set(struct timer *timer, TIM_TypeDef *tim) {
 
 void tim_init
 (uint32_t output_freq){
-    struct timer *setted = timx_set(&tim6_settings, TIM6);
+    struct timer *setted = timx_set(&tim6_settings);
 
     if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_2){
         setted->timx_clk_freq *= 2;
@@ -38,12 +37,12 @@ void tim_init
                           setted->timx_settings.Prescaler,
                           output_freq * DATA_SIZE(scaled_sin));
 
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
+    LL_APB1_GRP1_EnableClock(setted->apb_clock_reg);
     LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler);
     LL_TIM_SetAutoReload(setted->timx,  setted->timx_settings.Autoreload);
     LL_TIM_SetCounterMode(setted->timx, setted->timx_settings.CounterMode);
 
-    LL_TIM_SetTriggerOutput(setted->timx, LL_TIM_TRGO_UPDATE);
+    LL_TIM_SetTriggerOutput(setted->timx, setted->trigger_output);
     LL_TIM_EnableCounter(setted->timx);
     LL_TIM_EnableUpdateEvent(setted->timx);
 }

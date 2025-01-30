@@ -7,7 +7,7 @@
 
 #include "gpio.c"
 
-void dac_default_init
+void dac_ch1_init
 (struct dac *dac) {
     dac->dacx = DAC1;
     dac->channel = LL_DAC_CHANNEL_1;

@@ -6,7 +6,7 @@
 /* extern volatile uint16_t adc_value; */
 /* extern volatile uint16_t prev_value; */
 extern struct button wave_choise_but;
-extern struct adc adcx;
+// extern struct adc adcx;
 extern struct gpio led;
 
 void HardFault_Handler(void) {

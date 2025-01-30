@@ -20,9 +20,11 @@
   *
   */
 struct timer {
-  TIM_TypeDef *timx;
-  LL_TIM_InitTypeDef timx_settings;
-  uint32_t timx_clk_freq;
+    TIM_TypeDef *timx;
+    LL_TIM_InitTypeDef timx_settings;
+    uint32_t timx_clk_freq;
+    unsigned long apb_clock_reg;
+    unsigned long trigger_output;
 };
 
 

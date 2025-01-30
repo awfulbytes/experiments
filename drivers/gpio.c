@@ -1,5 +1,4 @@
 #include "gpio.h"
-#include "stm32g071xx.h"
 
 static void exti_setup(struct button *p){
     LL_EXTI_SetEXTISource(p->exti.exti_port_conf, p->exti.exti_line_conf);
@@ -15,7 +14,7 @@ void gpio_init(struct button *wave_button, struct gpio *led, struct gpio *adc_pi
     wave_button->pin.port_id = GPIOC;
     wave_button->pin.pin_id = LL_GPIO_PIN_10;
     wave_button->pin.mode = LL_GPIO_MODE_INPUT;
-    wave_button->pin.pull = LL_GPIO_PULL_NO; // test
+    wave_button->pin.pull = LL_GPIO_PULL_UP;
     wave_button->exti.exti_irqn = EXTI4_15_IRQn;
     wave_button->exti.exti_line = LL_EXTI_LINE_10;
     wave_button->exti.exti_port_conf = LL_EXTI_CONFIG_PORTC;

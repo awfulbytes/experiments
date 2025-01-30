@@ -14,7 +14,7 @@ struct dac {
 
 
 void dma_config(void);
-void dac_default_init(struct dac *dacx);
+void dac_ch1_init(struct dac *dacx);
 void dac_config(struct dac *gdac);
 void dac_act(struct dac *gdac);
 /* HAL_StatusTypeDef dac_init (void); */
