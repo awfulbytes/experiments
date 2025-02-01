@@ -1,5 +1,6 @@
 #include "stm32g071xx.h"
 #include "stm32g0xx.h"
+#include <stdint.h>
 
 #ifdef USE_FULL_LL_DRIVER
 #define TIMER TIM6
@@ -32,6 +33,6 @@ struct timer {
  * One should pass this from the initiator function to initialize default configs...
  * @ref: timer_init_settings
 */
-void tim_init (uint32_t out_freq);
+void tim_init (uint32_t out_freq, struct timer *timx);
 ErrorStatus alter_wave_frequency(const uint16_t out_freq, struct timer *timer);
-ErrorStatus dma_change_wave (const uint16_t *data);
+ErrorStatus dma_change_wave (const uint16_t *data, uint32_t dma_channel, uint32_t dac_channel);

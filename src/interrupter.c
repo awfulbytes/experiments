@@ -2,48 +2,54 @@
 /* #include <stdio.h> */
 /* #include "system_stm32g0xx.c" */
 #include "interrupter.h"     // Do i need this to be here or i can put all of them in main.h.... mooooore files more kBits...
+#include "stm32g071xx.h"
 #include "stm32g0xx.h"
-#include "stm32g0xx_ll_tim.h"
 #include "sysclk.c"
-volatile uint16_t adc_value = 0xff;
-volatile uint16_t prev_value = 1;
-
-struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
-struct dac dac_ch1_settings = {0};
-struct adc adcx = {.data = &adc_value, .channel=0, .roof='D', .settings={0}, .reg_settings={0}};
-struct button wave_choise_but = {.state=0, .flag='D', .exti={0}, .pin={0}};
-struct gpio led, adc_pin = {0};
-const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn};
 
 
 void main() {
+    const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn};
+    struct button *wave_buttons[2] = {&wave_choise_dac1, &wave_choise_dac2};
+    struct gpio *dacs[2] = {&dac1, &dac2};
+    struct dac *dacs_settings[2] = {&dac_ch1_settings, &dac_ch2_settings};
+    struct dma *dma_chans[2] = {&dac_1_dma, &dac_2_dma};
     sys_clock_config();
-    gpio_init(&wave_choise_but, &led, &adc_pin);
-    dma_config();
-    tim_init(250);
-    adc_init_settings(&adcx);
+    gpio_init(wave_buttons, dacs, &pitch_0_cv);
+    for (int i=0; i < 2; i++) {
+        dma_config(dma_chans[i]);
+    }
+    // dma_config(dma_chans[0]);
+    // dma_config_ch2();
+    tim_init(250, &tim6_settings);
+    tim_init(300, &tim7_settings);
+    adc_init_settings(&pitch0cv_in);
 
-
-    dac_ch1_init(&dac_ch1_settings);
-    dac_config(&dac_ch1_settings);
-    dac_act(&dac_ch1_settings);
+    for (int i=0; i<2; i++){
+        dac_config(dacs_settings[i]);
+        dac_act(dacs_settings[i]);
+    }
     // DEPRECATED:: see ./ui.c
     // WaitForUserButtonPress(&ubButtonPress);
     while (1) {
-        int32_t diff = prev_value - *adcx.data;
-        if ((((diff < 0) ? -diff : diff) > 3)){
-            prev_value = map_12bit_osc_freq(*adcx.data);
+        int32_t diff = prev_value - *pitch0cv_in.data;
+        if ((((diff < 0) ? -diff : diff) > 10)){
+            prev_value = map_12bit_osc_freq(*pitch0cv_in.data);
             start_adc_conversion();
         }
-        if (adcx.roof == 0x69){
+        if (pitch0cv_in.roof == 0x69){
             alter_wave_frequency(prev_value, &tim6_settings);
         }
-        if (wave_choise_but.flag == 0x69) {
+        if (wave_choise_dac1.flag == 0x69) {
             // HACK:: make this the delay not the shitty mDelay!!
-            while (dma_change_wave(waves_bank[wave_choise_but.state % WAVE_CTR]) != SUCCESS){
-            };
+            while (dma_change_wave(waves_bank[wave_choise_dac1.state % WAVE_CTR], dma_chans[0]->channel, dacs_settings[0]->channel)
+                   != SUCCESS){};
         }
-        wave_choise_but.flag = 'D';
-        adcx.roof = 'D';
+        if (wave_choise_dac2.flag == 0x69) {
+            while (dma_change_wave(waves_bank[wave_choise_dac2.state % WAVE_CTR], dma_chans[1]->channel, dacs_settings[1]->channel)
+                   != SUCCESS){};
+        }
+        wave_choise_dac1.flag = 'D';
+        wave_choise_dac2.flag = 'D';
+        pitch0cv_in.roof = 'D';
     }
 }

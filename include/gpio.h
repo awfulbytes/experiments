@@ -27,9 +27,8 @@ struct exti {
 struct button {
     struct gpio pin;
     struct exti exti;
-    volatile uint8_t state;
+    volatile uint16_t state;
     volatile uint8_t flag;
 };
 
-void gpio_init(struct button *p, struct gpio *led, struct gpio *adc_pin);
-
+void gpio_init(struct button **p, struct gpio **led, struct gpio *adc_pin);

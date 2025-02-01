@@ -1,35 +1,47 @@
 #include "dac.h"
 /* #include "stm32g0xx.h" */
 #include "stm32g071xx.h"
+#include "stm32g0xx_ll_bus.h"
 #include "stm32g0xx_ll_dac.h"
 #include "system_stm32g0xx.h"
 #include <stdint.h>
 
 #include "gpio.c"
 
-void dac_ch1_init
-(struct dac *dac) {
-    dac->dacx = DAC1;
-    dac->channel = LL_DAC_CHANNEL_1;
-    dac->dacx_settings.OutputMode = LL_DAC_OUTPUT_MODE_NORMAL;
-    dac->dacx_settings.OutputBuffer = LL_DAC_OUTPUT_BUFFER_ENABLE;
-    dac->dacx_settings.OutputConnection = LL_DAC_OUTPUT_CONNECT_GPIO;
+static void dac_chx_priority(struct dac *dac){
+    if (dac->channel == LL_DAC_CHANNEL_1){
+        NVIC_SetPriority(dac->timx_dac_irq, 0);
+        NVIC_EnableIRQ(dac->timx_dac_irq);
+    } else {
+        NVIC_SetPriority(dac->timx_dac_irq, 1);
+        NVIC_EnableIRQ(dac->timx_dac_irq);
+    }
 }
 
 void dac_config
 (struct dac *gdac){
-    NVIC_SetPriority(TIM6_DAC_LPTIM1_IRQn, 0);
-    NVIC_EnableIRQ(TIM6_DAC_LPTIM1_IRQn);
+    // HACK:: put the priority different...
+    // __XXX__:: i think that there is a race condition
+    //           for the timers of the dac (6, 7)
+    // I may be able to make this via code for the channels.
+    // The other wave does not have any issue... so mayby i
+    // have to use the lowest priority for left and higher for
+    // right channels????
+    dac_chx_priority(gdac);
+    LL_APB1_GRP1_EnableClock(gdac->bus_clk_abp);
 
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_DAC1);
-
-    LL_DAC_SetTriggerSource(gdac->dacx, gdac->channel, LL_DAC_TRIG_EXT_TIM6_TRGO);
+    LL_DAC_SetTriggerSource(gdac->dacx, gdac->channel, gdac->trg_src);
 
     LL_DAC_ConfigOutput(gdac->dacx, gdac->channel, gdac->dacx_settings.OutputMode,
                         gdac->dacx_settings.OutputBuffer,
                         gdac->dacx_settings.OutputConnection);
     LL_DAC_EnableDMAReq(gdac->dacx, gdac->channel);
-    LL_DAC_EnableIT_DMAUDR1(gdac->dacx);
+
+    // TODO:: this should fix the broken wave on channel 1
+    if (gdac->channel == LL_DAC_CHANNEL_1)
+        LL_DAC_EnableIT_DMAUDR1(gdac->dacx);
+    else
+        LL_DAC_EnableIT_DMAUDR2(gdac->dacx);
 }
 
 void dac_act

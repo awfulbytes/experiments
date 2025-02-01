@@ -9,6 +9,7 @@
 #include "wave.h"
 /* #include "stm32g0xx_ll_tim.h" */
 #include "stm32g0xx_ll_bus.h"
+#include <stdint.h>
 extern struct timer tim6_settings;
 
 /* #define WAVEFORM_TIMER_FREQUENCY                (WAVEFORM_FREQUENCY * WAVEFORM_SAMPLES_SIZE) */
@@ -24,8 +25,8 @@ static struct timer* timx_set(struct timer *timer) {
 }
 
 void tim_init
-(uint32_t output_freq){
-    struct timer *setted = timx_set(&tim6_settings);
+(uint32_t output_freq, struct timer *tim){
+    struct timer *setted = timx_set(tim);
 
     if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_2){
         setted->timx_clk_freq *= 2;
@@ -47,37 +48,6 @@ void tim_init
     LL_TIM_EnableUpdateEvent(setted->timx);
 }
 
-static void dma_init
-(void){
-    NVIC_SetPriority(DMA1_Channel2_3_IRQn, 2); /* DMA IRQ lower priority than DAC IRQ */
-    NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
-
-    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
-}
-
-void dma_config
-(void){
-    dma_init();
-    LL_DMA_ConfigTransfer(DMA1, LL_DMA_CHANNEL_3,
-                          LL_DMA_DIRECTION_MEMORY_TO_PERIPH | LL_DMA_MODE_CIRCULAR
-                          | LL_DMA_PERIPH_NOINCREMENT       | LL_DMA_MEMORY_INCREMENT
-                          | LL_DMA_PDATAALIGN_HALFWORD      | LL_DMA_MDATAALIGN_HALFWORD
-                          | LL_DMA_PRIORITY_MEDIUM);
-
-    LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_3, LL_DMAMUX_REQ_DAC1_CH1);
-    LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
-                           (uint32_t) &scaled_sin,
-                           LL_DAC_DMA_GetRegAddr(DAC1,
-                                                 LL_DAC_CHANNEL_1,
-                                                 LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
-                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-
-    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, DATA_SIZE(scaled_sin));
-
-    LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
-    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
-}
-
 ErrorStatus alter_wave_frequency
 (const uint16_t output_freq, struct timer *timer){
     timer->timx_settings.Autoreload =
@@ -86,14 +56,14 @@ ErrorStatus alter_wave_frequency
     return SUCCESS;
 }
 ErrorStatus dma_change_wave
-(const uint16_t *data){
-    LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_3);
-    LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
+(const uint16_t *data, uint32_t dma_channel, uint32_t dac_channel){
+    LL_DMA_DisableChannel(DMA1, dma_channel);
+    LL_DMA_ConfigAddresses(DMA1, dma_channel,
                            (uint32_t) data,
                            LL_DAC_DMA_GetRegAddr(DAC1,
-                                                 LL_DAC_CHANNEL_1,
+                                                 dac_channel,
                                                  LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
                            LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
+    LL_DMA_EnableChannel(DMA1, dma_channel);
     return SUCCESS;
 }
