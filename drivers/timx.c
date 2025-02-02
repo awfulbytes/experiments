@@ -55,15 +55,3 @@ ErrorStatus alter_wave_frequency
     LL_TIM_SetAutoReload(timer->timx, timer->timx_settings.Autoreload);
     return SUCCESS;
 }
-ErrorStatus dma_change_wave
-(const uint16_t *data, uint32_t dma_channel, uint32_t dac_channel){
-    LL_DMA_DisableChannel(DMA1, dma_channel);
-    LL_DMA_ConfigAddresses(DMA1, dma_channel,
-                           (uint32_t) data,
-                           LL_DAC_DMA_GetRegAddr(DAC1,
-                                                 dac_channel,
-                                                 LL_DAC_DMA_REG_DATA_12BITS_RIGHT_ALIGNED),
-                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-    LL_DMA_EnableChannel(DMA1, dma_channel);
-    return SUCCESS;
-}

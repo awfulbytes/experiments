@@ -24,6 +24,7 @@ struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1, .trg_src=L
                                 .OutputBuffer=LL_DAC_OUTPUT_BUFFER_ENABLE,
                                 .OutputConnection=LL_DAC_OUTPUT_CONNECT_GPIO}};
 struct dma dac_1_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_3, .data=sine_wave,
+                        .chan=(DMA_Channel_TypeDef *)((uint32_t)DMA1 + (8 + 40)),
                         .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_DAC1_CH1, .Direction=LL_DMA_DIRECTION_MEMORY_TO_PERIPH,
                                         .NbData=120, .Mode=LL_DMA_MODE_CIRCULAR,
                                         .Priority=LL_DMA_PRIORITY_MEDIUM,
@@ -38,6 +39,7 @@ struct dac dac_ch2_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_2, .trg_src=L
                                 .OutputBuffer=LL_DAC_OUTPUT_BUFFER_ENABLE,
                                 .OutputConnection=LL_DAC_OUTPUT_CONNECT_GPIO}};
 struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=sine_wave,
+                        .chan=(DMA_Channel_TypeDef *)((uint32_t)DMA1 + (8 + 20)),
                         .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_DAC1_CH2, .Direction=LL_DMA_DIRECTION_MEMORY_TO_PERIPH,
                                         .NbData=120, .Mode=LL_DMA_MODE_CIRCULAR,
                                         .Priority=LL_DMA_PRIORITY_MEDIUM,

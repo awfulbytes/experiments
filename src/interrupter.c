@@ -9,6 +9,7 @@
 
 void main() {
     const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn};
+    struct timer *timers[2] = {&tim6_settings, &tim7_settings};
     struct button *wave_buttons[2] = {&wave_choise_dac1, &wave_choise_dac2};
     struct gpio *dacs[2] = {&dac1, &dac2};
     struct dac *dacs_settings[2] = {&dac_ch1_settings, &dac_ch2_settings};
@@ -37,15 +38,15 @@ void main() {
             start_adc_conversion();
         }
         if (pitch0cv_in.roof == 0x69){
-            alter_wave_frequency(prev_value, &tim6_settings);
+            alter_wave_frequency(prev_value, timers[0]);
         }
         if (wave_choise_dac1.flag == 0x69) {
             // HACK:: make this the delay not the shitty mDelay!!
-            while (dma_change_wave(waves_bank[wave_choise_dac1.state % WAVE_CTR], dma_chans[0]->channel, dacs_settings[0]->channel)
+            while (alter_wave_form(waves_bank[wave_choise_dac1.state % WAVE_CTR], dma_chans[0])
                    != SUCCESS){};
         }
         if (wave_choise_dac2.flag == 0x69) {
-            while (dma_change_wave(waves_bank[wave_choise_dac2.state % WAVE_CTR], dma_chans[1]->channel, dacs_settings[1]->channel)
+            while (alter_wave_form(waves_bank[wave_choise_dac2.state % WAVE_CTR], dma_chans[1])
                    != SUCCESS){};
         }
         wave_choise_dac1.flag = 'D';
