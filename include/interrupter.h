@@ -2,11 +2,11 @@
 #include "stm32g0xx_ll_dma.h"
 #include "stm32g0xx_ll_dmamux.h"
 #include "ui.h"
-#include "dac.h"
 #include "adc.h"
 #include "forms.h"
 #include "timx.h"
 #include "dma.h"
+#include <stdint.h>
 
 
 #if defined(USE_FULL_ASSERT)
@@ -60,10 +60,12 @@ struct adc pitch0cv_in = {.adcx=ADC1, .data = &pitch0_value, .channel=LL_ADC_CHA
                                                       .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT,
                                                       .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_NOINCREMENT}};
 struct button wave_choise_dac1 = {.state=0, .flag='D',
-                                 .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_10, .exti_port_conf=LL_EXTI_CONFIG_PORTC, .exti_line_conf=LL_EXTI_CONFIG_LINE10},
+                                 .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_10, .exti_port_conf=LL_EXTI_CONFIG_PORTC,
+                                  .exti_line_conf=LL_EXTI_CONFIG_LINE10},
                                  .pin={.pin_id=LL_GPIO_PIN_10, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
 struct button wave_choise_dac2 = {.state=0, .flag='D',
-                                 .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_11, .exti_port_conf=LL_EXTI_CONFIG_PORTC, .exti_line_conf=LL_EXTI_CONFIG_LINE11},
+                                 .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_11, .exti_port_conf=LL_EXTI_CONFIG_PORTC,
+                                  .exti_line_conf=LL_EXTI_CONFIG_LINE11},
                                  .pin={.pin_id=LL_GPIO_PIN_11, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
 struct gpio dac1 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_4, .mode=LL_GPIO_MODE_ANALOG};
 struct gpio dac2 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_5, .mode=LL_GPIO_MODE_ANALOG};
