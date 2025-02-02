@@ -13,7 +13,7 @@ static ErrorStatus adc_dma_setup(struct adc *adc);
 
 uint16_t map_12bit_osc_freq(uint16_t _value) {
     uint16_t min = 440;
-    uint16_t max = 1760;
+    uint16_t max = 830;
     return min + (_value * (max - min)) / 0xfff;
     /* return min + (_value * (max - min)) / (0xfff - min); */
 }
@@ -27,12 +27,12 @@ void adc_init_settings(struct adc *adc){
     while (LL_ADC_IsCalibrationOnGoing(adc->adcx));
 
     LL_ADC_Init(adc->adcx, &adc->settings);
-
-    LL_ADC_REG_Init(adc->adcx, &adc->reg_settings);
+    LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, adc->channel);
+    while (LL_ADC_REG_Init(adc->adcx, &adc->reg_settings) != SUCCESS){};
     LL_ADC_ClearFlag_CCRDY(adc->adcx);
 
     LL_ADC_SetChannelSamplingTime(adc->adcx, adc->channel,
-                                  LL_ADC_SAMPLINGTIME_160CYCLES_5);
+                                  LL_ADC_SAMPLINGTIME_1CYCLE_5);
     LL_ADC_Enable(adc->adcx);
     while (adc_dma_setup(adc) &&
            !LL_ADC_IsActiveFlag_ADRDY(adc->adcx));
@@ -66,5 +66,4 @@ void start_adc_conversion(void) {
     while (!LL_DMA_IsActiveFlag_TC1(DMA1)); // Wait for transfer complete
     LL_DMA_ClearFlag_TC1(DMA1); // Clear transfer complete flag
     pitch0cv_in.roof = 'i';
-    LL_mDelay(3); // HACK:: to be removed
 }

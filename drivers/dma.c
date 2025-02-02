@@ -4,7 +4,7 @@
 #include "stm32g0xx_ll_dma.h"
 #include <stdint.h>
 static void dma_init(void){
-    NVIC_SetPriority(DMA1_Channel2_3_IRQn, 2); /* DMA IRQ lower priority than DAC IRQ */
+    NVIC_SetPriority(DMA1_Channel2_3_IRQn, 3); /* DMA IRQ lower priority than DAC IRQ */
     NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
 
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);

@@ -11,6 +11,7 @@ strip = 'arm-none-eabi-strip'
 [built-in options]
 c_args = ['-mcpu=cortex-m0plus', '-ffreestanding', '-Og',
             '-DSTM32G071xx', '-DUSE_FULL_LL_DRIVER',
+            '-DDEBUG',
             '-ffunction-sections',
             '-fdata-sections', '-Wall', '-fstack-usage', '-MMD', '-MP',
             '-fno-exceptions', '-g3'

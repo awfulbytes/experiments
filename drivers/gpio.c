@@ -1,4 +1,5 @@
 #include "gpio.h"
+#include "stm32g0xx_ll_bus.h"
 
 static void exti_setup(struct button *p){
     LL_EXTI_SetEXTISource(p->exti.exti_port_conf, p->exti.exti_line_conf);
@@ -10,6 +11,7 @@ static void exti_setup(struct button *p){
 
 void gpio_init(struct button **dac1_ch1_2_wave_buttons, struct gpio **dacs, struct gpio *adc_pin){
     LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA |
+                            LL_IOP_GRP1_PERIPH_GPIOB |
                             LL_IOP_GRP1_PERIPH_GPIOC);
 
     for (int i=0; i<2; i++) {

@@ -1,12 +1,22 @@
-/* #include "include/stm32g0xx_hal_driver/Inc/stm32g0xx.h" */
-/* #include <stdio.h> */
-/* #include "system_stm32g0xx.c" */
 #include "interrupter.h"     // Do i need this to be here or i can put all of them in main.h.... mooooore files more kBits...
 #include "stm32g071xx.h"
 #include "stm32g0xx.h"
+#include "stm32g0xx_ll_adc.h"
+#include "stm32g0xx_ll_bus.h"
+#include "stm32g0xx_ll_dma.h"
 #include "sysclk.c"
+#define DEBUG -DDEBUG
 
 
+void debug_tim2_pin31(void){
+    LL_GPIO_InitTypeDef gpio_init = {0};
+    gpio_init.Pin = LL_GPIO_PIN_3;
+    gpio_init.Mode = LL_GPIO_MODE_OUTPUT;
+    gpio_init.Speed = LL_GPIO_SPEED_FREQ_HIGH;
+    gpio_init.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+    gpio_init.Pull = LL_GPIO_PULL_NO;
+    LL_GPIO_Init(GPIOB, &gpio_init);
+}
 void main() {
     const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn};
     struct timer *timers[2] = {&tim6_settings, &tim7_settings};
@@ -16,13 +26,16 @@ void main() {
     struct dma *dma_chans[2] = {&dac_1_dma, &dac_2_dma};
     sys_clock_config();
     gpio_init(wave_buttons, dacs, &pitch_0_cv);
+#ifdef DEBUG
+    debug_tim2_pin31();
+#endif
     for (int i=0; i < 2; i++) {
         dma_config(dma_chans[i]);
     }
-    // dma_config(dma_chans[0]);
-    // dma_config_ch2();
-    tim_init(250, &tim6_settings);
-    tim_init(300, &tim7_settings);
+    for (int i=0; i < 2; i++){
+        tim_init(350, timers[i]);
+    }
+    tim_init(44100, &tim2_settings);
     adc_init_settings(&pitch0cv_in);
 
     for (int i=0; i<2; i++){
@@ -33,9 +46,9 @@ void main() {
     // WaitForUserButtonPress(&ubButtonPress);
     while (1) {
         int32_t diff = prev_value - *pitch0cv_in.data;
-        if ((((diff < 0) ? -diff : diff) > 10)){
+        if ((((diff < 0) ? -diff : diff) > 5)) {
             prev_value = map_12bit_osc_freq(*pitch0cv_in.data);
-            start_adc_conversion();
+            LL_mDelay(3);
         }
         if (pitch0cv_in.roof == 0x69){
             alter_wave_frequency(prev_value, timers[0]);

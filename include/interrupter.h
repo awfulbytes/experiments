@@ -1,4 +1,5 @@
 #include "gpio.h"
+#include "stm32g0xx_ll_adc.h"
 #include "stm32g0xx_ll_dma.h"
 #include "stm32g0xx_ll_dmamux.h"
 #include "ui.h"
@@ -17,6 +18,7 @@ volatile uint16_t prev_value = 1;
 
 struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim7_settings = {.timx=TIM7, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7, .trigger_output=LL_TIM_TRGO_UPDATE};
+struct timer tim2_settings = {.timx=TIM2, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1, .trg_src=LL_DAC_TRIG_EXT_TIM6_TRGO,
                                .bus_clk_abp=LL_APB1_GRP1_PERIPH_DAC1, .timx_dac_irq=TIM6_DAC_LPTIM1_IRQn,
                                .dacx_settings=
@@ -50,7 +52,7 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=sine_wave,
 struct adc pitch0cv_in = {.adcx=ADC1, .data = &pitch0_value, .channel=LL_ADC_CHANNEL_0, .roof='D',
                           .settings={.Clock=LL_ADC_CLOCK_SYNC_PCLK_DIV1, .Resolution=LL_ADC_RESOLUTION_12B,
                                      .DataAlignment=LL_ADC_DATA_ALIGN_RIGHT, .LowPowerMode=LL_ADC_LP_MODE_NONE},
-                          .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_SOFTWARE, .ContinuousMode=LL_ADC_REG_CONV_CONTINUOUS,
+                          .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_EXT_TIM2_TRGO, .ContinuousMode=LL_ADC_REG_CONV_SINGLE,
                                          .SequencerLength=LL_ADC_REG_SEQ_SCAN_DISABLE, .SequencerDiscont=LL_ADC_REG_SEQ_DISCONT_DISABLE,
                                          .DMATransfer=LL_ADC_REG_DMA_TRANSFER_UNLIMITED, .Overrun=LL_ADC_REG_OVR_DATA_OVERWRITTEN},
                           .dmax=DMA1, .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_ADC1, .Direction=LL_DMA_DIRECTION_PERIPH_TO_MEMORY,
