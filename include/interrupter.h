@@ -1,3 +1,4 @@
+#define DEBUGDAC -DDEBUG
 #include "gpio.h"
 #include "stm32g0xx_ll_adc.h"
 #include "stm32g0xx_ll_dma.h"
@@ -15,7 +16,9 @@
 #endif /* USE_FULL_ASSERT */
 volatile uint16_t pitch0_value = 0xff;
 volatile uint16_t prev_value = 1;
-
+volatile uint32_t phase_accum = 0;
+volatile uint64_t phase_inc = 0x01000000;
+volatile uint16_t dac_double_buff[240] = {};
 struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim7_settings = {.timx=TIM7, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim2_settings = {.timx=TIM2, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2, .trigger_output=LL_TIM_TRGO_UPDATE};
@@ -25,10 +28,10 @@ struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1, .trg_src=L
                                {.OutputMode=LL_DAC_OUTPUT_MODE_NORMAL,
                                 .OutputBuffer=LL_DAC_OUTPUT_BUFFER_ENABLE,
                                 .OutputConnection=LL_DAC_OUTPUT_CONNECT_GPIO}};
-struct dma dac_1_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_3, .data=sine_wave,
+struct dma dac_1_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_3, .data=(uint16_t *) dac_double_buff,
                         .chan=(DMA_Channel_TypeDef *)((uint32_t)DMA1 + (8 + 40)),
                         .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_DAC1_CH1, .Direction=LL_DMA_DIRECTION_MEMORY_TO_PERIPH,
-                                        .NbData=120, .Mode=LL_DMA_MODE_CIRCULAR,
+                                        .NbData=240, .Mode=LL_DMA_MODE_CIRCULAR,
                                         .Priority=LL_DMA_PRIORITY_MEDIUM,
                                         .PeriphOrM2MSrcDataSize=LL_DMA_PDATAALIGN_HALFWORD,
                                         .MemoryOrM2MDstDataSize=LL_DMA_MDATAALIGN_HALFWORD,

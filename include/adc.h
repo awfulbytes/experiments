@@ -5,6 +5,7 @@
 #include "stm32g0xx_ll_adc.h"
 #include "stm32g0xx_ll_gpio.h"
 
+#include "stm32g0xx_ll_utils.h"
 struct adc {
     volatile uint16_t *data;
     volatile char roof;
@@ -19,7 +20,6 @@ struct adc {
 };
 
 void adc_init_settings(struct adc *adc);
-void start_adc_conversion(void);
 void adc_init(void);
 uint16_t map_12bit_osc_freq(uint16_t adc_value);
 

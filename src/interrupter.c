@@ -5,20 +5,11 @@
 #include "stm32g0xx_ll_bus.h"
 #include "stm32g0xx_ll_dma.h"
 #include "sysclk.c"
-#define DEBUG -DDEBUG
+#include <stdint.h>
+const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn};
+volatile uint16_t *wave_me_d = sine_wave;
 
-
-void debug_tim2_pin31(void){
-    LL_GPIO_InitTypeDef gpio_init = {0};
-    gpio_init.Pin = LL_GPIO_PIN_3;
-    gpio_init.Mode = LL_GPIO_MODE_OUTPUT;
-    gpio_init.Speed = LL_GPIO_SPEED_FREQ_HIGH;
-    gpio_init.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-    gpio_init.Pull = LL_GPIO_PULL_NO;
-    LL_GPIO_Init(GPIOB, &gpio_init);
-}
 void main() {
-    const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn};
     struct timer *timers[2] = {&tim6_settings, &tim7_settings};
     struct button *wave_buttons[2] = {&wave_choise_dac1, &wave_choise_dac2};
     struct gpio *dacs[2] = {&dac1, &dac2};
@@ -26,14 +17,15 @@ void main() {
     struct dma *dma_chans[2] = {&dac_1_dma, &dac_2_dma};
     sys_clock_config();
     gpio_init(wave_buttons, dacs, &pitch_0_cv);
-#ifdef DEBUG
+#if defined(DEBUG) || defined(DEBUGDAC)
     debug_tim2_pin31();
+#else
 #endif
     for (int i=0; i < 2; i++) {
         dma_config(dma_chans[i]);
     }
     for (int i=0; i < 2; i++){
-        tim_init(350, timers[i]);
+        tim_init(44100, timers[i]);
     }
     tim_init(44100, &tim2_settings);
     adc_init_settings(&pitch0cv_in);
@@ -55,6 +47,7 @@ void main() {
         }
         if (wave_choise_dac1.flag == 0x69) {
             // HACK:: make this the delay not the shitty mDelay!!
+            *wave_me_d = *waves_bank[wave_choise_dac1.state % WAVE_CTR];
             while (alter_wave_form(waves_bank[wave_choise_dac1.state % WAVE_CTR], dma_chans[0])
                    != SUCCESS){};
         }

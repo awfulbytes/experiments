@@ -1,19 +1,14 @@
 #include "dac.h"
-/* #include "stm32g0xx.h" */
-#include "stm32g071xx.h"
-#include "stm32g0xx_ll_bus.h"
-#include "stm32g0xx_ll_dac.h"
-#include "system_stm32g0xx.h"
-#include <stdint.h>
-
 #include "gpio.c"
+#include <stdint.h>
+/* #include "stm32g0xx.h" */
 
 static void dac_chx_priority(struct dac *dac){
     if (dac->channel == LL_DAC_CHANNEL_1){
-        NVIC_SetPriority(dac->timx_dac_irq, 0);
+        NVIC_SetPriority(dac->timx_dac_irq, 3);
         NVIC_EnableIRQ(dac->timx_dac_irq);
     } else {
-        NVIC_SetPriority(dac->timx_dac_irq, 1);
+        NVIC_SetPriority(dac->timx_dac_irq, 2);
         NVIC_EnableIRQ(dac->timx_dac_irq);
     }
 }
@@ -53,4 +48,26 @@ void dac_act
         wait_idx--;
     }
     LL_DAC_EnableTrigger(gdac->dacx, gdac->channel);
+}
+// DDS variables (phase accumulator technique)
+extern volatile uint32_t phase_accum;
+extern volatile uint32_t phase_inc;
+
+// ----- Function to Update a Section of the DMA Buffer -----
+/**
+ * @brief Updates a section of the DMA buffer with new waveform data.
+ * @param bufferSection Pointer to the beginning of the section in dacBuffer.
+ * @param sectionLength Length of this section (number of samples).
+ */
+void UpdateDacBufferSection(const uint16_t *data, uint16_t *bufferSection, uint16_t sectionLength)
+{
+    for (uint16_t i = 0; i < sectionLength; i++) {
+        // For a TABLE_SIZE of 256, use the top 8 bits of the 32-bit phase accumulator.
+        uint32_t index = (phase_accum * 120) >> 24;  // Extract upper 8 bits (0..255)
+        index %= 120;
+        bufferSection[i] = (uint16_t) data[index];        // Get the sample from your lookup table
+
+        // Advance the phase accumulator by the phase increment.
+        phase_accum += phase_inc;
+    }
 }

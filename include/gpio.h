@@ -4,9 +4,23 @@
 #include "stm32g0xx_ll_utils.h"
 #include "stm32g0xx_ll_bus.h"
 
-#define LED4_PIN                           LL_GPIO_PIN_5
-#define LED4_GPIO_PORT                     GPIOA
-/* #define LED4_GPIO_CLK_ENABLE()             LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA) */
+// #define DEBUGDAC
+#if defined(DEBUG) || defined(DEBUGDAC) || defined(DEBUGDAC1)
+void debug_tim2_pin31(void){
+    LL_GPIO_InitTypeDef gpio_init = {0};
+#if defined(DEBUG) || defined(DEBUGDAC)
+    gpio_init.Pin = LL_GPIO_PIN_3;
+#endif // DEBUG
+    gpio_init.Mode = LL_GPIO_MODE_OUTPUT;
+    gpio_init.Speed = LL_GPIO_SPEED_FREQ_HIGH;
+    gpio_init.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+    gpio_init.Pull = LL_GPIO_PULL_NO;
+    LL_GPIO_Init(GPIOB, &gpio_init);
+}
+// #define LED4_PIN                           LL_GPIO_PIN_5
+// #define LED4_GPIO_PORT                     GPIOA
+#else
+#endif // DEBUG || DEBUGDAC
 
 #define LED_BLINK_FAST  200
 #define LED_BLINK_SLOW  500
@@ -23,6 +37,7 @@ struct exti {
     volatile uint32_t exti_irqn;
     volatile uint32_t exti_port_conf;
     volatile uint32_t exti_line_conf;
+    EXTI_TypeDef *exti;
 };
 struct button {
     struct gpio pin;

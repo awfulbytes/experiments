@@ -1,21 +1,13 @@
 #include "adc.h"
-#include "stm32g071xx.h"
-/* #include "stm32g0xx_hal_cortex.h" */
-#include "stm32g0xx.h"
 #include "stm32g0xx_ll_adc.h"
-#include "stm32g0xx_ll_dma.h"
-#include "stm32g0xx_ll_dmamux.h"
-#include "stm32g0xx_ll_rcc.h"
-#include "stm32g0xx_ll_utils.h"
 extern volatile uint16_t pitch0_value;
 extern struct adc pitch0cv_in;
 static ErrorStatus adc_dma_setup(struct adc *adc);
 
-uint16_t map_12bit_osc_freq(uint16_t _value) {
+uint16_t map_12bit_osc_freq(uint16_t value) {
     uint16_t min = 440;
     uint16_t max = 830;
-    return min + (_value * (max - min)) / 0xfff;
-    /* return min + (_value * (max - min)) / (0xfff - min); */
+    return min + (value * (max - min)) / 0xfff;
 }
 
 void adc_init_settings(struct adc *adc){
@@ -32,7 +24,7 @@ void adc_init_settings(struct adc *adc){
     LL_ADC_ClearFlag_CCRDY(adc->adcx);
 
     LL_ADC_SetChannelSamplingTime(adc->adcx, adc->channel,
-                                  LL_ADC_SAMPLINGTIME_1CYCLE_5);
+                                  LL_ADC_SAMPLINGTIME_160CYCLES_5);
     LL_ADC_Enable(adc->adcx);
     while (adc_dma_setup(adc) &&
            !LL_ADC_IsActiveFlag_ADRDY(adc->adcx));
@@ -56,14 +48,4 @@ static ErrorStatus adc_dma_setup(struct adc *adc) {
     LL_DMA_EnableChannel(adc->dmax, adc->dma_channel);
     while (!LL_DMA_IsEnabledChannel(adc->dmax, adc->dma_channel)) {}
     return SUCCESS;
-}
-
-void start_adc_conversion(void) {
-    // Start ADC conversion
-    LL_ADC_REG_StartConversion(pitch0cv_in.adcx);
-
-    // Wait for DMA transfer to complete
-    while (!LL_DMA_IsActiveFlag_TC1(DMA1)); // Wait for transfer complete
-    LL_DMA_ClearFlag_TC1(DMA1); // Clear transfer complete flag
-    pitch0cv_in.roof = 'i';
 }

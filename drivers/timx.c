@@ -33,12 +33,12 @@ void tim_init
     } else {
     }
 
+    uint32_t period = (SystemCoreClock / output_freq) - 1;
+    setted->timx_settings.Autoreload = period;
     if (tim->timx == TIM2) {
         LL_APB1_GRP1_EnableClock(setted->apb_clock_reg);
-        NVIC_SetPriority(TIM2_IRQn, 2);
+        NVIC_SetPriority(TIM2_IRQn, 0);
         NVIC_EnableIRQ(TIM2_IRQn);
-        uint32_t period = (SystemCoreClock / output_freq) - 1;
-        setted->timx_settings.Autoreload = period;
         LL_TIM_Init(tim->timx, &tim->timx_settings);
         LL_TIM_EnableARRPreload(tim->timx);
         LL_TIM_EnableIT_UPDATE(tim->timx);
@@ -49,10 +49,10 @@ void tim_init
         LL_TIM_EnableCounter(tim->timx);
         return;
     } else{
-        setted->timx_settings.Autoreload =
-            __LL_TIM_CALC_ARR(setted->timx_clk_freq,
-                              setted->timx_settings.Prescaler,
-                              output_freq * DATA_SIZE(scaled_sin));
+        // setted->timx_settings.Autoreload =
+        //     __LL_TIM_CALC_ARR(setted->timx_clk_freq,
+        //                       setted->timx_settings.Prescaler,
+        //                       output_freq * DATA_SIZE(scaled_sin));
     }
     LL_APB1_GRP1_EnableClock(setted->apb_clock_reg);
     LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler);
@@ -67,7 +67,7 @@ void tim_init
 ErrorStatus alter_wave_frequency
 (const uint16_t output_freq, struct timer *timer){
     timer->timx_settings.Autoreload =
-        __LL_TIM_CALC_ARR(timer->timx_clk_freq, timer->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
+        __LL_TIM_CALC_ARR(timer->timx_clk_freq, timer->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin) * 2);
     LL_TIM_SetAutoReload(timer->timx, timer->timx_settings.Autoreload);
     return SUCCESS;
 }

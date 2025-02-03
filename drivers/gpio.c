@@ -1,5 +1,4 @@
 #include "gpio.h"
-#include "stm32g0xx_ll_bus.h"
 
 static void exti_setup(struct button *p){
     LL_EXTI_SetEXTISource(p->exti.exti_port_conf, p->exti.exti_line_conf);
