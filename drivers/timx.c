@@ -11,6 +11,7 @@
 #include "stm32g0xx_ll_bus.h"
 #include <stdint.h>
 extern struct timer tim6_settings;
+extern volatile uint64_t phase_inc;
 
 /* #define WAVEFORM_TIMER_FREQUENCY                (WAVEFORM_FREQUENCY * WAVEFORM_SAMPLES_SIZE) */
 #define WAVEFORM_TIMER_PR_MAX_VAL               ((uint32_t)0xFFFF-1)
@@ -66,8 +67,9 @@ void tim_init
 
 ErrorStatus alter_wave_frequency
 (const uint16_t output_freq, struct timer *timer){
-    timer->timx_settings.Autoreload =
-        __LL_TIM_CALC_ARR(timer->timx_clk_freq, timer->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin) * 2);
-    LL_TIM_SetAutoReload(timer->timx, timer->timx_settings.Autoreload);
+    // timer->timx_settings.Autoreload =
+    //     __LL_TIM_CALC_ARR(timer->timx_clk_freq, timer->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
+    // LL_TIM_SetAutoReload(timer->timx, timer->timx_settings.Autoreload);
+    phase_inc = 0x01000000 >> 1;
     return SUCCESS;
 }

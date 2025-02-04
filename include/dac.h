@@ -23,4 +23,4 @@ struct dac {
 void dac_config(struct dac *gdac);
 void dac_act(struct dac *gdac);
 
-void UpdateDacBufferSection(const uint16_t *data, uint16_t *bufferSection, uint16_t sectionLength);
+void UpdateDacBufferSection(uint16_t *data, uint16_t *bufferSection, uint16_t sectionLength);

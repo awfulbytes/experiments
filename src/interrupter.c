@@ -6,8 +6,9 @@
 #include "stm32g0xx_ll_dma.h"
 #include "sysclk.c"
 #include <stdint.h>
+#include <stddef.h>
 const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn};
-volatile uint16_t *wave_me_d = sine_wave;
+const uint16_t *wave_me_d = sine_wave;
 
 void main() {
     struct timer *timers[2] = {&tim6_settings, &tim7_settings};
@@ -34,8 +35,8 @@ void main() {
         dac_config(dacs_settings[i]);
         dac_act(dacs_settings[i]);
     }
-    // DEPRECATED:: see ./ui.c
-    // WaitForUserButtonPress(&ubButtonPress);
+    UpdateDacBufferSection(wave_me_d, dac_double_buff, 120);
+    UpdateDacBufferSection(wave_me_d, dac_double_buff + 120, 120);
     while (1) {
         int32_t diff = prev_value - *pitch0cv_in.data;
         if ((((diff < 0) ? -diff : diff) > 5)) {
@@ -47,9 +48,9 @@ void main() {
         }
         if (wave_choise_dac1.flag == 0x69) {
             // HACK:: make this the delay not the shitty mDelay!!
-            *wave_me_d = *waves_bank[wave_choise_dac1.state % WAVE_CTR];
-            while (alter_wave_form(waves_bank[wave_choise_dac1.state % WAVE_CTR], dma_chans[0])
-                   != SUCCESS){};
+            wave_me_d = waves_bank[wave_choise_dac1.state % WAVE_CTR];
+            // while (alter_wave_form(dac_double_buff, dma_chans[0])
+            //        != SUCCESS){};
         }
         if (wave_choise_dac2.flag == 0x69) {
             while (alter_wave_form(waves_bank[wave_choise_dac2.state % WAVE_CTR], dma_chans[1])

@@ -59,13 +59,12 @@ extern volatile uint32_t phase_inc;
  * @param bufferSection Pointer to the beginning of the section in dacBuffer.
  * @param sectionLength Length of this section (number of samples).
  */
-void UpdateDacBufferSection(const uint16_t *data, uint16_t *bufferSection, uint16_t sectionLength)
+void UpdateDacBufferSection(uint16_t *data, uint16_t *bufferSection, uint16_t sectionLength)
 {
     for (uint16_t i = 0; i < sectionLength; i++) {
-        // For a TABLE_SIZE of 256, use the top 8 bits of the 32-bit phase accumulator.
-        uint32_t index = (phase_accum * 120) >> 24;  // Extract upper 8 bits (0..255)
-        index %= 120;
-        bufferSection[i] = (uint16_t) data[index];        // Get the sample from your lookup table
+        uint32_t index = ((uint64_t) phase_accum * 120) >> 32;  // Extract upper 8 bits (0..255)
+        // index %= 120;
+        bufferSection[i] = (uint16_t) data[index];
 
         // Advance the phase accumulator by the phase increment.
         phase_accum += phase_inc;

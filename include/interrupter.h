@@ -18,7 +18,7 @@ volatile uint16_t pitch0_value = 0xff;
 volatile uint16_t prev_value = 1;
 volatile uint32_t phase_accum = 0;
 volatile uint64_t phase_inc = 0x01000000;
-volatile uint16_t dac_double_buff[240] = {};
+uint16_t dac_double_buff[240] = {};
 struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim7_settings = {.timx=TIM7, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim2_settings = {.timx=TIM2, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2, .trigger_output=LL_TIM_TRGO_UPDATE};
