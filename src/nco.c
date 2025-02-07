@@ -1,5 +1,5 @@
 #include "nco.h"
-#include "stm32g071xx.h"
+// #include "stm32g071xx.h"
 #include <stdbool.h>
 #include <stdint.h>
 // DDS variables (phase accumulator technique)
@@ -25,8 +25,11 @@ static uint16_t map_12b_to_hz(uint16_t value) {
 }
 
 
-ErrorStatus alter_wave_frequency (uint32_t output_freq){
+void alter_wave_frequency (uint32_t output_freq){
     output_freq = (output_freq == 0) ? 1 : output_freq;
-    phase_pending_update_value = ((((uint64_t)output_freq) * ((uint64_t)1UL << 32)) / 44100);
-    return SUCCESS;
+    phase_pending_update_value =
+        // (((uint64_t)output_freq * ((uint64_t)1UL << 32)) * 14983) >> 28;
+        ((((uint64_t)output_freq) * ((uint64_t)1UL << 16)));
+        // ((((uint64_t)output_freq) * ((uint64_t)1UL << 32)) / 44100);
+    return;
 }
