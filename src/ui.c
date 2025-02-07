@@ -12,4 +12,5 @@ inline void wave_button_callback
             abut->state++;
             break;
     }
+    abut->flag = 'D';
 }

@@ -4,12 +4,6 @@ extern volatile uint16_t pitch0_value;
 extern struct adc pitch0cv_in;
 static ErrorStatus adc_dma_setup(struct adc *adc);
 
-uint16_t map_12bit_osc_freq(uint16_t value) {
-    uint16_t min = 440;
-    uint16_t max = 830;
-    return min + (value * (max - min)) / 0xfff;
-}
-
 void adc_init_settings(struct adc *adc){
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC);
     LL_ADC_REG_SetSequencerConfigurable(adc->adcx, LL_ADC_REG_SEQ_CONFIGURABLE);

@@ -21,6 +21,5 @@ struct adc {
 
 void adc_init_settings(struct adc *adc);
 void adc_init(void);
-uint16_t map_12bit_osc_freq(uint16_t adc_value);
 
 #endif

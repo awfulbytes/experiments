@@ -38,7 +38,7 @@ void tim_init
     setted->timx_settings.Autoreload = period;
     if (tim->timx == TIM2) {
         LL_APB1_GRP1_EnableClock(setted->apb_clock_reg);
-        NVIC_SetPriority(TIM2_IRQn, 0);
+        NVIC_SetPriority(TIM2_IRQn, 10);
         NVIC_EnableIRQ(TIM2_IRQn);
         LL_TIM_Init(tim->timx, &tim->timx_settings);
         LL_TIM_EnableARRPreload(tim->timx);
@@ -63,13 +63,4 @@ void tim_init
     LL_TIM_SetTriggerOutput(setted->timx, setted->trigger_output);
     LL_TIM_EnableCounter(setted->timx);
     LL_TIM_EnableUpdateEvent(setted->timx);
-}
-
-ErrorStatus alter_wave_frequency
-(const uint16_t output_freq, struct timer *timer){
-    // timer->timx_settings.Autoreload =
-    //     __LL_TIM_CALC_ARR(timer->timx_clk_freq, timer->timx_settings.Prescaler, output_freq * DATA_SIZE(scaled_sin));
-    // LL_TIM_SetAutoReload(timer->timx, timer->timx_settings.Autoreload);
-    phase_inc = 0x01000000 >> 1;
-    return SUCCESS;
 }

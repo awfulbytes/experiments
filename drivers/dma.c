@@ -29,6 +29,8 @@ void dma_config(struct dma *dma){
 
     LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_3);
     LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_3);
+    // LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_2);
+    // LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_2);
     LL_DMA_EnableIT_TE(dma->dmax, dma->channel);
     LL_DMA_EnableChannel(dma->dmax, dma->channel);
     while (!LL_DMA_IsEnabledChannel(dma->dmax, dma->channel)) {}
@@ -39,7 +41,7 @@ ErrorStatus alter_wave_form(const uint16_t *data, struct dma *dma){
     dma->chan->CMAR = (uint32_t) data;
     dma->chan->CPAR = (dma->channel == LL_DMA_CHANNEL_3) ?
         (uint32_t) &DAC1->DHR12R1 : (uint32_t) &DAC1->DHR12R2;
-    dma->chan->CNDTR = 240;
+    dma->chan->CNDTR = 256;
     // dma->chan->CCR |= DMA_CCR_MINC | DMA_CCR_CIRC | DMA_CCR_DIR | DMA_CCR_PL_1;
     dma->chan->CCR |= DMA_CCR_EN;
     return SUCCESS;

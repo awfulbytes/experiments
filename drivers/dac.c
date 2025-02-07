@@ -49,24 +49,3 @@ void dac_act
     }
     LL_DAC_EnableTrigger(gdac->dacx, gdac->channel);
 }
-// DDS variables (phase accumulator technique)
-extern volatile uint32_t phase_accum;
-extern volatile uint32_t phase_inc;
-
-// ----- Function to Update a Section of the DMA Buffer -----
-/**
- * @brief Updates a section of the DMA buffer with new waveform data.
- * @param bufferSection Pointer to the beginning of the section in dacBuffer.
- * @param sectionLength Length of this section (number of samples).
- */
-void UpdateDacBufferSection(uint16_t *data, uint16_t *bufferSection, uint16_t sectionLength)
-{
-    for (uint16_t i = 0; i < sectionLength; i++) {
-        uint32_t index = ((uint64_t) phase_accum * 120) >> 32;  // Extract upper 8 bits (0..255)
-        // index %= 120;
-        bufferSection[i] = (uint16_t) data[index];
-
-        // Advance the phase accumulator by the phase increment.
-        phase_accum += phase_inc;
-    }
-}

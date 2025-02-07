@@ -13,6 +13,7 @@ src_files = files(
   'src/startup_stm32g071xx.s',
   'src/system_stm32g0xx.c',
   'src/ui.c',
+  'src/nco.c',
   'src/stm32g0xx_it.c',
   # 'src/msp_init.c'
   )
