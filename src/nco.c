@@ -29,7 +29,7 @@ void alter_wave_frequency (uint32_t output_freq){
     output_freq = (output_freq == 0) ? 1 : output_freq;
     phase_pending_update_value =
         // (((uint64_t)output_freq * ((uint64_t)1UL << 32)) * 14983) >> 28;
-        ((((uint64_t)output_freq) * ((uint64_t)1UL << 16)));
-        // ((((uint64_t)output_freq) * ((uint64_t)1UL << 32)) / 44100);
+        // ((((uint64_t)output_freq) * ((uint64_t)1UL << 16)));
+        ((output_freq) * (1UL << 32)) / 44100;
     return;
 }

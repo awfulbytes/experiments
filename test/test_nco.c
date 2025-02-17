@@ -21,8 +21,13 @@ void test_phase_increment(){
     uint64_t new_incr = (required_freq * (1UL<<acc_bits)) / master_clock;
     uint64_t new_req = ((new_incr * master_clock) >> acc_bits) + 1;
     assert(required_freq == new_req);
+    // assert(new_incr != new_incr_2);
     assert((old_freq < new_req) && (phase_inc < new_incr));
     // printf("requested: %u[Hz]\tgot: %lu[Hz]\n", required_freq, new_req);
+    alter_wave_frequency(444);
+    assert(phase_pending_update_value == new_incr);
+    // printf("%lu\n", phase_pending_update_value);
+    // printf("%lu\n", new_incr);
 }
 
 void test_ping_pong(){
