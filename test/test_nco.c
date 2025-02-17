@@ -17,13 +17,12 @@ uint32_t required_freq = 444;
 uint16_t acc_bits = sizeof(phase_accum) * 8;
 
 void test_phase_increment(){
-    // alter_wave_frequency(0xfff);
-    // assert(phase_pending_update_value == ((phase_inc<<24) + 4095));
+    uint32_t old_freq = ((phase_inc * master_clock) >> 32) + 1;
     uint64_t new_incr = (required_freq * (1UL<<acc_bits)) / master_clock;
     uint64_t new_req = ((new_incr * master_clock) >> acc_bits) + 1;
     assert(required_freq == new_req);
-    // printf("%lx\n", new_incr);
-    printf("requested: %u[Hz]\tgot: %lu[Hz]\n", required_freq, new_req);
+    assert((old_freq < new_req) && (phase_inc < new_incr));
+    // printf("requested: %u[Hz]\tgot: %lu[Hz]\n", required_freq, new_req);
 }
 
 void test_ping_pong(){
@@ -43,15 +42,4 @@ void test_ping_pong(){
 int main(void){
     test_ping_pong();
     test_phase_increment();
-    // alter_wave_frequency(0xfff);
-    // printf("max_pending_inc: \t%lx\n", phase_pending_update_value);   // * (1UL << 4));
-    // printf("phase inc to pending phase ratio:    %lf\n", (float)phase_inc/(float)phase_pending_update_value);
-    // assert(phase_pending_update_value == phase_inc + 0xfff);
-    // printf("phase_4_right:      %lx\n", (phase_pending_update_value) >> 4);
-    // alter_wave_frequency(0);
-    // printf("pending_phase_0: \t%lx\n", phase_pending_update_value);
-    // alter_wave_frequency(0xfff);
-    // printf("phase inc to pending phase ratio:    %lf\n", (float)phase_inc/(float)phase_pending_update_value);
-    // char *some;
-    // some = "Hey there tests";
 }
