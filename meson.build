@@ -69,6 +69,7 @@ elf = executable('testershit', src_files + src_deps,
                  include_directories : lib_dirs + inc_dir,
                  override_options: [],
                  link_args : ['-nostdlib', '-nostartfiles', '-nodefaultlibs',
+                              '--data-sections', '-std=c23',
                               '--specs=nano.specs', '-Wl,-Map=output.map'],
                  build_by_default: true
                 )

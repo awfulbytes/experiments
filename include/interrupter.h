@@ -1,4 +1,4 @@
-#define DEBUG
+#define DEBUGDAC
 #include "gpio.h"
 #include "stm32g0xx_ll_adc.h"
 #include "stm32g0xx_ll_dma.h"
@@ -21,7 +21,7 @@ volatile uint16_t pitch0_value = 0xff;
 volatile uint16_t prev_value = 1;
 volatile uint32_t phase_accum = 0;
 volatile uint64_t phase_inc = 0x001000000;
-volatile uint64_t phase_pending_update_value;
+volatile uint64_t phase_pending_update_inc = 0x001000000;
 volatile bool phase_pending_update = false;
 uint16_t dac_double_buff[256] = {};
 uint16_t dac_double_buff2[256] = {};

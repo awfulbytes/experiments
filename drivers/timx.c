@@ -1,6 +1,7 @@
 #include "timx.h"
 #include "stm32g071xx.h"
 #include "stm32g0xx.h"
+#include "stm32g0xx_hal_cortex.h"
 #include "stm32g0xx_ll_dac.h"
 #include "stm32g0xx_ll_dma.h"
 #include "stm32g0xx_ll_rcc.h"
@@ -38,8 +39,13 @@ void tim_init
     setted->timx_settings.Autoreload = period;
     if (tim->timx == TIM2) {
         LL_APB1_GRP1_EnableClock(setted->apb_clock_reg);
-        NVIC_SetPriority(TIM2_IRQn, 10);
+
+        NVIC_SetPriority(TIM2_IRQn, 4);
         NVIC_EnableIRQ(TIM2_IRQn);
+        NVIC_SetPriority(TIM6_DAC_LPTIM1_IRQn, 2);
+        NVIC_EnableIRQ(TIM6_DAC_LPTIM1_IRQn);
+        NVIC_SetPriority(TIM7_LPTIM2_IRQn, 3);
+        NVIC_EnableIRQ(TIM7_LPTIM2_IRQn);
         LL_TIM_Init(tim->timx, &tim->timx_settings);
         LL_TIM_EnableARRPreload(tim->timx);
         LL_TIM_EnableIT_UPDATE(tim->timx);
@@ -56,10 +62,9 @@ void tim_init
         //                       output_freq * DATA_SIZE(scaled_sin));
     }
     LL_APB1_GRP1_EnableClock(setted->apb_clock_reg);
-    LL_TIM_SetPrescaler(setted->timx, setted->timx_settings.Prescaler);
+    LL_TIM_SetPrescaler(setted->timx, 0);
     LL_TIM_SetAutoReload(setted->timx,  setted->timx_settings.Autoreload);
     LL_TIM_SetCounterMode(setted->timx, setted->timx_settings.CounterMode);
-
     LL_TIM_SetTriggerOutput(setted->timx, setted->trigger_output);
     LL_TIM_EnableCounter(setted->timx);
     LL_TIM_EnableUpdateEvent(setted->timx);

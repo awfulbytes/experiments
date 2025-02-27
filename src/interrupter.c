@@ -1,4 +1,5 @@
 #include "interrupter.h"     // Do i need this to be here or i can put all of them in main.h.... mooooore files more kBits...
+#include "cmsis_gcc.h"
 #include "stm32g071xx.h"
 #include "stm32g0xx.h"
 #include "stm32g0xx_hal_cortex.h"
@@ -35,9 +36,9 @@ void main() {
         dma_config(dma_chans[i]);
     }
     for (int i=0; i < 2; i++){
-        tim_init(44100, timers[i]);
+        tim_init(44000, timers[i]);
     }
-    tim_init(44100, &tim2_settings);
+    tim_init(44000, &tim2_settings);
     adc_init_settings(&pitch0cv_in);
 
     for (int i=0; i<2; i++){
@@ -45,15 +46,42 @@ void main() {
         dac_act(dacs_settings[i]);
     }
     while (1) {
-        if (pitch0cv_in.roof == 0x69){
-            int32_t diff = prev_value - *pitch0cv_in.data;
-            if ((((diff < 0) ? -diff : diff) > 5)) {
-                // GPIOB->ODR ^= (1 << 3);
-                // pitch0_value = map_12b_to_hz(*pitch0cv_in.data);
-                prev_value = *pitch0cv_in.data;
-                phase_pending_update = true;
-            }
-            pitch0cv_in.roof = 'D';
+        // if (pitch0cv_in.roof == 0x69){
+        //     pitch0cv_in.roof = 'D';
+        // }
+        if (phase_pending_update) {
+            uint16_t note_to_hz = map_12b_to_hz(prev_value);
+            alter_wave_frequency(note_to_hz);
+            // __disable_irq();
+            // if (phase_pending_update_inc < 0x01000000) {
+            //     phase_pending_update_inc = 0x01000000;
+            // } else if (phase_pending_update_inc > 0x1aff11a) {
+            //     phase_pending_update_inc = 0x1aff11a;
+            // } else if (phase_pending_update_inc < 0x00100000){
+            //     GPIOB->ODR ^= (1<<3);
+            // }
+            // else {
+            //     phase_inc = phase_pending_update_inc;
+            // }
+            if (phase_inc == 0x01000000) {
+                phase_inc = 0x1aff11a;
+            } else if (phase_inc == 0x1aff11a) {
+                phase_inc = 0x01'00'00'00;}
+            // __enable_irq();
+            // if (phase_pending_update_inc > (0x01'00'00'00 << 6)) {
+            //     // phase_inc = 0x01'00'00'00;
+
+            // } else if ((phase_pending_update_inc < 0x01'00'00'00)) {
+            // }
+            // else {
+            //     // phase_inc = phase_pending_update_inc;
+            //     // NOTE:: this seems to imply that the reason of hardlocking
+            //     //        is due to 64 bit calculation... i may need to do this
+            //     //        on native word sized double buffer struct for the 2 parts
+            //     //        this is HARD though
+            // }
+            phase_pending_update = !phase_pending_update;
+            // __enable_irq();
         }
         if (wave_choise_dac1.flag == 0x69) {
             // alter_wave_frequency(prev_value);

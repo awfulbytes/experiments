@@ -31,11 +31,7 @@ static ErrorStatus adc_dma_setup(struct adc *adc) {
 
     adc->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &adc->adcx->DR;
     adc->dmax_settings.MemoryOrM2MDstAddress = (uint32_t) adc->data;  // single buffer
-      /* DMA_InitStruct.Priority = 0x03;  // Lower than DAC DMA */
     LL_DMA_Init(adc->dmax, adc->dma_channel, &adc->dmax_settings);
-
-    /* NVIC_SetPriority(DMA1_Channel1_IRQn, 0x03); */
-    /* NVIC_EnableIRQ(DMA1_Channel1_IRQn); */
 
     LL_DMA_EnableIT_TE(adc->dmax, adc->dma_channel);
     LL_DMA_EnableIT_TC(adc->dmax, adc->dma_channel);
