@@ -32,7 +32,11 @@ int main(){
         printf("%d\t%lu\t\t%lx\n", i+1, freqs[i], incs[i]);
     }
     printf("\n~~~~~~~~~ Needed from OG table ~~~~~~~~~\n\n");
-    for (uint64_t i=0; i<21; i+=2) {
+    for (uint64_t i=0; i<21; i++) {
+        int count = 0;
+        ((freqs[i] == freqs[i+1]) ? i++ : i);
+        (idx(i) == 5 ?  count++ : count);
+        if (count == 2) {i = 8;}
         printf("%lu\t%lu\t\t%lx\n", idx(i), freqs[i], incs[i]);
     }
     assert(freqs[0] == 440);
