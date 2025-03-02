@@ -51,8 +51,10 @@ void main() {
         // }
         if (phase_pending_update) {
             uint16_t note_to_hz = map_12b_to_hz(prev_value);
-            alter_wave_frequency(note_to_hz);
             // __disable_irq();
+            // alter_wave_frequency(note_to_hz);
+            // __enable_irq();
+            // phase_pending_update_inc = (( (((output_freq) * (1UL << 32)) )) / 44000);
             // if (phase_pending_update_inc < 0x01000000) {
             //     phase_pending_update_inc = 0x01000000;
             // } else if (phase_pending_update_inc > 0x1aff11a) {
@@ -63,10 +65,10 @@ void main() {
             // else {
             //     phase_inc = phase_pending_update_inc;
             // }
-            if (phase_inc == 0x01000000) {
-                phase_inc = 0x1aff11a;
-            } else if (phase_inc == 0x1aff11a) {
-                phase_inc = 0x01'00'00'00;}
+            // if (phase_inc == 0x01000000) {
+            //     phase_inc = 0x1220000;
+            // } else if (phase_inc == 0x1220000) {
+            //     phase_inc = 0x01'00'00'00;}
             // __enable_irq();
             // if (phase_pending_update_inc > (0x01'00'00'00 << 6)) {
             //     // phase_inc = 0x01'00'00'00;
@@ -74,13 +76,15 @@ void main() {
             // } else if ((phase_pending_update_inc < 0x01'00'00'00)) {
             // }
             // else {
-            //     // phase_inc = phase_pending_update_inc;
+            // phase_inc = phase_pending_update_inc;
             //     // NOTE:: this seems to imply that the reason of hardlocking
             //     //        is due to 64 bit calculation... i may need to do this
             //     //        on native word sized double buffer struct for the 2 parts
             //     //        this is HARD though
             // }
+
             phase_pending_update = !phase_pending_update;
+            phase_done_update = !phase_done_update;
             // __enable_irq();
         }
         if (wave_choise_dac1.flag == 0x69) {

@@ -1,4 +1,5 @@
 #include "stm32g0xx_it.h"
+#include "cmsis_gcc.h"
 #include "errors.h"
 // #include "dac.h"
 #include "dma.h"
@@ -13,6 +14,7 @@ extern volatile uint64_t phase_inc;
 extern volatile uint16_t prev_value;
 extern volatile uint16_t pitch0_value;
 extern volatile bool phase_pending_update;
+extern volatile bool phase_done_update;
 extern volatile uint64_t phase_pending_update_inc;
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
 extern uint16_t dac_double_buff[256], dac_double_buff2[256];
@@ -50,6 +52,12 @@ void DMA1_Channel2_3_IRQHandler(void){
     if ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3){
         (DMA1->IFCR) = (DMA_IFCR_CTCIF3);
         update_ping_pong_buff(wave_me_d, &dac_double_buff[128], 128);
+    }
+    if (phase_done_update) {
+        GPIOB->ODR ^= (1<<3);
+        // phase_inc = 0x00001e3a544; //12200000000
+        // phase_inc = phase_pending_update_inc; //12200000000
+        phase_done_update = false;
     }
     if (LL_DMA_IsActiveFlag_TE2(DMA1) == SET){
         LL_DMA_ClearFlag_TE2(DMA1);
