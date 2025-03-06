@@ -11,34 +11,36 @@ uint64_t phase_inc = 0x01000000;
 // uint64_t phase_inc = 0x01011761;
 
 bool phase_pending_update;
-uint64_t phase_pending_update_inc;
+uint64_t phase_pending_update_inc = 0;
 uint16_t some[256];
 uint16_t some2[256];
 uint16_t full[256];
 uint16_t sine_upd[256];
 
 uint32_t master_clock = 44000;
-uint32_t required_freq = 262;
+uint32_t required_freq = 440;
 uint16_t acc_bits = sizeof(phase_accum) * 8;
 
 void test_phase_increment(){
     uint32_t old_freq = ((phase_inc * master_clock) >> acc_bits);
-    uint64_t new_incr = ((required_freq * (1UL<<acc_bits)) / master_clock) + 1;
+    uint64_t new_incr = ((required_freq * (1UL<<acc_bits)) / master_clock);
     uint64_t new_req = ((new_incr * master_clock) >> acc_bits);
     // assert(required_freq == new_req);
     // assert((old_freq < new_req) && (phase_inc < new_incr));
     printf("requested:\t%u[Hz]\n_old_shit:\t%u[Hz]\ngot-back:\t%lu[Hz]\n",
            required_freq, old_freq, new_req);
-    alter_wave_frequency(262);
+    // alter_wave_frequency(440);
     // assert(phase_pending_update_inc == new_incr);
-    uint32_t test_mapper = map_12b_to_hz(0xfff);
-    alter_wave_frequency(test_mapper);
-    uint32_t pending_freq = ((phase_pending_update_inc * master_clock) >> acc_bits) + 1;
+    uint64_t test_mapper = map_12b_to_hz(0x7ff);
+    phase_pending_update_inc = test_mapper;
+    // alter_wave_frequency(test_mapper);
+    printf("this is the mapper: %lx", test_mapper);
+    uint64_t pending_freq = ((phase_pending_update_inc * master_clock) >> acc_bits);
     // assert(phase_pending_update_inc > new_incr);
     printf("\n------- phase values -------\n");
-    printf("%lu\t%lu\n", (2000UL<<32)/44000, sizeof(phase_pending_update_inc) * 8);
+    // printf("%lu\t%lu\n", (2000UL<<32)/44000, sizeof(phase_pending_update_inc) * 8);
     printf("pending_incr:\t%lx\n", phase_pending_update_inc);
-    printf("pen_max_freq:\t%u\n", pending_freq);
+    printf("pen_max_freq:\t%lu\n", pending_freq);
     printf("o_g_val_incr:\t%lx\n", phase_inc);
     printf("new_val_incr:\t%lx\n", new_incr);
     uint32_t differ = phase_pending_update_inc - phase_inc;
