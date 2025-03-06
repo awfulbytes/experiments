@@ -29,12 +29,12 @@ void test_phase_increment(){
     // assert((old_freq < new_req) && (phase_inc < new_incr));
     printf("requested:\t%u[Hz]\n_old_shit:\t%u[Hz]\ngot-back:\t%lu[Hz]\n",
            required_freq, old_freq, new_req);
-    // alter_wave_frequency(440);
+    uint32_t test_mapper = alter_wave_frequency(830);
     // assert(phase_pending_update_inc == new_incr);
-    uint64_t test_mapper = map_12b_to_hz(0x7ff);
+    // uint64_t test_mapper = map_12b_to_hz(0x7ff);
     phase_pending_update_inc = test_mapper;
     // alter_wave_frequency(test_mapper);
-    printf("this is the mapper: %lx", test_mapper);
+    printf("this is the mapper: %x", test_mapper);
     uint64_t pending_freq = ((phase_pending_update_inc * master_clock) >> acc_bits);
     // assert(phase_pending_update_inc > new_incr);
     printf("\n------- phase values -------\n");

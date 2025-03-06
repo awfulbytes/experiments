@@ -54,9 +54,8 @@ void DMA1_Channel2_3_IRQHandler(void){
         update_ping_pong_buff(wave_me_d, &dac_double_buff[128], 128);
     }
     if (phase_done_update) {
-        GPIOB->ODR ^= (1<<3);
         // phase_inc = 0x00001e3a544; //12200000000
-        // phase_inc = phase_pending_update_inc; //12200000000
+        phase_inc = phase_pending_update_inc; //12200000000
         phase_done_update = false;
     }
     if (LL_DMA_IsActiveFlag_TE2(DMA1) == SET){
@@ -70,7 +69,7 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         uint16_t current = pitch0_value;
         int32_t diff = current - prev_value;
-        if ((((diff < 0) ? -diff : diff) > 100)) {
+        if ((((diff < 0) ? -diff : diff) > 5)) {
             prev_value = current;
             // GPIOB->ODR ^= (1 << 3);
             // __disable_irq();

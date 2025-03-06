@@ -7,6 +7,7 @@
 #include "stm32g0xx_ll_bus.h"
 #include "stm32g0xx_ll_dma.h"
 #include "sysclk.c"
+#include <stdatomic.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -32,6 +33,7 @@ void main() {
     debug_tim2_pin31();
 #else
 #endif
+    // osc_lut_inc_generator();
     for (int i=0; i < 2; i++) {
         dma_config(dma_chans[i]);
     }
@@ -50,9 +52,9 @@ void main() {
         //     pitch0cv_in.roof = 'D';
         // }
         if (phase_pending_update) {
-            uint16_t note_to_hz = map_12b_to_hz(prev_value);
+            uint32_t note_to_hz = map_12b_to_hz(prev_value);
             // __disable_irq();
-            // alter_wave_frequency(note_to_hz);
+            phase_pending_update_inc = alter_wave_frequency(note_to_hz);
             // __enable_irq();
             // phase_pending_update_inc = (( (((output_freq) * (1UL << 32)) )) / 44000);
             // if (phase_pending_update_inc < 0x01000000) {
@@ -83,8 +85,8 @@ void main() {
             //     //        this is HARD though
             // }
 
-            phase_pending_update = !phase_pending_update;
-            phase_done_update = !phase_done_update;
+            phase_pending_update = false;
+            phase_done_update = true;
             // __enable_irq();
         }
         if (wave_choise_dac1.flag == 0x69) {
