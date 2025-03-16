@@ -10,12 +10,10 @@
 #include "stm32g0xx_ll_tim.h"
 #include <stdint.h>
 // #define DEBUG
-extern volatile uint64_t phase_inc;
 extern volatile uint16_t prev_value;
 extern volatile uint16_t pitch0_value;
-extern volatile bool phase_pending_update;
+extern struct nco l_osc, r_osc;
 extern volatile bool phase_done_update;
-extern volatile uint64_t phase_pending_update_inc;
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
 extern uint16_t dac_double_buff[256], dac_double_buff2[256];
 // extern struct dma dac_1_dma;
@@ -47,15 +45,15 @@ void TIM7_LPTIM2_IRQHandler(void){
 void DMA1_Channel2_3_IRQHandler(void){
     if ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3) {
         (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
-        update_ping_pong_buff(wave_me_d, dac_double_buff, 128);
+        update_ping_pong_buff(wave_me_d, dac_double_buff, 128, &l_osc);
     }
     if ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3){
         (DMA1->IFCR) = (DMA_IFCR_CTCIF3);
-        update_ping_pong_buff(wave_me_d, &dac_double_buff[128], 128);
+        update_ping_pong_buff(wave_me_d, &dac_double_buff[128], 128, &l_osc);
     }
     if (phase_done_update) {
         // phase_inc = 0x00001e3a544; //12200000000
-        phase_inc = phase_pending_update_inc; //12200000000
+        l_osc.phase_inc = l_osc.phase_pending_update_inc; //12200000000
         phase_done_update = false;
     }
     if (LL_DMA_IsActiveFlag_TE2(DMA1) == SET){
@@ -74,7 +72,7 @@ void TIM2_IRQHandler(void) {
             // GPIOB->ODR ^= (1 << 3);
             // __disable_irq();
             // __enable_irq();
-            phase_pending_update = true;
+            l_osc.phase_pending_update = true;
         }
 #ifdef DEBUG
         GPIOB->ODR ^= (1 << 3);

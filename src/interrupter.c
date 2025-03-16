@@ -17,10 +17,9 @@ void main() {
     gpio_init(wave_buttons, dacs, &pitch_0_cv);
     // FIXME::::::::::::::::::::::::
     // alter_wave_frequency(4095);
-    update_ping_pong_buff(wave_me_d, dac_double_buff, 128);
-    update_ping_pong_buff(wave_me_d, dac_double_buff + 128, 128);
-    update_ping_pong_buff(wave_me_d2, dac_double_buff2, 128);
-    update_ping_pong_buff(wave_me_d2, &dac_double_buff2[128], 128);
+    update_ping_pong_buff(wave_me_d, dac_double_buff, 128, &l_osc);
+    update_ping_pong_buff(wave_me_d, dac_double_buff + 128, 128, &l_osc);
+    update_ping_pong_buff(wave_me_d2, dac_double_buff2, 256, &r_osc);
 #if defined(DEBUG) || defined(DEBUGDAC)
     debug_tim2_pin31();
 #else
@@ -40,12 +39,12 @@ void main() {
         dac_act(dacs_settings[i]);
     }
     while (1) {
-        if (phase_pending_update) {
+        if (l_osc.phase_pending_update) {
             uint32_t note_to_hz = map_12b_to_hz(prev_value);
             // __disable_irq();
-            phase_pending_update_inc = alter_wave_frequency(note_to_hz);
+            l_osc.phase_pending_update_inc = alter_wave_frequency(note_to_hz);
 
-            phase_pending_update = false;
+            l_osc.phase_pending_update = false;
             phase_done_update = true;
             // __enable_irq();
         }
@@ -57,10 +56,10 @@ void main() {
             // TODO::
             //     This currently breakes me...
             //     should investigate how can i use the second dac for L R
-            // __disable_irq();
-            // // update_ping_pong_buff(wave_me_d2, dac_double_buff2, 128);
+            __disable_irq();
+            update_ping_pong_buff(wave_me_d2, dac_double_buff2, 256, &r_osc);
             // // update_ping_pong_buff(wave_me_d2, dac_double_buff2 + 128, 128);
-            // __enable_irq();
+            __enable_irq();
         }
     }
 }

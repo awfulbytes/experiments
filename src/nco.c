@@ -3,22 +3,18 @@
 #include <stdint.h>
 // #define TEST
 // DDS variables (phase accumulator technique)
-volatile uint32_t phase_accum = 0;
-volatile uint64_t phase_inc = 0x001000000;
-volatile bool phase_pending_update = false;
-volatile uint64_t phase_pending_update_inc = 0x001000000;
 
 void update_ping_pong_buff
-(volatile const uint16_t data[static 128], uint16_t bufferSection[static 128], uint16_t sectionLength) {
+(volatile const uint16_t data[static 128], uint16_t bufferSection[static 128], uint16_t sectionLength, struct nco *nco) {
     for (uint16_t i = 0; i < sectionLength; i++) {
-        uint32_t index = (uint32_t) (((uint64_t) phase_accum * (1 << 7)) >> 32) % 128;
-        // uint32_t index = phase_accum << 24;
+        uint32_t index = (uint32_t) (((uint64_t) nco->phase_accum * (1 << 7)) >> 32) % 128;
+        // uint32_t index = nco->phase_accum << 24;
         bufferSection[i] = (uint16_t) data[index];
 
-        phase_accum += phase_inc;
+        nco->phase_accum += nco->phase_inc;
 #ifdef TEST
         #include "stdio.h"
-        printf("accum: %d\n", phase_accum);
+        printf("accum: %d\n", nco->phase_accum);
 #endif // TEST
     }
 }
