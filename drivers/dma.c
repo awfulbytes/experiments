@@ -15,11 +15,15 @@ void dma_config(struct dma *dma){
     switch (dma->channel) {
         case LL_DMA_CHANNEL_3:
             dma->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &DAC1->DHR12R1;
+            LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_3);
+            LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_3);
             // LL_DMA_EnableIT_HT(dma->dmax, dma->channel);
             // LL_DMA_EnableIT_TC(dma->dmax, dma->channel);
             break;
         case LL_DMA_CHANNEL_2:
             dma->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &DAC1->DHR12R2;
+            // LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_2);
+            // LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_2);
             break;
         default:
             break;
@@ -27,15 +31,16 @@ void dma_config(struct dma *dma){
     dma->dmax_settings.MemoryOrM2MDstAddress = (uint32_t) dma->data;
     LL_DMA_Init(dma->dmax, dma->channel, &dma->dmax_settings);
 
-    LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_3);
-    LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_3);
-    // LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_2);
-    // LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_2);
+    // LL_DMA_EnableIT_HT(dma->dmax, dma->channel);
+    // LL_DMA_EnableIT_TC(dma->dmax, dma->channel);
     LL_DMA_EnableIT_TE(dma->dmax, dma->channel);
+    // LL_DMA_EnableIT_TC(dma->dmax, dma->channel);
     LL_DMA_EnableChannel(dma->dmax, dma->channel);
     while (!LL_DMA_IsEnabledChannel(dma->dmax, dma->channel)) {}
 }
 
+// LEGACY:: this can be removed later but is a nice way to change the
+//          waveform if i dont succeed
 ErrorStatus alter_wave_form(const uint16_t *data, struct dma *dma){
     dma->chan->CCR &= ~DMA_CCR_EN;
     dma->chan->CMAR = (uint32_t) data;

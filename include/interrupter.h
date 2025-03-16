@@ -10,22 +10,19 @@
 #include "dma.h"
 #include "nco.h"
 #include <stdint.h>
-#include <stdbool.h>
-_Bool someother = 0;
-bool some = true;
 
 #if defined(USE_FULL_ASSERT)
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
 volatile uint16_t pitch0_value = 0xff;
 volatile uint16_t prev_value = 1;
-volatile uint32_t phase_accum = 0;
-volatile uint64_t phase_inc = 0x001000000;
-volatile uint64_t phase_pending_update_inc = 0x001000000;
-volatile bool phase_pending_update = false;
+extern volatile uint32_t phase_accum;
+extern volatile uint64_t phase_inc;
+extern volatile uint64_t phase_pending_update_inc;
+extern volatile bool phase_pending_update;
 volatile bool phase_done_update = false;
-uint16_t dac_double_buff[256] = {};
-uint16_t dac_double_buff2[256] = {};
+uint16_t dac_double_buff[256] = {0};
+uint16_t dac_double_buff2[256] = {0};
 struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim7_settings = {.timx=TIM7, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim2_settings = {.timx=TIM2, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2, .trigger_output=LL_TIM_TRGO_UPDATE};

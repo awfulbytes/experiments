@@ -1,17 +1,17 @@
 #include "nco.h"
 // #include "stm32g071xx.h"
-#include <stdbool.h>
 #include <stdint.h>
 // #define TEST
 // DDS variables (phase accumulator technique)
-extern volatile uint32_t phase_accum;
-extern volatile uint64_t phase_inc;
-extern volatile bool phase_pending_update;
-extern volatile uint64_t phase_pending_update_inc;
+volatile uint32_t phase_accum = 0;
+volatile uint64_t phase_inc = 0x001000000;
+volatile bool phase_pending_update = false;
+volatile uint64_t phase_pending_update_inc = 0x001000000;
 
-void update_ping_pong_buff(volatile const uint16_t *data, uint16_t *bufferSection, uint16_t sectionLength) {
+void update_ping_pong_buff
+(volatile const uint16_t data[static 128], uint16_t bufferSection[static 128], uint16_t sectionLength) {
     for (uint16_t i = 0; i < sectionLength; i++) {
-        uint32_t index = (uint32_t) (((uint64_t) phase_accum * (1 << 7)) >> 32);
+        uint32_t index = (uint32_t) (((uint64_t) phase_accum * (1 << 7)) >> 32) % 128;
         // uint32_t index = phase_accum << 24;
         bufferSection[i] = (uint16_t) data[index];
 
@@ -23,7 +23,7 @@ void update_ping_pong_buff(volatile const uint16_t *data, uint16_t *bufferSectio
     }
 }
 
-uint64_t map_12b_to_hz(uint16_t value) {
+uint32_t map_12b_to_hz(uint16_t value) {
     uint16_t in_max = 0xfff;
     uint32_t min = 440;
     uint32_t max = 830; // NOTE:: off by 1
@@ -51,17 +51,18 @@ const uint32_t osc_oct_incs[12]={0x28f5c28, 0x2b652fa, 0x2df9c9f, 0x30b5b6a,
 //     }
 // }
 
-static uint64_t search(uint32_t item, const uint32_t *arr){
-    int found = 0;
-    uint64_t curr = ((uint64_t) (((uint64_t)item) << 32)) / 44000;
-    for (int i=0; i<12; i++) {
-        if (curr == arr[i]){
-            found = i;
-            break;
-        }
-    }
-    return arr[found];
-}
+// DEPRECATED:: left for education
+// static uint64_t search(uint32_t item, const uint32_t *arr){
+//     int found = 0;
+//     uint64_t curr = ((uint64_t) (((uint64_t)item) << 32)) / 44000;
+//     for (int i=0; i<12; i++) {
+//         if (curr == arr[i]){
+//             found = i;
+//             break;
+//         }
+//     }
+//     return arr[found];
+// }
 
 uint32_t alter_wave_frequency (uint32_t output_freq){
     uint32_t found = 0;
@@ -71,30 +72,5 @@ uint32_t alter_wave_frequency (uint32_t output_freq){
             break;
         } else {continue;}
     }
-    // NOTE::: i may excede the cpu cycles on hand....
-    //         i have 64 MHz / 44100 = ~1454 cycles ....
-    //         i need a HACK
-    // phase_pending_update_inc = // search(output_freq, incs);
-    //         ((uint64_t) (((uint64_t) output_freq) << 32)) / 44000;
-
-    // FIXME:: will not work on 32 bit interrupt systems
-    //         i need os lock for this and i dont want to deal with RTOS...
-    // atomic_uint_least64_t freq = (atomic_uint_least64_t) 0x001000000;
-    // atomic_load(&freq);
-    // if (output_freq <= 442) {
-    //     phase_pending_update_inc =
-    //         // ((uint64_t) (((uint64_t) output_freq) << 32)) / 44000;
-    //         osc_oct_incs[0];
-    //         // 0x28f5c28;
-    // } else if (output_freq <= 635 && output_freq > 630) {
-    //     phase_pending_update_inc =
-    //         osc_oct_incs[5];
-    // } else if (output_freq == 830) {
-    //     phase_pending_update_inc =
-    //         osc_oct_incs[11];
-    // }
-    // else {
-    //     phase_pending_update_inc = incs[1];
-    // }
     return osc_oct_incs[found];
 }

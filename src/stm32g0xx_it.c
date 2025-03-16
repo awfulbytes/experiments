@@ -69,7 +69,7 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         uint16_t current = pitch0_value;
         int32_t diff = current - prev_value;
-        if ((((diff < 0) ? -diff : diff) > 5)) {
+        if ((((diff < 0) ? -diff : diff) > 2)) {
             prev_value = current;
             // GPIOB->ODR ^= (1 << 3);
             // __disable_irq();
@@ -85,10 +85,12 @@ void TIM2_IRQHandler(void) {
 void EXTI4_15_IRQHandler(void) {
     if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line) {
         (EXTI->RPR1) = (wave_choise_dac1.exti.exti_line);
+        wave_button_callback(&wave_choise_dac1);
         wave_choise_dac1.flag = 'i';
     }
     if ((EXTI->RPR1 & wave_choise_dac2.exti.exti_line) == wave_choise_dac2.exti.exti_line) {
         (EXTI->RPR1) = (wave_choise_dac2.exti.exti_line);
+        wave_button_callback(&wave_choise_dac2);
         wave_choise_dac2.flag = 'i';
     }
 }

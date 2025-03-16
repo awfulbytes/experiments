@@ -4,14 +4,14 @@
 #include <stdio.h>
 #include "nco.h"
 #include "forms.h"
-uint32_t phase_accum;
+extern uint32_t phase_accum;
 // uint16_t phase_inc = 0x7ff;
-// uint64_t phase_inc = 0x001301b0;
-uint64_t phase_inc = 0x01000000;
+extern uint64_t phase_inc;
+// uint64_t phase_inc = 0x01000000;
 // uint64_t phase_inc = 0x01011761;
 
-bool phase_pending_update;
-uint64_t phase_pending_update_inc = 0;
+extern bool phase_pending_update;
+extern uint64_t phase_pending_update_inc;
 uint16_t some[256];
 uint16_t some2[256];
 uint16_t full[256];
@@ -29,7 +29,7 @@ void test_phase_increment(){
     // assert((old_freq < new_req) && (phase_inc < new_incr));
     printf("requested:\t%u[Hz]\n_old_shit:\t%u[Hz]\ngot-back:\t%lu[Hz]\n",
            required_freq, old_freq, new_req);
-    uint32_t test_mapper = alter_wave_frequency(830);
+    uint32_t test_mapper = alter_wave_frequency(831);
     // assert(phase_pending_update_inc == new_incr);
     // uint64_t test_mapper = map_12b_to_hz(0x7ff);
     phase_pending_update_inc = test_mapper;
@@ -54,7 +54,7 @@ void test_ping_pong(){
     update_ping_pong_buff(sine_wave, some, 128);
     update_ping_pong_buff(sine_wave, &some[128], 128);
     update_ping_pong_buff(sine_wave, some2, 128);
-    update_ping_pong_buff(sine_wave, &some2[128], 128);
+    update_ping_pong_buff(sine_wave, some2 + 128, 128);
     update_ping_pong_buff(sine_wave, full, 256);
     for (int i=0; i<256; i++) {
         // printf("%d\t\t %d   %d    %d\n", i, some[i], some2[i], full[i]);
