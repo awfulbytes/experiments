@@ -1,15 +1,27 @@
 #include "nco.h"
+#include <string.h>
 // #include "stm32g071xx.h"
 #include <stdint.h>
 // #define TEST
 // DDS variables (phase accumulator technique)
 
+static uint32_t compute_static_lut_index(struct nco nco[static 1]){
+    return (uint32_t) (((uint64_t) nco->phase_accum * (1<<7))>>32) % 128;
+}
+
 void update_ping_pong_buff
 (volatile const uint16_t data[static 128], uint16_t bufferSection[static 128], uint16_t sectionLength, struct nco *nco) {
-    for (uint16_t i = 0; i < sectionLength; i++) {
-        uint32_t index = (uint32_t) (((uint64_t) nco->phase_accum * (1 << 7)) >> 32) % 128;
+    for (uint16_t i = 0; i < sectionLength; ++i) {
+        // uint32_t index = (uint32_t) (((uint64_t) nco->phase_accum * (1 << 7)) >> 32) % 128;
+        uint32_t index = compute_static_lut_index(nco);
         // uint32_t index = nco->phase_accum << 24;
-        bufferSection[i] = (uint16_t) data[index];
+        // HACK:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        //        DO NOT CAST...
+        //        memcpy explicitly takes care of size!!
+        memcpy(bufferSection + i, data + index, sizeof(uint16_t));
+        // bufferSection[i] >>= 1;
+        // bufferSection[i] = (uint16_t) data[index];
+        // HACK:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
         nco->phase_accum += nco->phase_inc;
 #ifdef TEST
@@ -35,7 +47,7 @@ uint32_t map_12b_to_hz(uint16_t value) {
 //                      830.61, 830.61};
 uint32_t freqs[12]={440, 467, 494, 524,
                     555, 588, 623, 660,
-                    699, 740, 784, 831};
+                    699, 740, 784, 830};
 
 const uint32_t osc_oct_incs[12]={0x28f5c28, 0x2b652fa, 0x2df9c9f, 0x30b5b6a,
                          0x339b57b, 0x36acd24, 0x39ed026, 0x3d5f013,
@@ -62,11 +74,11 @@ const uint32_t osc_oct_incs[12]={0x28f5c28, 0x2b652fa, 0x2df9c9f, 0x30b5b6a,
 
 uint32_t alter_wave_frequency (uint32_t output_freq){
     uint32_t found = 0;
-    for (int i=0; i<12; i++) {
-        if (output_freq > freqs[i] && output_freq <= freqs[i+1]){
-            found = i;
+    for (int i=0; i<12; ++i) {
+        if (output_freq > freqs[i] && output_freq < freqs[i+1]){
+            found = i + 1;
             break;
-        } else {continue;}
+        } else {found = i;}
     }
     return osc_oct_incs[found];
 }

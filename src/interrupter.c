@@ -40,13 +40,11 @@ void main() {
     }
     while (1) {
         if (l_osc.phase_pending_update) {
-            uint32_t note_to_hz = map_12b_to_hz(prev_value);
+            // uint32_t note_to_hz = map_12b_to_hz(prev_value);
             // __disable_irq();
-            l_osc.phase_pending_update_inc = alter_wave_frequency(note_to_hz);
-
+            l_osc.phase_pending_update_inc = osc_fine_incs[prev_value];
             l_osc.phase_pending_update = false;
             phase_done_update = true;
-            // __enable_irq();
         }
         if (wave_choise_dac1.flag == 0x69) {
             wave_me_d = waves_bank[wave_choise_dac1.state];

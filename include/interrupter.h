@@ -16,8 +16,14 @@
 #endif /* USE_FULL_ASSERT */
 volatile uint16_t pitch0_value = 0xff;
 volatile uint16_t prev_value = 1;
-struct nco l_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00, .phase_pending_update=false, .phase_pending_update_inc=0};
-struct nco r_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00, .phase_pending_update=false, .phase_pending_update_inc=0};
+struct nco l_osc = {.phase_accum = 0,
+                    .phase_inc = 0x01'00'00'00,
+                    .phase_pending_update_inc=0,
+                    .phase_pending_update=false};
+struct nco r_osc = {.phase_accum = 0,
+                    .phase_inc = 0x01'00'00'00,
+                    .phase_pending_update_inc=0,
+                    .phase_pending_update=false};
 // extern volatile uint32_t phase_accum;
 // extern volatile uint64_t phase_inc;
 // extern volatile uint64_t phase_pending_update_inc;

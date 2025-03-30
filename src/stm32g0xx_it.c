@@ -67,7 +67,7 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         uint16_t current = pitch0_value;
         int32_t diff = current - prev_value;
-        if ((((diff < 0) ? -diff : diff) > 2)) {
+        if ((((diff < 0) ? -diff : diff) > 15)) {
             prev_value = current;
             // GPIOB->ODR ^= (1 << 3);
             // __disable_irq();

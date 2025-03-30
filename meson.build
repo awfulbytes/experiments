@@ -47,7 +47,8 @@ arm_sources += files(
   'ventor/cmsis-core/DSP/Source/CommonTables/arm_common_tables.c',
 )
 inc_dir = include_directories('include')
-core_inc_dir = include_directories('include/Core/Include')
+core_inc_dir = include_directories('include/Core/Include',
+                                  '/usr/include')
 cmsis_dev_inc = include_directories('ventor/cmsis_device_g0/Include',
                                    'ventor/cmsis-core/DSP/Include',
                                    )
@@ -105,7 +106,7 @@ custom_target('stm32.bin',
 
 run_target(
   'bin_size',
-  command: [size, '--format=GNU', '-t', 'testershit', 'stripped.elf'],
+  command: [size, '--format=sysv', '--common', 'testershit', 'stripped.elf'],
 )
 flash = find_program('st-flash')
 run_target(
