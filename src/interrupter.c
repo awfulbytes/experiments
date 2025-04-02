@@ -42,10 +42,12 @@ void main() {
         if (l_osc.phase_pending_update) {
             // uint32_t note_to_hz = map_12b_to_hz(prev_value);
             // __disable_irq();
-    // uint32_t tmp = ((required_freq * (1<<16)) / master_clock) + 1;
-    // uint64_t new_incr = tmp << 16;
-    // uint64_t new_req = ((new_incr * master_clock) >> acc_bits);
-            l_osc.phase_pending_update_inc = osc_fine_incs[prev_value];
+            uint32_t tmp = ((prev_value * (1<<16)) / 44000) + 1;
+            uint64_t new_incr = tmp << 16;
+            // uint64_t new_req = ((new_incr * master_clock) >> acc_bits);
+            l_osc.phase_pending_update_inc =
+                new_incr;
+                // osc_fine_incs[prev_value];
             l_osc.phase_pending_update = false;
             phase_done_update = true;
         }
