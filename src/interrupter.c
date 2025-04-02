@@ -47,9 +47,7 @@ void main() {
         }
         if (wave_choise_dac2.flag == 0x69) {
             wave_me_d2 = waves_bank[wave_choise_dac2.state];
-            __disable_irq();
             update_ping_pong_buff(wave_me_d2, dac_double_buff2, 256, &r_osc);
-            __enable_irq();
         }
     }
 }
