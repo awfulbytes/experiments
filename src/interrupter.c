@@ -3,6 +3,8 @@
 volatile const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn};
 volatile const uint16_t *wave_me_d = sine_wave;
 volatile const uint16_t *wave_me_d2 = sine_wave;
+
+
 void main() {
     struct timer *timers[2] = {&tim6_settings, &tim7_settings};
     struct button *wave_buttons[2] = {&wave_choise_dac1, &wave_choise_dac2};
@@ -20,10 +22,10 @@ void main() {
 #endif
     for (int i=0; i < 2; i++) {
         dma_config(dma_chans[i]);
-        tim_init(44000, timers[i]);
+        tim_init(master_clock, timers[i]);
     }
 
-    tim_init(44000, &tim2_settings);
+    tim_init(master_clock, &tim2_settings);
     adc_init_settings(&pitch0cv_in);
 
     for (int i=0; i<2; i++){
@@ -33,7 +35,7 @@ void main() {
     while (1) {
         if (l_osc.phase_pending_update) {
             prev_value = map_12b_to_hz(prev_value);
-            uint32_t tmp = ((prev_value * (1<<16)) / 44000) + 1;
+            uint32_t tmp = ((prev_value * (1<<16)) / master_clock);
             uint64_t new_incr = tmp << 16;
             // uint64_t new_req = ((new_incr * master_clock) >> acc_bits);
             l_osc.phase_pending_update_inc = new_incr;

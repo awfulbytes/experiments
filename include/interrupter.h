@@ -11,6 +11,8 @@
 #include "nco.h"
 #include <stdint.h>
 
+#define master_clock 44000
+
 #if defined(USE_FULL_ASSERT)
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */

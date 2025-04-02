@@ -10,6 +10,7 @@
 #include "stm32g0xx_ll_tim.h"
 #include <stdint.h>
 // #define DEBUG
+#define abs(x) ((x<0) ? -x : x)
 extern volatile uint16_t prev_value;
 extern volatile uint16_t pitch0_value;
 extern struct nco l_osc, r_osc;
@@ -66,7 +67,7 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         uint16_t current = pitch0_value;
         int32_t diff = current - prev_value;
-        if ((((diff < 0) ? -diff : diff) > 15)) {
+        if ((abs(diff) > 1)) {
             prev_value = current;
             // GPIOB->ODR ^= (1 << 3);
             // __disable_irq();
