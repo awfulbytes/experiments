@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <string.h>
 #include "nco.h"
 #include "forms.h"
 
@@ -21,7 +20,7 @@ uint16_t acc_bits = sizeof(l_osc.phase_accum) * 8;
 void test_phase_increment(){
     uint32_t old_freq = ((l_osc.phase_inc * master_clock) >> acc_bits);
     uint32_t tmp = ((required_freq * (1<<16)) / master_clock) + 1;
-    uint64_t new_incr = (tmp) << 16;
+    uint64_t new_incr = tmp << 16;
     uint64_t new_req = ((new_incr * master_clock) >> acc_bits);
     // assert(required_freq == new_req);
     assert((old_freq < new_req) && (l_osc.phase_inc < new_incr));
@@ -44,14 +43,15 @@ void test_ping_pong(){
     alter_wave_frequency(test_mapper);
     // assert(phase_inc == 0x01000000>>1);
     update_ping_pong_buff(sine_wave, some, 128, &l_osc);
-    update_ping_pong_buff(sine_wave, &some[128], 128, &l_osc);
+    update_ping_pong_buff(sine_wave, some + 128, 128, &l_osc);
     update_ping_pong_buff(sine_wave, some2, 128, &l_osc);
     update_ping_pong_buff(sine_wave, some2 + 128, 128, &l_osc);
     update_ping_pong_buff(sine_wave, full, 256, &l_osc);
     for (int i=0; i<256; ++i) {
-        printf("%d\t\t %d   %d    %d\n", i, some[i], some2[i], full[i]);
+        // printf("%d\t\t %d   %d    %d\n", i, some[i], some2[i], full[i]);
         assert(some[i] == some2[i]);
         assert(full[i] == some2[i]);
+        assert(some[i] != 0 && some[i] != 0xfff);
     }
     assert(some[10] != some2[16]);
     assert(sizeof(some)/sizeof(some[0]) == 2 * (sizeof(sine_wave)/sizeof(sine_wave[0])));
@@ -60,11 +60,4 @@ void test_ping_pong(){
 int main(void){
     test_phase_increment();
     test_ping_pong();
-
-    // for (int i=0; i<0xfff; i++) {
-    //     int freq = i + 440;
-    //     int incr =
-    //         ((freq * (1UL<<acc_bits)) / master_clock) + 1;
-    //     printf("%x\n", incr);
-    // }
 }

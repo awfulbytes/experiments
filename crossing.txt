@@ -10,12 +10,11 @@ strip = 'arm-none-eabi-strip'
 
 [built-in options]
 c_std = 'c23'
-c_args = ['-mcpu=cortex-m0plus', '-ffreestanding', '-Og',
+c_args = ['-mcpu=cortex-m0plus', '-ffreestanding', '-Og', '-marm',
             '-DSTM32G071xx', '-DUSE_FULL_LL_DRIVER',
             '-ffunction-sections',
             '-Wconversion',
             '-Wextra',
-            '-Wno-sign-conversion',
             '-fdata-sections', '-Wall', '-fstack-usage', '-MMD', '-MP',
             '-fno-exceptions', '-g3'
             ]

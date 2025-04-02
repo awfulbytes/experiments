@@ -5,7 +5,7 @@ project('Testing', 'c',
 src_f = files('./test_nco.c', '../src/nco.c')
 src_f_g = files('./test_generation_option.c')
 
-inc_f = include_directories('../include')
+inc_f = include_directories('../include','../ventor/stm32g0xx_hal_driver/Inc' )
 o = executable('oscillators', src_f,
                include_directories : inc_f)
 g = executable('generate_stuff', src_f_g,

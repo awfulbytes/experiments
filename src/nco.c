@@ -1,25 +1,27 @@
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 #include "nco.h"
 #include <string.h>
-// #include "stm32g071xx.h"
+#ifndef USE_FULL_ASSERT
+#include "stm32_assert_template.h"
+#include <assert.h>
+#endif
+// include "stm32g071xx.h"
 #include <stdint.h>
 // #define TEST
 // DDS variables (phase accumulator technique)
 
-static uint32_t compute_static_lut_index(struct nco nco[static 1]){
-    return (uint32_t) (((uint64_t) nco->phase_accum * (1<<7))>>32) % 128;
-}
 
-void update_ping_pong_buff
-(volatile const uint16_t data[static 128], uint16_t bufferSection[static 128], uint16_t sectionLength, struct nco *nco) {
+void update_ping_pong_buff(volatile const uint16_t data[static 128],
+                           uint16_t bufferSection[static 128],
+                           uint16_t sectionLength,
+                           struct nco *nco) {
     for (uint16_t i = 0; i < sectionLength; ++i) {
-        // uint32_t index = (uint32_t) (((uint64_t) nco->phase_accum * (1 << 7)) >> 32) % 128;
-        uint32_t index = compute_static_lut_index(nco);
-        // uint32_t index = nco->phase_accum << 24;
+        uint32_t index = compute_1cycle_lut_index(nco);
         // HACK:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        //        DO NOT CAST...
         //        memcpy explicitly takes care of size!!
-        memcpy(bufferSection + i, data + index, sizeof(uint16_t));
-        // bufferSection[i] >>= 1;
+        //        also does not make temp arrays and buffers shall not
+        //        `overlap`.
+        memcpy(&bufferSection[i], &data[index], sizeof(uint16_t));
         // bufferSection[i] = (uint16_t) data[index];
         // HACK:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -52,25 +54,6 @@ uint32_t freqs[12]={440, 467, 494, 524,
 const uint32_t osc_oct_incs[12]={0x28f5c28, 0x2b652fa, 0x2df9c9f, 0x30b5b6a,
                          0x339b57b, 0x36acd24, 0x39ed026, 0x3d5f013,
                          0x410530d, 0x44e2e74, 0x48fb7ac, 0x4d527e5};
-
-// void osc_lut_inc_generator(){
-//     for (uint16_t i=0; i<21; i++) {
-//         incs[i] = (uint64_t)((octave[i] * (1ULL<<32))/44000);
-//     }
-// }
-
-// DEPRECATED:: left for education
-// static uint64_t search(uint32_t item, const uint32_t *arr){
-//     int found = 0;
-//     uint64_t curr = ((uint64_t) (((uint64_t)item) << 32)) / 44000;
-//     for (int i=0; i<12; i++) {
-//         if (curr == arr[i]){
-//             found = i;
-//             break;
-//         }
-//     }
-//     return arr[found];
-// }
 
 uint32_t alter_wave_frequency (uint32_t output_freq){
     uint32_t found = 0;
