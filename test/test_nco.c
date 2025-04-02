@@ -27,9 +27,9 @@ void test_phase_increment(){
     printf("requested:\t%u[Hz]\n_old_shit:\t%u[Hz]\ngot-back:\t%lu[Hz]\n",
            required_freq, old_freq, new_req);
     // assert(phase_pending_update_inc == new_incr);
-    l_osc.phase_pending_update_inc = osc_fine_incs[0xffe];
+    l_osc.phase_pending_update_inc = new_incr;
     uint64_t pending_freq = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits);
-    assert(l_osc.phase_pending_update_inc > new_incr);
+    assert(l_osc.phase_pending_update_inc == new_incr);
     printf("\n------- phase values -------\n");
     // printf("%lu\t%lu\n", (2000UL<<32)/44000, sizeof(phase_pending_update_inc) * 8);
     printf("pending_incr:\t%lx\n", l_osc.phase_pending_update_inc);
@@ -39,8 +39,6 @@ void test_phase_increment(){
 }
 
 void test_ping_pong(){
-    uint32_t test_mapper = map_12b_to_hz(0x555);
-    alter_wave_frequency(test_mapper);
     // assert(phase_inc == 0x01000000>>1);
     update_ping_pong_buff(sine_wave, some, 128, &l_osc);
     update_ping_pong_buff(sine_wave, some + 128, 128, &l_osc);

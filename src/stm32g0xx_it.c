@@ -52,8 +52,7 @@ void DMA1_Channel2_3_IRQHandler(void){
         update_ping_pong_buff(wave_me_d, &dac_double_buff[128], 128, &l_osc);
     }
     if (phase_done_update) {
-        // phase_inc = 0x00001e3a544; //12200000000
-        l_osc.phase_inc = l_osc.phase_pending_update_inc; //12200000000
+        l_osc.phase_inc = l_osc.phase_pending_update_inc;
         phase_done_update = false;
     }
     if (LL_DMA_IsActiveFlag_TE2(DMA1) == SET){

@@ -32,7 +32,6 @@ void dac_config
                         gdac->dacx_settings.OutputConnection);
     LL_DAC_EnableDMAReq(gdac->dacx, gdac->channel);
 
-    // TODO:: this should fix the broken wave on channel 1
     if (gdac->channel == LL_DAC_CHANNEL_1)
         LL_DAC_EnableIT_DMAUDR1(gdac->dacx);
     else

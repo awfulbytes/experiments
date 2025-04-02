@@ -4,7 +4,7 @@
 #include "stm32g0xx_ll_dma.h"
 #include <stdint.h>
 static void dma_init(void){
-    NVIC_SetPriority(DMA1_Channel2_3_IRQn, 1); /* DMA IRQ lower priority than DAC IRQ */
+    NVIC_SetPriority(DMA1_Channel2_3_IRQn, 1);
     NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
 
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
@@ -17,13 +17,9 @@ void dma_config(struct dma *dma){
             dma->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &DAC1->DHR12R1;
             LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_3);
             LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_3);
-            // LL_DMA_EnableIT_HT(dma->dmax, dma->channel);
-            // LL_DMA_EnableIT_TC(dma->dmax, dma->channel);
             break;
         case LL_DMA_CHANNEL_2:
             dma->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &DAC1->DHR12R2;
-            // LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_2);
-            // LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_2);
             break;
         default:
             break;
@@ -31,10 +27,7 @@ void dma_config(struct dma *dma){
     dma->dmax_settings.MemoryOrM2MDstAddress = (uint32_t) dma->data;
     LL_DMA_Init(dma->dmax, dma->channel, &dma->dmax_settings);
 
-    // LL_DMA_EnableIT_HT(dma->dmax, dma->channel);
-    // LL_DMA_EnableIT_TC(dma->dmax, dma->channel);
     LL_DMA_EnableIT_TE(dma->dmax, dma->channel);
-    // LL_DMA_EnableIT_TC(dma->dmax, dma->channel);
     LL_DMA_EnableChannel(dma->dmax, dma->channel);
     while (!LL_DMA_IsEnabledChannel(dma->dmax, dma->channel)) {}
 }

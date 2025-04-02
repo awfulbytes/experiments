@@ -9,7 +9,7 @@ inline void wave_button_callback
             abut->state >>= abut->state;
             break;
         default:
-            abut->state++;
+            ++abut->state;
             break;
     }
     abut->flag = 'D';
