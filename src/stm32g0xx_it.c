@@ -44,6 +44,10 @@ void TIM7_LPTIM2_IRQHandler(void){
     }
 }
 void DMA1_Channel2_3_IRQHandler(void){
+    if (phase_done_update) {
+        l_osc.phase_inc = l_osc.phase_pending_update_inc;
+        phase_done_update = false;
+    }
     if ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3) {
         (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
         update_ping_pong_buff(wave_me_d, dac_double_buff, 128, &l_osc);
@@ -51,10 +55,6 @@ void DMA1_Channel2_3_IRQHandler(void){
     if ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3){
         (DMA1->IFCR) = (DMA_IFCR_CTCIF3);
         update_ping_pong_buff(wave_me_d, &dac_double_buff[128], 128, &l_osc);
-    }
-    if (phase_done_update) {
-        l_osc.phase_inc = l_osc.phase_pending_update_inc;
-        phase_done_update = false;
     }
     if (LL_DMA_IsActiveFlag_TE2(DMA1) == SET){
         LL_DMA_ClearFlag_TE2(DMA1);
