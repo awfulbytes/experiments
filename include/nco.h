@@ -1,3 +1,4 @@
+#include <stdatomic.h>
 #include <string.h>
 #include <stdint.h>
 
@@ -16,7 +17,7 @@ struct nco {
 };
 
 void update_ping_pong_buff
-(const volatile uint16_t data[static 128], uint16_t bufferSection[static 128], uint16_t sectionLength, struct nco *nco);
+(const volatile uint16_t data[static 128], atomic_ushort bufferSection[static 128], uint16_t sectionLength, struct nco *nco);
 uint32_t map_12b_to_hz(uint16_t adc_value);
 
 

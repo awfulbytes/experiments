@@ -10,7 +10,7 @@
 
 
 void update_ping_pong_buff(volatile const uint16_t data[static 128],
-                           uint16_t bufferSection[static 128],
+                           atomic_ushort bufferSection[static 128],
                            uint16_t sectionLength,
                            struct nco *nco) {
     for (uint16_t i = 0; i < sectionLength; ++i) {

@@ -1,14 +1,5 @@
 #include "stm32g0xx_it.h"
-#include "cmsis_gcc.h"
-#include "errors.h"
-// #include "dac.h"
-#include "dma.h"
-#include "nco.h"
-#include "stm32g071xx.h"
-#include "stm32g0xx_ll_dma.h"
-#include "stm32g0xx_ll_gpio.h"
-#include "stm32g0xx_ll_tim.h"
-#include <stdint.h>
+#include <stdatomic.h>
 // #define DEBUG
 #define abs(x) ((x<0) ? -x : x)
 extern volatile uint16_t prev_value;
@@ -16,7 +7,7 @@ extern volatile uint16_t pitch0_value;
 extern struct nco l_osc, r_osc;
 extern volatile bool phase_done_update;
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
-extern uint16_t dac_double_buff[256], dac_double_buff2[256];
+extern atomic_ushort dac_double_buff[256], dac_double_buff2[256];
 // extern struct dma dac_1_dma;
 extern struct button wave_choise_dac1;
 extern struct button wave_choise_dac2;

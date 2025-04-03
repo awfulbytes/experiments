@@ -1,3 +1,4 @@
+#include <stdatomic.h>
 #define DEBUGDAC
 #include "gpio.h"
 #include "stm32g0xx_ll_adc.h"
@@ -11,7 +12,7 @@
 #include "nco.h"
 #include <stdint.h>
 
-#define master_clock 44000
+constexpr  uint_fast16_t master_clock = 44000;
 
 #if defined(USE_FULL_ASSERT)
 #include "stm32_assert.h"
@@ -31,8 +32,8 @@ struct nco r_osc = {.phase_accum = 0,
 // extern volatile uint64_t phase_pending_update_inc;
 // extern volatile bool phase_pending_update;
 volatile bool phase_done_update = false;
-uint16_t dac_double_buff[256] = {0};
-uint16_t dac_double_buff2[256] = {0};
+atomic_ushort dac_double_buff[256] = {0};
+atomic_ushort dac_double_buff2[256] = {0};
 struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim7_settings = {.timx=TIM7, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim2_settings = {.timx=TIM2, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2, .trigger_output=LL_TIM_TRGO_UPDATE};
