@@ -24,7 +24,8 @@ struct nco l_osc = {.phase_accum = 0,
                     .phase_pending_update_inc=0,
                     .phase_pending_update=false};
 struct nco r_osc = {.phase_accum = 0,
-                    .phase_inc = 0x01'e0'00'0,
+                    .phase_inc = 0x01'00'00'00,
+                    // .phase_inc = 0x01'e0'00'0,
                     .phase_pending_update_inc=0,
                     .phase_pending_update=false};
 // extern volatile uint32_t phase_accum;

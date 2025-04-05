@@ -34,8 +34,8 @@ void main() {
     }
     while (1) {
         if (l_osc.phase_pending_update) {
-            prev_value = map_12b_to_hz(prev_value);
-            uint32_t tmp = ((prev_value * (1<<16)) / master_clock);
+            atomic_ushort note = map_12b_to_hz(prev_value);
+            uint32_t tmp = ((note * (1<<16)) / master_clock);
             uint64_t new_incr = tmp << 16;
             // uint64_t new_req = ((new_incr * master_clock) >> acc_bits);
             l_osc.phase_pending_update_inc = new_incr;

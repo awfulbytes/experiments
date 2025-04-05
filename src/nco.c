@@ -27,8 +27,8 @@ void update_ping_pong_buff(volatile const uint16_t data[static 128],
 
 uint32_t map_12b_to_hz(uint16_t value) {
     uint16_t in_max = 0xfff;
-    uint32_t min = 440;
-    uint32_t max = 830; // NOTE:: off by 1
+    uint32_t min = 120;
+    uint32_t max = 16000; // NOTE:: off by 1
     uint32_t range = max - min;
     return min + (value * range) / in_max;
 }
