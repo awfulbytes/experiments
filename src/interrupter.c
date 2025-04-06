@@ -13,9 +13,7 @@ void main() {
     struct dma *dma_chans[2] = {&dac_1_dma, &dac_2_dma};
     sys_clock_config();
     gpio_init(wave_buttons, dacs, &pitch_0_cv);
-    update_ping_pong_buff(wave_me_d, dac_double_buff, 128, &l_osc);
-    update_ping_pong_buff(wave_me_d, dac_double_buff + 128, 128, &l_osc);
-    update_ping_pong_buff(wave_me_d2, dac_double_buff2, 256, &r_osc);
+
 #if defined(DEBUG) || defined(DEBUGDAC)
     debug_tim2_pin31();
 #else
@@ -35,10 +33,8 @@ void main() {
     while (1) {
         if (l_osc.phase_pending_update) {
             atomic_ushort note = map_12b_to_hz(prev_value);
-            uint32_t tmp = ((note * (1<<16)) / master_clock);
-            uint64_t new_incr = tmp << 16;
-            // uint64_t new_req = ((new_incr * master_clock) >> acc_bits);
-            l_osc.phase_pending_update_inc = new_incr;
+            atomic_uint_fast32_t tmp = ((note * (1<<16)) / master_clock);
+            l_osc.phase_pending_update_inc = tmp << 16;
             l_osc.phase_pending_update = false;
             phase_done_update = true;
         }
@@ -47,7 +43,6 @@ void main() {
         }
         if (wave_choise_dac2.flag == 0x69) {
             wave_me_d2 = waves_bank[wave_choise_dac2.state];
-            update_ping_pong_buff(wave_me_d2, dac_double_buff2, 256, &r_osc);
         }
     }
 }

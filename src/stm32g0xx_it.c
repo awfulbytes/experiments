@@ -1,5 +1,6 @@
 #include "stm32g0xx_it.h"
 #include <stdatomic.h>
+#include <stdint.h>
 // #define DEBUG
 #define abs(x) ((x<0) ? -x : x)
 extern volatile uint16_t prev_value;
@@ -7,6 +8,7 @@ extern volatile uint16_t pitch0_value;
 extern struct nco l_osc, r_osc;
 extern volatile bool phase_done_update;
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
+extern volatile const uint16_t *dither;
 extern atomic_ushort dac_double_buff[256], dac_double_buff2[256];
 // extern struct dma dac_1_dma;
 extern struct button wave_choise_dac1;
@@ -35,21 +37,31 @@ void TIM7_LPTIM2_IRQHandler(void){
     }
 }
 void DMA1_Channel2_3_IRQHandler(void){
+
     if (phase_done_update) {
         l_osc.phase_inc = l_osc.phase_pending_update_inc;
+        r_osc.phase_inc = l_osc.phase_inc;
+        generate_half_signal(wave_me_d, dither, 128, &l_osc);
+        generate_half_signal(wave_me_d2, dither, 128, &r_osc);
         phase_done_update = false;
     }
+
     if ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3) {
         (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
-        update_ping_pong_buff(wave_me_d, dac_double_buff, 128, &l_osc);
+        update_ping_pong_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128);
     }
     if ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3){
         (DMA1->IFCR) = (DMA_IFCR_CTCIF3);
-        update_ping_pong_buff(wave_me_d, &dac_double_buff[128], 128, &l_osc);
+        update_ping_pong_buff(l_osc.data_buff.ping_buff, dac_double_buff + 128, 128);
     }
-    if (LL_DMA_IsActiveFlag_TE2(DMA1) == SET){
-        LL_DMA_ClearFlag_TE2(DMA1);
-        while (1) {}
+
+    if ((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) {
+        (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
+        update_ping_pong_buff(r_osc.data_buff.ping_buff, dac_double_buff2, 128);
+    }
+    if ((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2){
+        (DMA1->IFCR) = (DMA_IFCR_CTCIF2);
+        update_ping_pong_buff(r_osc.data_buff.ping_buff, dac_double_buff2 + 128, 128);
     }
 }
 
@@ -58,11 +70,8 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         uint16_t current = pitch0_value;
         int32_t diff = current - prev_value;
-        if ((abs(diff) > 1)) {
+        if ((abs(diff) > 2)) {
             prev_value = current;
-            // GPIOB->ODR ^= (1 << 3);
-            // __disable_irq();
-            // __enable_irq();
             l_osc.phase_pending_update = true;
         }
 #ifdef DEBUG

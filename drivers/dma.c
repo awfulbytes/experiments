@@ -20,6 +20,8 @@ void dma_config(struct dma *dma){
             break;
         case LL_DMA_CHANNEL_2:
             dma->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &DAC1->DHR12R2;
+            LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_2);
+            LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_2);
             break;
         default:
             break;
