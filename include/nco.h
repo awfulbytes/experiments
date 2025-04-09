@@ -25,6 +25,7 @@ void update_ping_pong_buff (const volatile uint16_t data[static 128],
 uint32_t map_12b_to_hz(uint16_t adc_value);
 
 void compute_nco_increment(atomic_ushort note, struct nco *nco, const uint_fast16_t sample_rate);
+void stage_pending_inc(volatile uint16_t adc_raw_value, struct nco *nco, const uint_fast16_t sample_rate);
 
 inline static uint32_t compute_1cycle_lut_index(struct nco nco[static 1]){
     // uint32_t index = (uint32_t) (((uint64_t) nco->phase_accum * (1 << 7)) >> 32) % 128;

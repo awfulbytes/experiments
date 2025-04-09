@@ -7,14 +7,10 @@
 // DDS variables (phase accumulator technique)
 inline static uint32_t compute_1cycle_lut_index(struct nco nco[static 1]);
 
-void compute_nco_increment(atomic_ushort note, struct nco *nco, const uint_fast16_t sample_rate){
-    atomic_uint_fast32_t tmp = ((note * (1<<16))/sample_rate);
-    nco->phase_pending_update_inc = (tmp<<16);
-}
-
 void generate_half_signal(volatile const uint16_t data[static 128],
                           // volatile const uint16_t dither_source[static 128],
                           uint16_t sectionLength, struct nco nco[static 1]){
+
     for (uint16_t i = 0; i < sectionLength; ++i) {
         uint32_t index = compute_1cycle_lut_index(nco);
         uint32_t n_index = index + 1;
@@ -31,17 +27,14 @@ void generate_half_signal(volatile const uint16_t data[static 128],
 #endif // TEST
 
         nco->data_buff.ping_buff[i] = (a + (((diff * fract) >> 16)));
-
-        // nco->data_buff.ping_buff[i] = data[index] + dither_source[i];
         nco->phase_accum += nco->phase_inc;
-
     }
 }
 
-void update_ping_pong_buff(volatile const uint16_t data[static 128],
-                           atomic_ushort bufferSection[static 128],
-                           uint16_t sectionLength) {
-    memcpy(bufferSection, data, sizeof(uint16_t) * sectionLength);
+void compute_nco_increment(atomic_ushort note, struct nco *nco, const uint_fast16_t sample_rate){
+
+    atomic_uint_fast32_t tmp = ((note * (1<<16))/sample_rate);
+    nco->phase_pending_update_inc = (tmp<<16);
 }
 
 uint32_t map_12b_to_hz(uint16_t value) {
@@ -50,4 +43,16 @@ uint32_t map_12b_to_hz(uint16_t value) {
     uint32_t max = 440; // NOTE:: this measures 830.{38-61} [Hz]
     uint32_t range = max - min;
     return min + (value * range) / in_max;
+}
+
+void stage_pending_inc(volatile uint16_t adc_raw_value, struct nco *nco, const uint_fast16_t sample_rate){
+    atomic_ushort note = map_12b_to_hz(adc_raw_value);
+    compute_nco_increment(note, nco, sample_rate);
+    nco->phase_pending_update = false;
+}
+
+inline void update_ping_pong_buff(volatile const uint16_t data[static 128],
+                           atomic_ushort bufferSection[static 128],
+                           uint16_t sectionLength) {
+    memcpy(bufferSection, data, sizeof(uint16_t) * sectionLength);
 }
