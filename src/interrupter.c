@@ -33,8 +33,7 @@ void main() {
     while (1) {
         if (l_osc.phase_pending_update) {
             atomic_ushort note = map_12b_to_hz(prev_value);
-            atomic_uint_fast32_t tmp = ((note * (1<<16)) / master_clock);
-            l_osc.phase_pending_update_inc = tmp << 16;
+            compute_nco_increment(note, &l_osc, master_clock);
             l_osc.phase_pending_update = false;
             phase_done_update = true;
         }

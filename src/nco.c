@@ -1,9 +1,16 @@
+#include <stdatomic.h>
 #include <stdint.h>
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 #include "nco.h"
 // include "stm32g071xx.h"
 // #define TEST
 // DDS variables (phase accumulator technique)
+inline static uint32_t compute_1cycle_lut_index(struct nco nco[static 1]);
+
+void compute_nco_increment(atomic_ushort note, struct nco *nco, const uint_fast16_t sample_rate){
+    atomic_uint_fast32_t tmp = ((note * (1<<16))/sample_rate);
+    nco->phase_pending_update_inc = (tmp<<16);
+}
 
 void generate_half_signal(volatile const uint16_t data[static 128],
                           // volatile const uint16_t dither_source[static 128],
@@ -40,7 +47,7 @@ void update_ping_pong_buff(volatile const uint16_t data[static 128],
 uint32_t map_12b_to_hz(uint16_t value) {
     uint16_t in_max = 0xfff;
     uint32_t min = 110;
-    uint32_t max = 443; // NOTE:: this measures 830.{38-61} [Hz]
+    uint32_t max = 440; // NOTE:: this measures 830.{38-61} [Hz]
     uint32_t range = max - min;
     return min + (value * range) / in_max;
 }
