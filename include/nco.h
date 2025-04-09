@@ -17,7 +17,6 @@ struct nco {
 };
 
 void generate_half_signal(volatile const uint16_t data[static 128],
-                          volatile const uint16_t dither_source[static 128],
                           uint16_t sectionLength, struct nco nco[static 1]);
 
 void update_ping_pong_buff (const volatile uint16_t data[static 128],
