@@ -12,7 +12,7 @@
 #include "nco.h"
 #include <stdint.h>
 
-constexpr  uint_fast16_t master_clock = 44000;
+constexpr  uint_fast16_t master_clock = 48000;
 
 #if defined(USE_FULL_ASSERT)
 #include "stm32_assert.h"
