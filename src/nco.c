@@ -1,21 +1,33 @@
+#include <stdint.h>
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 #include "nco.h"
-#ifndef USE_FULL_ASSERT
-#include "stm32_assert_template.h"
-#include <assert.h>
-#endif
 // include "stm32g071xx.h"
 // #define TEST
 // DDS variables (phase accumulator technique)
 
 void generate_half_signal(volatile const uint16_t data[static 128],
-                          volatile const uint16_t dither_source[static 128],
+                          // volatile const uint16_t dither_source[static 128],
                           uint16_t sectionLength, struct nco nco[static 1]){
-
-    for (uint16_t i = 0; i < sectionLength; i++) {
+    for (uint16_t i = 0; i < sectionLength; ++i) {
         uint32_t index = compute_1cycle_lut_index(nco);
-        nco->data_buff.ping_buff[i] = data[index] + dither_source[i];
+        uint32_t n_index = index + 1;
+        uint16_t a = data[index];
+        uint16_t b = data[n_index & 0x7f];
+        int16_t diff = (int16_t) (b-a);
+        // diff = ((diff<0) ? -diff : diff);
+        uint32_t fract = ((uint64_t)((nco->phase_accum) * (1<<7)) >> 16) & 0xffff;
+
+#ifdef TEST
+#include <stdio.h>
+        printf("fract:\t%d\n", fract);
+        printf("interp-factor:\t%d\n", (diff * fract)>>16);
+#endif // TEST
+
+        nco->data_buff.ping_buff[i] = (a + (((diff * fract) >> 16)));
+
+        // nco->data_buff.ping_buff[i] = data[index] + dither_source[i];
         nco->phase_accum += nco->phase_inc;
+
     }
 }
 
