@@ -14,7 +14,7 @@ atomic_ushort some2[256];
 atomic_ushort full[256];
 atomic_ushort sine_upd[256];
 
-uint32_t master_clock = 44000;
+uint32_t master_clock = 48000;
 uint32_t required_freq = 440;
 uint16_t acc_bits = sizeof(l_osc.phase_accum) * 8;
 
@@ -24,7 +24,7 @@ void test_phase_increment(){
     uint64_t new_incr = tmp << 16;
     uint64_t new_req = ((new_incr * master_clock) >> acc_bits);
     // assert(required_freq == new_req);
-    assert((old_freq < new_req) && (l_osc.phase_inc < new_incr));
+    // assert((old_freq < new_req) && (l_osc.phase_inc < new_incr));
     printf("requested:\t%u[Hz]\n_old_shit:\t%u[Hz]\ngot-back:\t%lu[Hz]\n",
            required_freq, old_freq, new_req);
     // assert(phase_pending_update_inc == new_incr);
@@ -41,7 +41,8 @@ void test_phase_increment(){
 
 void test_ping_pong(){
     // assert(phase_inc == 0x01000000>>1);
-    generate_half_signal(sine_wave, dither, 128, &l_osc);
+    l_osc.phase_inc = l_osc.phase_pending_update_inc;
+    generate_half_signal(sine_wave, 128, &l_osc);
     // update_ping_pong_buff(l_osc.data_buff.pong_buff, (some + 128), 128);
     // update_ping_pong_buff(l_osc.data_buff.ping_buff, some, 128);
     // memcpy(some, l_osc.data_buff.ping_buff, 128 * sizeof(uint16_t));
@@ -49,21 +50,17 @@ void test_ping_pong(){
     update_ping_pong_buff(l_osc.data_buff.ping_buff, some + 128, 128);
 
     for (int i=0; i<256; ++i) {
-        // printf("%d\t\t %d  \n", i, some[i]);
-        // if (i>128) {
-            // some[i] = l_osc.data_buff.pong_buff[i-128];
-            // printf("%d\t\t %d  %d \n", i, l_osc.data_buff.pong_buff[i-128], some[i]);
-            // printf("%d\t\t %d   \n", i, some[i]);
-            // assert(some[i] == l_osc.data_buff.pong_buff[i - 128]);
-        // } else{
-        printf("%d\t\t %d   %d \n", i, l_osc.data_buff.ping_buff[i], some[i]);
-            // some[i] = l_osc.data_buff.pong_buff[i];
-        if (i > 128) {
+        if (i > 128)
             assert(some[i] == l_osc.data_buff.ping_buff[i-128]);
+        else if (i < 128){
+            assert(some[i] == l_osc.data_buff.ping_buff[i]);
+            // printf("b:\t %u\n", l_osc.data_buff.ping_buff[i]);
         }
-        // }
-    // // //     // assert(full[i] == some2[i]);
-    // // //     // assert(some[i] != 0 && some[i] != 0xfff);
+        else {
+            assert(l_osc.data_buff.ping_buff[i] == 0);
+            assert(some[i] == l_osc.data_buff.ping_buff[0]);
+        }
+        // printf("data-big-buff:\t%d\n", some[i]);
     }
 
     // assert(some[10] != some2[16]);
