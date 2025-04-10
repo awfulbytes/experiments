@@ -1,7 +1,11 @@
-#include "errors.h"
+#ifndef INC_SYSCLK_H_
+#define INC_SYSCLK_H_
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_bus.h"
 #include "stm32g0xx_ll_system.h"
+#include "stm32g0xx_ll_utils.h"
+#include "stm32g0xx_ll_pwr.h"
+#endif
 #include <stdint.h>
 
 typedef struct sysclk {

@@ -1,16 +1,6 @@
 #include "timx.h"
-#include "stm32g071xx.h"
-#include "stm32g0xx.h"
-#include "stm32g0xx_hal_cortex.h"
-#include "stm32g0xx_ll_dac.h"
-#include "stm32g0xx_ll_dma.h"
 #include "stm32g0xx_ll_rcc.h"
-#include "stm32g0xx_ll_tim.h"
-#include "system_stm32g0xx.h"
-#include "wave.h"
-/* #include "stm32g0xx_ll_tim.h" */
 #include "stm32g0xx_ll_bus.h"
-#include <stdint.h>
 extern struct timer tim6_settings;
 extern volatile uint64_t phase_inc;
 

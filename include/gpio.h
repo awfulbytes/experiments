@@ -17,14 +17,8 @@ void debug_tim2_pin31(void){
     gpio_init.Pull = LL_GPIO_PULL_NO;
     LL_GPIO_Init(GPIOB, &gpio_init);
 }
-// #define LED4_PIN                           LL_GPIO_PIN_5
-// #define LED4_GPIO_PORT                     GPIOA
 #else
 #endif // DEBUG || DEBUGDAC
-
-#define LED_BLINK_FAST  200
-#define LED_BLINK_SLOW  500
-#define LED_BLINK_ERROR 1000
 
 struct gpio {
     uint32_t pin_id;

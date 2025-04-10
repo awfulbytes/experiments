@@ -11,7 +11,4 @@ struct dma {
     DMA_Channel_TypeDef *chan;
 };
 ErrorStatus alter_wave_form(const uint16_t *data, struct dma *d);
-// DEPRECATED:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// should be removed there is no need i change the wave properly now!!
-ErrorStatus dma_change_wave(const uint16_t *data, struct dma *d, struct dac *dac);
 void dma_config(struct dma *dma);

@@ -1,9 +1,16 @@
 #include <stdint.h>
-enum waves {SINE, SAWU, SAWD, WAVE_CTR};
-/** Generated using Dr LUT - Free Lookup Table Generator
-  * https://github.com/ppelikan/drlut
-  **/
-// Formula:
+enum waves {SINE, SAWU, SAWD, SINE64, WAVE_CTR};
+
+const uint16_t sine_high_speed64[] = {
+ 2030, 2229, 2426, 2619, 2807, 2987, 3158, 3318,
+ 3465, 3599, 3718, 3820, 3905, 3973, 4021, 4050,
+ 4060, 4050, 4021, 3973, 3905, 3820, 3718, 3599,
+ 3465, 3318, 3158, 2987, 2807, 2619, 2426, 2229,
+ 2030, 1831, 1634, 1441, 1253, 1073,  902,  742,
+  595,  461,  342,  240,  155,   87,   39,   10,
+    0,   10,   39,   87,  155,  240,  342,  461,
+  595,  742,  902, 1073, 1253, 1441, 1634, 1831 };
+
 const uint16_t sine_wave[] = {
  2030, 2129, 2227, 2325, 2422, 2518, 2613, 2707,
  2799, 2889, 2978, 3063, 3147, 3227, 3305, 3380,
@@ -22,10 +29,6 @@ const uint16_t sine_wave[] = {
   609,  680,  755,  833,  913,  997, 1082, 1171,
  1261, 1353, 1447, 1542, 1638, 1735, 1833, 1931 };
 
-/** Generated using Dr LUT - Free Lookup Table Generator
-  * https://github.com/ppelikan/drlut
-  **/
-// Formula: 2*(t%T)/T-1
 const uint16_t sawup[] = {
  0,   32,   64,   96,  128,  160,  192,  224,
   256,  288,  320,  352,  384,  416,  448,  480,
@@ -44,10 +47,6 @@ const uint16_t sawup[] = {
  3582, 3614, 3646, 3678, 3710, 3742, 3774, 3806,
  3838, 3870, 3902, 3934, 3966, 3998, 4030, 4062 };
 
-/** Generated using Dr LUT - Free Lookup Table Generator
-  * https://github.com/ppelikan/drlut
-  **/
-// Formula: 1-2*(t%T)/T
 const uint16_t sawdn[] = {
  4094, 4062, 4030, 3998, 3966, 3934, 3902, 3870,
  3838, 3806, 3774, 3742, 3710, 3678, 3646, 3614,
@@ -66,10 +65,6 @@ const uint16_t sawdn[] = {
   512,  480,  448,  416,  384,  352,  320,  288,
   256,  224,  192,  160,  128,   96,   64,   32 };
 
-/** Generated using Dr LUT - Free Lookup Table Generator
-  * https://github.com/ppelikan/drlut
-  **/
-// Formula: rand NOTE:::5 enters to change waveform
 const uint16_t noise[] = {
  3112, 1441, 3926,  419, 1679, 1988, 2612, 2301,
   355, 2868,  278, 2599, 2773,  817,  804, 2145,

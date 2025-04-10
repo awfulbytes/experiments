@@ -1,7 +1,4 @@
 #include "sysclk.h"
-#include "stm32g0xx_ll_bus.h"
-#include "stm32g0xx_ll_pwr.h"
-#include "stm32g0xx_ll_rcc.h"
 
 void clk_config_settings(sysclk_t *clk){
     clk->clk_source = LL_RCC_PLLSOURCE_HSI;
