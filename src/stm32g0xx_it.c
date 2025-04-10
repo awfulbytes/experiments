@@ -79,11 +79,13 @@ void EXTI4_15_IRQHandler(void) {
     if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line) {
         (EXTI->RPR1) = (wave_choise_dac1.exti.exti_line);
         wave_button_callback(&wave_choise_dac1);
+        l_osc.mode = free;
         wave_choise_dac1.flag = 'i';
     }
     if ((EXTI->RPR1 & wave_choise_dac2.exti.exti_line) == wave_choise_dac2.exti.exti_line) {
         (EXTI->RPR1) = (wave_choise_dac2.exti.exti_line);
         wave_button_callback(&wave_choise_dac2);
+        l_osc.mode = single_octave;
         wave_choise_dac2.flag = 'i';
     }
 }

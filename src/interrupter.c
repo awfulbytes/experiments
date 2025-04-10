@@ -1,6 +1,6 @@
 #include "interrupter.h"
 #include "sysclk.c"
-const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn};
+const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn, sine_high_speed64};
 volatile const uint16_t *wave_me_d = sine_wave;
 volatile const uint16_t *wave_me_d2 = sine_wave;
 
@@ -36,10 +36,10 @@ void main() {
             phase_done_update = true;
         }
         if (wave_choise_dac1.flag == 0x69) {
-            wave_me_d = waves_bank[wave_choise_dac1.state];
+            // wave_me_d = waves_bank[wave_choise_dac1.state];
         }
         if (wave_choise_dac2.flag == 0x69) {
-            wave_me_d2 = waves_bank[wave_choise_dac2.state];
+            // wave_me_d2 = waves_bank[wave_choise_dac2.state];
         }
     }
 }

@@ -12,29 +12,31 @@
 #include "nco.h"
 #include <stdint.h>
 
-constexpr  uint_fast16_t master_clock = 48000;
+// enum modes pitch_modes =free;
 
 #if defined(USE_FULL_ASSERT)
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
+volatile bool phase_done_update = false;
 volatile uint16_t pitch0_value = 0xff;
 volatile uint16_t prev_value = 1;
+
 struct nco l_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
                     .phase_pending_update_inc=0,
-                    .phase_pending_update=false};
+                    .phase_pending_update=false,
+                    .mode = free};
 struct nco r_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
                     // .phase_inc = 0x01'e0'00'0,
                     .phase_pending_update_inc=0,
-                    .phase_pending_update=false};
-// extern volatile uint32_t phase_accum;
-// extern volatile uint64_t phase_inc;
-// extern volatile uint64_t phase_pending_update_inc;
-// extern volatile bool phase_pending_update;
-volatile bool phase_done_update = false;
+                    .phase_pending_update=false,
+                    .mode=free};
+
+constexpr  uint_fast32_t master_clock = 198000;
 atomic_ushort dac_double_buff[256] = {0};
 atomic_ushort dac_double_buff2[256] = {0};
+
 struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim7_settings = {.timx=TIM7, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim2_settings = {.timx=TIM2, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2, .trigger_output=LL_TIM_TRGO_UPDATE};

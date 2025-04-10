@@ -1,8 +1,6 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #include "nco.h"
-// include "stm32g071xx.h"
 // #define TEST
-// DDS variables (phase accumulator technique)
 inline static uint32_t compute_1cycle_lut_index(struct nco nco[static 1]);
 
 void generate_half_signal(volatile const uint16_t data[static 128],
@@ -14,7 +12,6 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         uint16_t a = data[index];
         uint16_t b = data[n_index & 0x7f];
         int16_t diff = (int16_t) (b-a);
-        // diff = ((diff<0) ? -diff : diff);
         uint32_t fract = ((uint64_t)((nco->phase_accum) * (1<<7)) >> 16) & 0xffff;
 
 #ifdef TEST
@@ -34,16 +31,29 @@ void compute_nco_increment(atomic_ushort note, struct nco *nco, const uint_fast1
     nco->phase_pending_update_inc = (tmp<<16);
 }
 
-atomic_ushort map_12b_to_hz(uint16_t value) {
+atomic_ushort map_12b_to_hz(uint16_t value, enum modes pitch_mode) {
     atomic_ushort in_max = 0xfff;
-    atomic_ushort min = 110;
-    atomic_ushort max = 440; // NOTE:: this measures 830.{38-61} [Hz]
+    atomic_ushort min;
+    atomic_ushort max;
+    switch (pitch_mode) {
+        case free:
+            min = 20;
+            max = 16646;
+            break;
+        case single_octave:
+            min = 220;
+            max = 415;
+            break;
+        default:
+            min = 100;
+            max = 300;
+    }
     atomic_ushort range = max - min;
     return (atomic_ushort)(min + (value * range) / in_max);
 }
 
 void stage_pending_inc(volatile uint16_t adc_raw_value, struct nco *nco, const uint_fast16_t sample_rate){
-    atomic_ushort note = map_12b_to_hz(adc_raw_value);
+    atomic_ushort note = map_12b_to_hz(adc_raw_value, nco->mode);
     compute_nco_increment(note, nco, sample_rate);
     nco->phase_pending_update = false;
 }
