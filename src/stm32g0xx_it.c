@@ -8,7 +8,6 @@ extern volatile uint16_t pitch0_value;
 extern struct nco l_osc, r_osc;
 extern volatile bool phase_done_update;
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
-extern volatile const uint16_t *dither;
 extern atomic_ushort dac_double_buff[256], dac_double_buff2[256];
 // extern struct dma dac_1_dma;
 extern struct button wave_choise_dac1;

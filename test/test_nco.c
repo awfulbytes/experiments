@@ -40,12 +40,8 @@ void test_phase_increment(){
 }
 
 void test_ping_pong(){
-    // assert(phase_inc == 0x01000000>>1);
     l_osc.phase_inc = l_osc.phase_pending_update_inc;
     generate_half_signal(sine_wave, 128, &l_osc);
-    // update_ping_pong_buff(l_osc.data_buff.pong_buff, (some + 128), 128);
-    // update_ping_pong_buff(l_osc.data_buff.ping_buff, some, 128);
-    // memcpy(some, l_osc.data_buff.ping_buff, 128 * sizeof(uint16_t));
     update_ping_pong_buff(l_osc.data_buff.ping_buff, some, 128);
     update_ping_pong_buff(l_osc.data_buff.ping_buff, some + 128, 128);
 
@@ -60,10 +56,10 @@ void test_ping_pong(){
             assert(l_osc.data_buff.ping_buff[i] == 0);
             assert(some[i] == l_osc.data_buff.ping_buff[0]);
         }
-        // printf("data-big-buff:\t%d\n", some[i]);
+        printf("data-big-buff:\t%d\n", some[i]);
     }
 
-    // assert(some[10] != some2[16]);
+    assert(some[10] != some[16]);
     assert(sizeof(some)/sizeof(some[0]) == 2 * (sizeof(sine_wave)/sizeof(sine_wave[0])));
 }
 

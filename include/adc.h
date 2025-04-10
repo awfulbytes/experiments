@@ -7,16 +7,15 @@
 
 #include "stm32g0xx_ll_utils.h"
 struct adc {
-    volatile uint16_t *data;
-    volatile char roof;
-    volatile uint32_t dbg_ctr;
     ADC_TypeDef *adcx;
-    unsigned long channel;
     LL_ADC_InitTypeDef settings;
     LL_ADC_REG_InitTypeDef reg_settings;
     DMA_TypeDef *dmax;
-    unsigned int dma_channel;
     LL_DMA_InitTypeDef dmax_settings;
+    volatile char roof;
+    volatile uint16_t *data;
+    unsigned int dma_channel;
+    unsigned long channel;
 };
 
 void adc_init_settings(struct adc *adc);
