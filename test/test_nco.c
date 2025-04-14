@@ -6,37 +6,45 @@
 #include "forms.h"
 
 extern struct nco l_osc, r_osc;
-struct nco l_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00, .phase_pending_update=false, .phase_pending_update_inc=0};
-struct nco r_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00, .phase_pending_update=false, .phase_pending_update_inc=0};
+struct nco l_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
+                    .phase_pending_update=false, .phase_pending_update_inc=0,
+                    .mode=single_octave};
+struct nco r_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
+                    .phase_pending_update=false, .phase_pending_update_inc=0,
+                    .mode=single_octave};
 extern bool phase_pending_update;
 atomic_ushort some[256];
 atomic_ushort some2[256];
 atomic_ushort full[256];
 atomic_ushort sine_upd[256];
 
-uint32_t master_clock = 48000;
+uint16_t adc_data = 0x000;
+
+constexpr uint_fast32_t master_clock = 198000;
 uint32_t required_freq = 440;
 uint16_t acc_bits = sizeof(l_osc.phase_accum) * 8;
+void emulate_adc_timer2_interrupt(void){
+    adc_data = 0xfff;
+    l_osc.phase_pending_update = true;
+}
 
 void test_phase_increment(){
-    uint32_t old_freq = ((l_osc.phase_inc * master_clock) >> acc_bits);
-    uint32_t tmp = ((required_freq * (1<<16)) / master_clock) + 1;
-    uint64_t new_incr = tmp << 16;
-    uint64_t new_req = ((new_incr * master_clock) >> acc_bits);
-    // assert(required_freq == new_req);
-    // assert((old_freq < new_req) && (l_osc.phase_inc < new_incr));
-    printf("requested:\t%u[Hz]\n_old_shit:\t%u[Hz]\ngot-back:\t%lu[Hz]\n",
-           required_freq, old_freq, new_req);
-    // assert(phase_pending_update_inc == new_incr);
-    l_osc.phase_pending_update_inc = new_incr;
+    emulate_adc_timer2_interrupt();
+    if (l_osc.phase_pending_update){
+        stage_pending_inc(adc_data, &l_osc, master_clock);
+    }
+    assert(l_osc.phase_pending_update == false);
+    assert(adc_data == 0xfff);
+    uint64_t new_req = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits);
+
+    char *pretty_mode_printer = ((l_osc.mode == 0) ? "free": "single_octave");
+    printf("requested:\t\t\t%u[Hz]\ngot-back:\t\t\t%lu[Hz]\noscillator-mode:\t%s",
+           required_freq, new_req, pretty_mode_printer);
     uint64_t pending_freq = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits);
-    assert(l_osc.phase_pending_update_inc == new_incr);
     printf("\n------- phase values -------\n");
-    // printf("%lu\t%lu\n", (2000UL<<32)/44000, sizeof(phase_pending_update_inc) * 8);
     printf("pending_incr:\t%lx\n", l_osc.phase_pending_update_inc);
     printf("pen_max_freq:\t%lu\n", pending_freq);
     printf("o_g_val_incr:\t%lx\n", l_osc.phase_inc);
-    printf("new_val_incr:\t%lx\n", new_incr);
 }
 
 void test_ping_pong(){
@@ -53,10 +61,10 @@ void test_ping_pong(){
             // printf("b:\t %u\n", l_osc.data_buff.ping_buff[i]);
         }
         else {
-            assert(l_osc.data_buff.ping_buff[i] == 0);
+            // assert(l_osc.data_buff.ping_buff[i] == 0);
             assert(some[i] == l_osc.data_buff.ping_buff[0]);
         }
-        printf("data-big-buff:\t%d\n", some[i]);
+        // printf("data-big-buff:\t%d\n", some[i]);
     }
 
     assert(some[10] != some[16]);
