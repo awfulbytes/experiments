@@ -5,3 +5,6 @@ obj
 *.log
 compile_commands*
 builddir
+
+.clang*
+ventor/*
