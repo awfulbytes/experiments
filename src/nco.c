@@ -1,13 +1,15 @@
+#include <stdint.h>
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #include "nco.h"
+#include "string.h"
 // #define TEST
-inline static uint32_t compute_1cycle_lut_index(struct nco nco[static 1]);
+inline static uint32_t compute_lut_index(struct nco nco[static 1]);
 
 void generate_half_signal(volatile const uint16_t data[static 128],
                           uint16_t sectionLength, struct nco nco[static 1]){
 
     for (uint16_t i = 0; i < sectionLength; ++i) {
-        uint32_t index = compute_1cycle_lut_index(nco);
+        uint32_t index = compute_lut_index(nco);
         uint32_t n_index = index + 1;
         uint16_t a = data[index];
         uint16_t b = data[n_index & 0x7f];
@@ -25,10 +27,10 @@ void generate_half_signal(volatile const uint16_t data[static 128],
     }
 }
 
-void compute_nco_increment(atomic_ushort note, struct nco *nco, const uint_fast16_t sample_rate){
-
+uint64_t compute_nco_increment(atomic_ushort note, const uint_fast16_t sample_rate){
     atomic_uint_fast32_t tmp = ((note * (1<<16))/sample_rate);
-    nco->phase_pending_update_inc = (tmp<<16);
+    // TODO:: test on chip
+    return (tmp<<16);
 }
 
 atomic_ushort map_12b_to_hz(uint16_t value, enum modes pitch_mode) {
@@ -52,9 +54,9 @@ atomic_ushort map_12b_to_hz(uint16_t value, enum modes pitch_mode) {
     return (atomic_ushort)(min + (value * range) / in_max);
 }
 
-void stage_pending_inc(volatile uint16_t adc_raw_value, struct nco *nco, const uint_fast16_t sample_rate){
+void stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast16_t sample_rate){
     atomic_ushort note = map_12b_to_hz(adc_raw_value, nco->mode);
-    compute_nco_increment(note, nco, sample_rate);
+    nco->phase_pending_update_inc = compute_nco_increment(note, sample_rate);
     nco->phase_pending_update = false;
 }
 
