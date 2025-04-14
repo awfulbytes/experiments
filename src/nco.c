@@ -40,7 +40,7 @@ atomic_ushort map_12b_to_hz(uint16_t value, enum modes pitch_mode) {
     switch (pitch_mode) {
         case free:
             min = 20;
-            max = 16646;
+            max = 16000;
             break;
         case single_octave:
             min = 220;
