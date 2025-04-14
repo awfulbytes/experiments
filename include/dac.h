@@ -1,12 +1,5 @@
 #include <stdint.h>
-#define TIMER TIM6
-#include "stm32g0xx_ll_bus.h"
 #include "stm32g0xx_ll_dac.h"
-#include "stm32g0xx_ll_tim.h"
-#include "stm32g071xx.h"
-#include "stm32g0xx_ll_bus.h"
-#include "stm32g0xx_ll_dac.h"
-#include "system_stm32g0xx.h"
 #include <stdint.h>
 
 struct dac {

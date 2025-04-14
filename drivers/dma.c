@@ -2,6 +2,7 @@
 #include "stm32g071xx.h"
 #include "stm32g0xx.h"
 #include "stm32g0xx_ll_dma.h"
+#include "stm32g0xx_ll_bus.h"
 #include <stdint.h>
 static void dma_init(void){
     NVIC_SetPriority(DMA1_Channel2_3_IRQn, 1);

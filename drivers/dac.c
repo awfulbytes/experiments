@@ -1,7 +1,5 @@
 #include "dac.h"
 #include "gpio.c"
-#include <stdint.h>
-/* #include "stm32g0xx.h" */
 
 static void dac_chx_priority(struct dac *dac){
     if (dac->channel == LL_DAC_CHANNEL_1){

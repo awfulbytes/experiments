@@ -1,5 +1,7 @@
 #include "adc.h"
-#include "stm32g0xx_ll_adc.h"
+#include "stm32g0xx_ll_utils.h"
+#include "stm32g0xx_ll_bus.h"
+
 extern volatile uint16_t pitch0_value;
 extern struct adc pitch0cv_in;
 static ErrorStatus adc_dma_setup(struct adc *adc);

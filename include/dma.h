@@ -1,8 +1,6 @@
 #include "stm32g071xx.h"
 #include "dac.h"
-#include "stm32g0xx_ll_dac.h"
 #include "stm32g0xx_ll_dma.h"
-#include "stm32g0xx_ll_bus.h"
 struct dma {
     const uint16_t *data;
     uint32_t channel;
