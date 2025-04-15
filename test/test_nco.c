@@ -28,18 +28,23 @@ void emulate_adc_timer2_interrupt(void){
     l_osc.phase_pending_update = true;
 }
 
-void test_phase_increment(){
+void test_phase_increment_pending_request(){
     emulate_adc_timer2_interrupt();
     if (l_osc.phase_pending_update){
         stage_pending_inc(adc_data, &l_osc, master_clock);
     }
     assert(l_osc.phase_pending_update == false);
+    uint64_t new_req = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits) + 1;
+    if (l_osc.mode == single_octave && adc_data == 0xfff){
+        atomic_ushort osc_max_current_mode = map_12b_to_hz(0xfff, l_osc.mode);
+        // printf("%d\n", osc_max_current_mode);
+        assert(new_req + 1 == osc_max_current_mode);
+    }
     assert(adc_data == 0xfff);
-    uint64_t new_req = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits);
 
     char *pretty_mode_printer = ((l_osc.mode == 0) ? "free": "single_octave");
-    printf("requested:\t\t\t%u[Hz]\ngot-back:\t\t\t%lu[Hz]\noscillator-mode:\t%s",
-           required_freq, new_req, pretty_mode_printer);
+    printf("pend-val:\t\t\t%lu[Hz]\noscillator-mode:\t%s",
+           new_req, pretty_mode_printer);
     uint64_t pending_freq = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits);
     printf("\n------- phase values -------\n");
     printf("pending_incr:\t%lx\n", l_osc.phase_pending_update_inc);
@@ -72,6 +77,6 @@ void test_ping_pong(){
 }
 
 int main(void){
-    test_phase_increment();
+    test_phase_increment_pending_request();
     test_ping_pong();
 }
