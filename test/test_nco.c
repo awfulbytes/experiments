@@ -55,8 +55,8 @@ void test_phase_increment_pending_request(){
 void test_ping_pong(){
     l_osc.phase_inc = l_osc.phase_pending_update_inc;
     generate_half_signal(sine_wave, 128, &l_osc);
-    update_ping_pong_buff(l_osc.data_buff.ping_buff, some, 128);
-    update_ping_pong_buff(l_osc.data_buff.ping_buff, some + 128, 128);
+    update_data_buff(l_osc.data_buff.ping_buff, some, 128);
+    update_data_buff(l_osc.data_buff.ping_buff, some + 128, 128);
 
     for (int i=0; i<256; ++i) {
         if (i > 128)

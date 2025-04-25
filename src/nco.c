@@ -27,7 +27,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
     }
 }
 
-uint64_t compute_nco_increment(atomic_ushort note, const uint_fast16_t sample_rate){
+uint64_t compute_nco_increment(atomic_ushort note, const uint_fast32_t sample_rate){
     atomic_uint_fast32_t tmp = ((note * (1<<16))/sample_rate);
     // TODO:: test on chip
     return (tmp<<16);
@@ -54,13 +54,13 @@ atomic_ushort map_12b_to_hz(uint16_t value, enum modes pitch_mode) {
     return (atomic_ushort)(min + (value * range) / in_max);
 }
 
-void stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast16_t sample_rate){
+void stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate){
     atomic_ushort note = map_12b_to_hz(adc_raw_value, nco->mode);
     nco->phase_pending_update_inc = compute_nco_increment(note, sample_rate);
     nco->phase_pending_update = false;
 }
 
-inline void update_ping_pong_buff(const uint16_t data[static 128],
+inline void update_data_buff(const uint16_t data[static 128],
                                   atomic_ushort bufferSection[static 128],
                                   uint16_t sectionLength) {
     memcpy(bufferSection, data, sizeof(uint16_t) * sectionLength);
