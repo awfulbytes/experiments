@@ -1,5 +1,4 @@
 #include <stdint.h>
-#pragma GCC diagnostic ignored "-Wunused-parameter"
 #include "nco.h"
 #include "string.h"
 // #define TEST
