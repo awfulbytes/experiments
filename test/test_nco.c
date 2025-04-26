@@ -22,7 +22,7 @@ uint16_t adc_data = 0x000;
 
 constexpr uint_fast32_t master_clock = 198000;
 uint32_t required_freq = 440;
-uint16_t acc_bits = sizeof(l_osc.phase_accum) * 8;
+uint16_t acc_bits = (sizeof l_osc.phase_accum) * 8;
 void emulate_adc_timer2_interrupt(void){
     adc_data = 0xfff;
     l_osc.phase_pending_update = true;
