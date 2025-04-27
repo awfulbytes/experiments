@@ -1,7 +1,7 @@
 #include "stm32g0xx_it.h"
 #include <stdatomic.h>
 #include <stdint.h>
-// #define DEBUG
+#define DEBUG
 #define abs(x) ((x<0) ? -x : x)
 extern volatile uint16_t prev_value;
 extern volatile uint16_t pitch0_value;
@@ -45,16 +45,16 @@ void DMA1_Channel2_3_IRQHandler(void){
         phase_done_update = false;
     }
 
+    #warning "check if this is possible"
     // HACK:: this could eliminate the latency and sync the oscillators...
     //        if that's the case we can have true sync and not first
     //        second oscillators...
-    //        TODO:: the same for TC interrupt
     // if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) &&
-    //     ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3) {
-    //    (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
-    //    (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
-    //    update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128);
-    //    update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2, 128);
+    //     ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3)) {
+    //     (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
+    //     (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
+    //     update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128);
+    //     update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2, 128);
     // }
     // HACK::
 

@@ -28,7 +28,6 @@ void generate_half_signal(volatile const uint16_t data[static 128],
 
 uint64_t compute_nco_increment(atomic_ushort note, const uint_fast32_t sample_rate){
     atomic_uint_fast32_t tmp = ((note * (1<<16))/sample_rate);
-    // TODO:: test on chip
     return (tmp<<16);
 }
 
