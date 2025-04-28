@@ -1,194 +1,14 @@
 #+title: Notes
-* tables
-
-| Name                           | Value    | Class | Type   |     Size | Line | Section        |
-|--------------------------------+----------+-------+--------+----------+------+----------------|
-| adc_dma_setup                  | 080005c4 | t     | FUNC   | 00000074 |      | .text          |
-| adc_init_settings              | 08000638 | T     | FUNC   | 000000f4 |      | .text          |
-| ____aeabi_idiv0_from_arm       | 08002ca8 | t     | FUNC   | 0000000c |      | .text          |
-| __aeabi_uidiv                  | 080000d4 | T     | FUNC   |          |      | .text          |
-| __aeabi_uidivmod               | 08000154 | T     | FUNC   | 00000012 |      | .text          |
-| AHBPrescTable                  | 08007200 | R     | OBJECT | 00000040 |      | .rodata        |
-| alter_wave_form                | 080007fc | T     | FUNC   | 00000040 |      | .text          |
-| alter_wave_frequency           | 08000c88 | T     | FUNC   | 00000034 |      | .text          |
-| APBPrescTable                  | 080071e0 | R     | OBJECT | 00000020 |      | .rodata        |
-| __bss_end__                      | 200006cc | B     | NOTYPE |          |      | .bss           |
-| _bss_start__                     | 200002b8 | B     | NOTYPE |          |      | .bss           |
-| CHANNEL_OFFSET_TAB             | 08002dd0 | r     | OBJECT | 00000007 |      | .rodata        |
-| CHANNEL_OFFSET_TAB             | 08002dd8 | r     | OBJECT | 00000007 |      | .rodata        |
-| CHANNEL_OFFSET_TAB             | 0800728c | r     | OBJECT | 00000007 |      | .rodata        |
-| clk_config_settings            | 08000868 | T     | FUNC   | 00000012 |      | .text          |
-| CopyDataInit                   | 08000b16 | t     | NOTYPE |          |      | .text          |
-| dac1                           | 20000034 | D     | OBJECT | 00000010 |      | .data          |
-| dac_1_dma                      | 2000016c | D     | OBJECT | 0000003c |      | .data          |
-| dac2                           | 20000024 | D     | OBJECT | 00000010 |      | .data          |
-| dac_2_dma                      | 20000104 | D     | OBJECT | 0000003c |      | .data          |
-| dac_act                        | 080003f8 | T     | FUNC   | 0000005c |      | .text          |
-| dac_ch1_settings               | 200001a8 | D     | OBJECT | 0000002c |      | .data          |
-| dac_ch2_settings               | 20000140 | D     | OBJECT | 0000002c |      | .data          |
-| dac_chx_priority               | 08000238 | t     | FUNC   | 00000054 |      | .text          |
-| dac_config                     | 08000360 | T     | FUNC   | 00000098 |      | .text          |
-| dac_double_buff                | 200004c8 | B     | OBJECT | 00000200 |      | .bss           |
-| dac_double_buff2               | 200002c8 | B     | OBJECT | 00000200 |      | .bss           |
-| debug_tim2_pin31               | 0800083c | T     | FUNC   | 0000002c |      | .text          |
-| Default_Handler                | 08000b54 | T     | NOTYPE | 00000002 |      | .text          |
-| DMA1_Channel2_3_IRQHandler     | 08000cf0 | T     | FUNC   | 00000084 |      | .text          |
-| dma_config                     | 0800076c | T     | FUNC   | 00000090 |      | .text          |
-| dma_init                       | 0800072c | t     | FUNC   | 00000040 |      | .text          |
-| _ebss                          | 200006cc | B     | NOTYPE |          |      | .bss           |
-| _edata                         | 200002b8 | D     | NOTYPE |          |      | .data          |
-| _estack                        | 20009000 | R     | NOTYPE |          |      | .isr_vector    |
-| _etext                         | 08002cb8 | T     | NOTYPE |          |      | .text          |
-| __exidx_end                    | 080072c4 | N     | NOTYPE |          |      | .ARM           |
-| __exidx_start                  | 080072c4 | N     | NOTYPE |          |      | .ARM           |
-| EXTI4_15_IRQHandler            | 08000db8 | T     | FUNC   | 0000005c |      | .text          |
-| exti_setup                     | 080001f0 | t     | FUNC   | 00000048 |      | .text          |
-| FillZerobss                    | 08000b2a | t     | NOTYPE |          |      | .text          |
-| freqs                          | 20000288 | D     | OBJECT | 00000030 |      | .data          |
-| g_pfnVectors                   | 08000000 | R     | OBJECT | 000000bc |      | .isr_vector    |
-| gpio_init                      | 0800028c | T     | FUNC   | 000000d4 |      | .text          |
-| HardFault_Handler              | 08000cbc | T     | FUNC   | 00000002 |      | .text          |
-| IC1Config                      | 080021f8 | t     | FUNC   | 00000034 |      | .text          |
-| IC2Config                      | 0800222c | t     | FUNC   | 00000038 |      | .text          |
-| IC3Config                      | 08002264 | t     | FUNC   | 00000044 |      | .text          |
-| IC4Config                      | 080022a8 | t     | FUNC   | 00000044 |      | .text          |
-| Infinite_Loop                  | 08000b54 | t     | NOTYPE |          |      | .text          |
-| _init                          | 08000c20 | T     | FUNC   | 00000002 |      | .text          |
-| __init_array_end               | 080072c4 | d     | NOTYPE |          |      | .init_array    |
-| __init_array_start             | 080072c4 | d     | NOTYPE |          |      | .init_array    |
-| __libc_init_array              | 08002c50 | T     | FUNC   | 00000052 |      | .text          |
-| LL_ADC_CommonDeInit            | 08000e14 | T     | FUNC   | 00000020 |      | .text          |
-| LL_ADC_CommonInit              | 08000e34 | T     | FUNC   | 00000024 |      | .text          |
-| LL_ADC_CommonStructInit        | 08000e58 | T     | FUNC   | 00000008 |      | .text          |
-| LL_ADC_DeInit                  | 08000e60 | T     | FUNC   | 00000118 |      | .text          |
-| LL_ADC_Init                    | 08000f78 | T     | FUNC   | 00000034 |      | .text          |
-| LL_ADC_REG_Init                | 08000fbc | T     | FUNC   | 0000006c |      | .text          |
-| LL_ADC_REG_StructInit          | 08001028 | T     | FUNC   | 00000016 |      | .text          |
-| LL_ADC_StructInit              | 08000fac | T     | FUNC   | 00000010 |      | .text          |
-| LL_DAC_DeInit                  | 08001040 | T     | FUNC   | 00000020 |      | .text          |
-| LL_DAC_Init                    | 08001060 | T     | FUNC   | 00000068 |      | .text          |
-| LL_DAC_StructInit              | 080010c8 | T     | FUNC   | 00000010 |      | .text          |
-| LL_DMA_DeInit                  | 080010d8 | T     | FUNC   | 00000124 |      | .text          |
-| LL_DMA_Init                    | 080011fc | T     | FUNC   | 00000074 |      | .text          |
-| LL_DMA_StructInit              | 08001270 | T     | FUNC   | 0000001a |      | .text          |
-| LL_EXTI_DeInit                 | 0800128c | T     | FUNC   | 00000034 |      | .text          |
-| LL_EXTI_Init                   | 080012c0 | T     | FUNC   | 0000014c |      | .text          |
-| LL_EXTI_SetEXTISource          | 080001cc | t     | FUNC   | 00000024 |      | .text          |
-| LL_EXTI_StructInit             | 0800140c | T     | FUNC   | 00000010 |      | .text          |
-| LL_GPIO_DeInit                 | 0800141c | T     | FUNC   | 0000009c |      | .text          |
-| LL_GPIO_Init                   | 080014b8 | T     | FUNC   | 000000b6 |      | .text          |
-| LL_GPIO_StructInit             | 08001570 | T     | FUNC   | 00000018 |      | .text          |
-| LL_Init1msTick                 | 080029b0 | T     | FUNC   | 00000020 |      | .text          |
-| LL_LPTIM_DeInit                | 08001588 | T     | FUNC   | 00000050 |      | .text          |
-| LL_LPTIM_Disable               | 08001610 | T     | FUNC   | 00000138 |      | .text          |
-| LL_LPTIM_Init                  | 080015e4 | T     | FUNC   | 0000002c |      | .text          |
-| LL_LPTIM_StructInit            | 080015d8 | T     | FUNC   | 0000000c |      | .text          |
-| LL_mDelay                      | 080029d0 | T     | FUNC   | 00000028 |      | .text          |
-| LL_PLL_ConfigSystemClock_HSE   | 08002ba4 | T     | FUNC   | 0000009c |      | .text          |
-| LL_PLL_ConfigSystemClock_HSI   | 08002b2c | T     | FUNC   | 00000078 |      | .text          |
-| LL_PWR_DeInit                  | 08001748 | T     | FUNC   | 00000020 |      | .text          |
-| LL_RCC_DeInit                  | 08001950 | T     | FUNC   | 00000098 |      | .text          |
-| LL_RCC_GetADCClockFreq         | 08001e04 | T     | FUNC   | 0000005c |      | .text          |
-| LL_RCC_GetCECClockFreq         | 08001dc8 | T     | FUNC   | 0000003c |      | .text          |
-| LL_RCC_GetI2CClockFreq         | 08001ae0 | T     | FUNC   | 0000005c |      | .text          |
-| LL_RCC_GetI2SClockFreq         | 08001b3c | T     | FUNC   | 0000006c |      | .text          |
-| LL_RCC_GetLPTIMClockFreq       | 08001c24 | T     | FUNC   | 000000f8 |      | .text          |
-| LL_RCC_GetLPUARTClockFreq      | 08001ba8 | T     | FUNC   | 0000007c |      | .text          |
-| LL_RCC_GetRTCClockFreq         | 08001e60 | T     | FUNC   | 0000005c |      | .text          |
-| LL_RCC_GetSystemClocksFreq     | 080019e8 | T     | FUNC   | 00000018 |      | .text          |
-| LL_RCC_GetTIMClockFreq         | 08001d1c | T     | FUNC   | 000000ac |      | .text          |
-| LL_RCC_GetUSARTClockFreq       | 08001a00 | T     | FUNC   | 000000e0 |      | .text          |
-| LL_SetFlashLatency             | 08002a04 | T     | FUNC   | 00000060 |      | .text          |
-| LL_SetSystemCoreClock          | 080029f8 | T     | FUNC   | 0000000c |      | .text          |
-| LL_TIM_BDTR_Init               | 080026a0 | T     | FUNC   | 0000009c |      | .text          |
-| LL_TIM_BDTR_StructInit         | 08002680 | T     | FUNC   | 0000001e |      | .text          |
-| LL_TIM_DeInit                  | 080022ec | T     | FUNC   | 0000013c |      | .text          |
-| LL_TIM_ENCODER_Init            | 080025b8 | T     | FUNC   | 00000060 |      | .text          |
-| LL_TIM_ENCODER_StructInit      | 0800259c | T     | FUNC   | 0000001c |      | .text          |
-| LL_TIM_HALLSENSOR_Init         | 08002624 | T     | FUNC   | 0000005c |      | .text          |
-| LL_TIM_HALLSENSOR_StructInit   | 08002618 | T     | FUNC   | 0000000c |      | .text          |
-| LL_TIM_IC_Init                 | 0800255c | T     | FUNC   | 00000040 |      | .text          |
-| LL_TIM_IC_StructInit           | 0800254c | T     | FUNC   | 00000010 |      | .text          |
-| LL_TIM_Init                    | 0800243c | T     | FUNC   | 000000a0 |      | .text          |
-| LL_TIM_OC_Init                 | 080024f0 | T     | FUNC   | 0000005c |      | .text          |
-| LL_TIM_OC_StructInit           | 080024dc | T     | FUNC   | 00000014 |      | .text          |
-| LL_TIM_StructInit              | 08002428 | T     | FUNC   | 00000012 |      | .text          |
-| LL_USART_ClockInit             | 08002940 | T     | FUNC   | 0000002c |      | .text          |
-| LL_USART_ClockStructInit       | 0800296c | T     | FUNC   | 0000000c |      | .text          |
-| LL_USART_DeInit                | 080027ac | T     | FUNC   | 000000a0 |      | .text          |
-| LL_USART_Init                  | 0800284c | T     | FUNC   | 000000d8 |      | .text          |
-| LL_USART_SetBaudRate           | 0800273c | t     | FUNC   | 00000070 |      | .text          |
-| LL_USART_StructInit            | 08002924 | T     | FUNC   | 0000001a |      | .text          |
-| LoopCopyDataInit               | 08000b1c | t     | NOTYPE |          |      | .text          |
-| LoopFillZerobss                | 08000b2e | t     | NOTYPE |          |      | .text          |
-| LoopForever                    | 08000b3a | t     | NOTYPE |          |      | .text          |
-| l_osc                          | 20000260 | D     | OBJECT | 00000020 |      | .data          |
-| main                           | 0800098c | T     | FUNC   | 00000178 |      | .text          |
-| map_12b_to_hz                  | 08000c6c | T     | FUNC   | 0000001c |      | .text          |
-| memset                         | 08002c40 | T     | FUNC   | 00000010 |      | .text          |
-| _Min_Heap_Size                 | 00000200 | A     | NOTYPE |          |      | *ABS*            |
-| _Min_Stack_Size                | 00000400 | A     | NOTYPE |          |      | *ABS*            |
-| my_clk                         | 200002b8 | B     | OBJECT | 00000010 |      | .bss           |
-| NMI_Handler                    | 08000cbe | T     | FUNC   | 00000002 |      | .text          |
-| noise                          | 08006de0 | R     | OBJECT | 00000100 |      | .rodata        |
-| __NVIC_SetPriority             | 0800016c | t     | FUNC   | 00000060 |      | .text          |
-| OC1Config                      | 08001ebc | t     | FUNC   | 00000090 |      | .text          |
-| OC2Config                      | 08001f4c | t     | FUNC   | 00000098 |      | .text          |
-| OC3Config                      | 08001fe4 | t     | FUNC   | 000000a4 |      | .text          |
-| OC4Config                      | 08002088 | t     | FUNC   | 0000007c |      | .text          |
-| OC5Config                      | 08002104 | t     | FUNC   | 00000078 |      | .text          |
-| OC6Config                      | 0800217c | t     | FUNC   | 0000007c |      | .text          |
-| osc_fine_incs                  | 08002de0 | R     | OBJECT | 00004000 |      | .rodata        |
-| osc_oct_incs                   | 08007240 | R     | OBJECT | 00000030 |      | .rodata        |
-| phase_done_update              | 200006c8 | B     | OBJECT | 00000001 |      | .bss           |
-| pitch_0_cv                     | 20000014 | D     | OBJECT | 00000010 |      | .data          |
-| pitch0cv_in                    | 20000094 | D     | OBJECT | 00000070 |      | .data          |
-| pitch0_value                   | 20000282 | D     | OBJECT | 00000002 |      | .data          |
-| __preinit_array_end            | 080072c4 | d     | NOTYPE |          |      | .preinit_array |
-| __preinit_array_start          | 080072c4 | d     | NOTYPE |          |      | .preinit_array |
-| prev_value                     | 20000280 | D     | OBJECT | 00000002 |      | .data          |
-| RCC_GetHCLKClockFreq           | 08001768 | t     | FUNC   | 00000020 |      | .text          |
-| RCC_GetPCLK1ClockFreq          | 08001788 | t     | FUNC   | 00000020 |      | .text          |
-| RCC_GetSystemClockFreq         | 080017f0 | t     | FUNC   | 00000038 |      | .text          |
-| RCC_PLL_GetFreqDomain_ADC      | 08001828 | t     | FUNC   | 0000004c |      | .text          |
-| RCC_PLL_GetFreqDomain_I2S1     | 08001874 | t     | FUNC   | 0000004c |      | .text          |
-| RCC_PLL_GetFreqDomain_SYS      | 080017a8 | t     | FUNC   | 00000048 |      | .text          |
-| RCC_PLL_GetFreqDomain_TIM1     | 080018c0 | t     | FUNC   | 00000048 |      | .text          |
-| RCC_PLL_GetFreqDomain_TIM15    | 08001908 | t     | FUNC   | 00000048 |      | .text          |
-| r_osc                          | 20000240 | D     | OBJECT | 00000020 |      | .data          |
-| sawdn                          | 08006ee0 | R     | OBJECT | 00000100 |      | .rodata        |
-| sawup                          | 08006fe0 | R     | OBJECT | 00000100 |      | .rodata        |
-| _sbss                          | 200002b8 | B     | NOTYPE |          |      | .bss           |
-| scaled_sin                     | 08002ce0 | R     | OBJECT | 000000f0 |      | .rodata        |
-| _sdata                         | 20000000 | D     | NOTYPE |          |      | .data          |
-| _sidata                        | 080072c4 | A     | NOTYPE |          |      | *ABS*            |
-| sine_wave                      | 080070e0 | R     | OBJECT | 00000100 |      | .rodata        |
-| sys_clock_config               | 0800087c | T     | FUNC   | 00000110 |      | .text          |
-| SystemCoreClock                | 20000284 | D     | OBJECT | 00000004 |      | .data          |
-| SystemCoreClockUpdate          | 08000b68 | T     | FUNC   | 000000b8 |      | .text          |
-| SystemInit                     | 08000b58 | T     | FUNC   | 00000010 |      | .text          |
-| TIM2_IRQHandler                | 08000d74 | T     | FUNC   | 00000044 |      | .text          |
-| tim2_settings                  | 200001d4 | D     | OBJECT | 00000024 |      | .data          |
-| TIM6_DAC_LPTIM1_IRQHandler     | 08000cc0 | T     | FUNC   | 00000018 |      | .text          |
-| tim6_settings                  | 2000021c | D     | OBJECT | 00000024 |      | .data          |
-| TIM7_LPTIM2_IRQHandler         | 08000cd8 | T     | FUNC   | 00000018 |      | .text          |
-| tim7_settings                  | 200001f8 | D     | OBJECT | 00000024 |      | .data          |
-| tim_init                       | 08000488 | T     | FUNC   | 0000013c |      | .text          |
-| timx_set                       | 08000454 | t     | FUNC   | 00000034 |      | .text          |
-| __udivsi3                      | 080000d4 | T     | FUNC   | 00000080 |      | .text          |
-| .udivsi3_skip_div0_test        | 080000d8 | t     | NOTYPE |          |      | .text          |
-| update_ping_pong_buff          | 08000c44 | T     | FUNC   | 00000028 |      | .text          |
-| USART_PRESCALER_TAB            | 08007294 | r     | OBJECT | 00000030 |      | .rodata        |
-| UTILS_EnablePLLAndSwitchSystem | 08002a64 | t     | FUNC   | 000000c8 |      | .text          |
-| UTILS_GetPLLOutputFrequency    | 08002978 | t     | FUNC   | 00000022 |      | .text          |
-| UTILS_PLL_IsBusy               | 0800299c | t     | FUNC   | 00000014 |      | .text          |
-| wave_button_callback           | 08000c22 | T     | FUNC   | 00000022 |      | .text          |
-| wave_choise_dac1               | 2000006c | D     | OBJECT | 00000028 |      | .data          |
-| wave_choise_dac2               | 20000044 | D     | OBJECT | 00000028 |      | .data          |
-| wave_me_d                      | 20000004 | D     | OBJECT | 00000004 |      | .data          |
-| wave_me_d2                     | 20000000 | D     | OBJECT | 00000004 |      | .data          |
-| waves_bank                     | 20000008 | D     | OBJECT | 0000000c |      | .data          |
-#+TBLFM:
+* using framing for buffers
+use the same technick but act on separate time-frames...
+** TODO decouple from interpolation
+** TODO add more signal mangling algorithms
+** TODO malform the accumulator to make PD
+=phase distortion= is a nice and easy thing to do now that we have a DDS
+a. using an injection to change the slope of the accumulator mid generation makes the signal kinda folding.
+b. we have to check at which point and onward in the lut i can make this happen... and what different positions do.
+c. make this selectable or even modulated!!
+** MODS should add leds for tracking
 * table increments
 #+begin_src c
 const uint32_t osc_fine_incs[4096] = {
@@ -1218,3 +1038,193 @@ const uint32_t osc_fine_incs[4096] = {
 0x1a5e3540, 0x1a5fb28d, 0x1a612fda,
 };
 #+end_src
+* tables
+
+| Name                           | Value    | Class | Type   |     Size | Line | Section        |
+|--------------------------------+----------+-------+--------+----------+------+----------------|
+| adc_dma_setup                  | 080005c4 | t     | FUNC   | 00000074 |      | .text          |
+| adc_init_settings              | 08000638 | T     | FUNC   | 000000f4 |      | .text          |
+| ____aeabi_idiv0_from_arm       | 08002ca8 | t     | FUNC   | 0000000c |      | .text          |
+| __aeabi_uidiv                  | 080000d4 | T     | FUNC   |          |      | .text          |
+| __aeabi_uidivmod               | 08000154 | T     | FUNC   | 00000012 |      | .text          |
+| AHBPrescTable                  | 08007200 | R     | OBJECT | 00000040 |      | .rodata        |
+| alter_wave_form                | 080007fc | T     | FUNC   | 00000040 |      | .text          |
+| alter_wave_frequency           | 08000c88 | T     | FUNC   | 00000034 |      | .text          |
+| APBPrescTable                  | 080071e0 | R     | OBJECT | 00000020 |      | .rodata        |
+| __bss_end__                      | 200006cc | B     | NOTYPE |          |      | .bss           |
+| _bss_start__                     | 200002b8 | B     | NOTYPE |          |      | .bss           |
+| CHANNEL_OFFSET_TAB             | 08002dd0 | r     | OBJECT | 00000007 |      | .rodata        |
+| CHANNEL_OFFSET_TAB             | 08002dd8 | r     | OBJECT | 00000007 |      | .rodata        |
+| CHANNEL_OFFSET_TAB             | 0800728c | r     | OBJECT | 00000007 |      | .rodata        |
+| clk_config_settings            | 08000868 | T     | FUNC   | 00000012 |      | .text          |
+| CopyDataInit                   | 08000b16 | t     | NOTYPE |          |      | .text          |
+| dac1                           | 20000034 | D     | OBJECT | 00000010 |      | .data          |
+| dac_1_dma                      | 2000016c | D     | OBJECT | 0000003c |      | .data          |
+| dac2                           | 20000024 | D     | OBJECT | 00000010 |      | .data          |
+| dac_2_dma                      | 20000104 | D     | OBJECT | 0000003c |      | .data          |
+| dac_act                        | 080003f8 | T     | FUNC   | 0000005c |      | .text          |
+| dac_ch1_settings               | 200001a8 | D     | OBJECT | 0000002c |      | .data          |
+| dac_ch2_settings               | 20000140 | D     | OBJECT | 0000002c |      | .data          |
+| dac_chx_priority               | 08000238 | t     | FUNC   | 00000054 |      | .text          |
+| dac_config                     | 08000360 | T     | FUNC   | 00000098 |      | .text          |
+| dac_double_buff                | 200004c8 | B     | OBJECT | 00000200 |      | .bss           |
+| dac_double_buff2               | 200002c8 | B     | OBJECT | 00000200 |      | .bss           |
+| debug_tim2_pin31               | 0800083c | T     | FUNC   | 0000002c |      | .text          |
+| Default_Handler                | 08000b54 | T     | NOTYPE | 00000002 |      | .text          |
+| DMA1_Channel2_3_IRQHandler     | 08000cf0 | T     | FUNC   | 00000084 |      | .text          |
+| dma_config                     | 0800076c | T     | FUNC   | 00000090 |      | .text          |
+| dma_init                       | 0800072c | t     | FUNC   | 00000040 |      | .text          |
+| _ebss                          | 200006cc | B     | NOTYPE |          |      | .bss           |
+| _edata                         | 200002b8 | D     | NOTYPE |          |      | .data          |
+| _estack                        | 20009000 | R     | NOTYPE |          |      | .isr_vector    |
+| _etext                         | 08002cb8 | T     | NOTYPE |          |      | .text          |
+| __exidx_end                    | 080072c4 | N     | NOTYPE |          |      | .ARM           |
+| __exidx_start                  | 080072c4 | N     | NOTYPE |          |      | .ARM           |
+| EXTI4_15_IRQHandler            | 08000db8 | T     | FUNC   | 0000005c |      | .text          |
+| exti_setup                     | 080001f0 | t     | FUNC   | 00000048 |      | .text          |
+| FillZerobss                    | 08000b2a | t     | NOTYPE |          |      | .text          |
+| freqs                          | 20000288 | D     | OBJECT | 00000030 |      | .data          |
+| g_pfnVectors                   | 08000000 | R     | OBJECT | 000000bc |      | .isr_vector    |
+| gpio_init                      | 0800028c | T     | FUNC   | 000000d4 |      | .text          |
+| HardFault_Handler              | 08000cbc | T     | FUNC   | 00000002 |      | .text          |
+| IC1Config                      | 080021f8 | t     | FUNC   | 00000034 |      | .text          |
+| IC2Config                      | 0800222c | t     | FUNC   | 00000038 |      | .text          |
+| IC3Config                      | 08002264 | t     | FUNC   | 00000044 |      | .text          |
+| IC4Config                      | 080022a8 | t     | FUNC   | 00000044 |      | .text          |
+| Infinite_Loop                  | 08000b54 | t     | NOTYPE |          |      | .text          |
+| _init                          | 08000c20 | T     | FUNC   | 00000002 |      | .text          |
+| __init_array_end               | 080072c4 | d     | NOTYPE |          |      | .init_array    |
+| __init_array_start             | 080072c4 | d     | NOTYPE |          |      | .init_array    |
+| __libc_init_array              | 08002c50 | T     | FUNC   | 00000052 |      | .text          |
+| LL_ADC_CommonDeInit            | 08000e14 | T     | FUNC   | 00000020 |      | .text          |
+| LL_ADC_CommonInit              | 08000e34 | T     | FUNC   | 00000024 |      | .text          |
+| LL_ADC_CommonStructInit        | 08000e58 | T     | FUNC   | 00000008 |      | .text          |
+| LL_ADC_DeInit                  | 08000e60 | T     | FUNC   | 00000118 |      | .text          |
+| LL_ADC_Init                    | 08000f78 | T     | FUNC   | 00000034 |      | .text          |
+| LL_ADC_REG_Init                | 08000fbc | T     | FUNC   | 0000006c |      | .text          |
+| LL_ADC_REG_StructInit          | 08001028 | T     | FUNC   | 00000016 |      | .text          |
+| LL_ADC_StructInit              | 08000fac | T     | FUNC   | 00000010 |      | .text          |
+| LL_DAC_DeInit                  | 08001040 | T     | FUNC   | 00000020 |      | .text          |
+| LL_DAC_Init                    | 08001060 | T     | FUNC   | 00000068 |      | .text          |
+| LL_DAC_StructInit              | 080010c8 | T     | FUNC   | 00000010 |      | .text          |
+| LL_DMA_DeInit                  | 080010d8 | T     | FUNC   | 00000124 |      | .text          |
+| LL_DMA_Init                    | 080011fc | T     | FUNC   | 00000074 |      | .text          |
+| LL_DMA_StructInit              | 08001270 | T     | FUNC   | 0000001a |      | .text          |
+| LL_EXTI_DeInit                 | 0800128c | T     | FUNC   | 00000034 |      | .text          |
+| LL_EXTI_Init                   | 080012c0 | T     | FUNC   | 0000014c |      | .text          |
+| LL_EXTI_SetEXTISource          | 080001cc | t     | FUNC   | 00000024 |      | .text          |
+| LL_EXTI_StructInit             | 0800140c | T     | FUNC   | 00000010 |      | .text          |
+| LL_GPIO_DeInit                 | 0800141c | T     | FUNC   | 0000009c |      | .text          |
+| LL_GPIO_Init                   | 080014b8 | T     | FUNC   | 000000b6 |      | .text          |
+| LL_GPIO_StructInit             | 08001570 | T     | FUNC   | 00000018 |      | .text          |
+| LL_Init1msTick                 | 080029b0 | T     | FUNC   | 00000020 |      | .text          |
+| LL_LPTIM_DeInit                | 08001588 | T     | FUNC   | 00000050 |      | .text          |
+| LL_LPTIM_Disable               | 08001610 | T     | FUNC   | 00000138 |      | .text          |
+| LL_LPTIM_Init                  | 080015e4 | T     | FUNC   | 0000002c |      | .text          |
+| LL_LPTIM_StructInit            | 080015d8 | T     | FUNC   | 0000000c |      | .text          |
+| LL_mDelay                      | 080029d0 | T     | FUNC   | 00000028 |      | .text          |
+| LL_PLL_ConfigSystemClock_HSE   | 08002ba4 | T     | FUNC   | 0000009c |      | .text          |
+| LL_PLL_ConfigSystemClock_HSI   | 08002b2c | T     | FUNC   | 00000078 |      | .text          |
+| LL_PWR_DeInit                  | 08001748 | T     | FUNC   | 00000020 |      | .text          |
+| LL_RCC_DeInit                  | 08001950 | T     | FUNC   | 00000098 |      | .text          |
+| LL_RCC_GetADCClockFreq         | 08001e04 | T     | FUNC   | 0000005c |      | .text          |
+| LL_RCC_GetCECClockFreq         | 08001dc8 | T     | FUNC   | 0000003c |      | .text          |
+| LL_RCC_GetI2CClockFreq         | 08001ae0 | T     | FUNC   | 0000005c |      | .text          |
+| LL_RCC_GetI2SClockFreq         | 08001b3c | T     | FUNC   | 0000006c |      | .text          |
+| LL_RCC_GetLPTIMClockFreq       | 08001c24 | T     | FUNC   | 000000f8 |      | .text          |
+| LL_RCC_GetLPUARTClockFreq      | 08001ba8 | T     | FUNC   | 0000007c |      | .text          |
+| LL_RCC_GetRTCClockFreq         | 08001e60 | T     | FUNC   | 0000005c |      | .text          |
+| LL_RCC_GetSystemClocksFreq     | 080019e8 | T     | FUNC   | 00000018 |      | .text          |
+| LL_RCC_GetTIMClockFreq         | 08001d1c | T     | FUNC   | 000000ac |      | .text          |
+| LL_RCC_GetUSARTClockFreq       | 08001a00 | T     | FUNC   | 000000e0 |      | .text          |
+| LL_SetFlashLatency             | 08002a04 | T     | FUNC   | 00000060 |      | .text          |
+| LL_SetSystemCoreClock          | 080029f8 | T     | FUNC   | 0000000c |      | .text          |
+| LL_TIM_BDTR_Init               | 080026a0 | T     | FUNC   | 0000009c |      | .text          |
+| LL_TIM_BDTR_StructInit         | 08002680 | T     | FUNC   | 0000001e |      | .text          |
+| LL_TIM_DeInit                  | 080022ec | T     | FUNC   | 0000013c |      | .text          |
+| LL_TIM_ENCODER_Init            | 080025b8 | T     | FUNC   | 00000060 |      | .text          |
+| LL_TIM_ENCODER_StructInit      | 0800259c | T     | FUNC   | 0000001c |      | .text          |
+| LL_TIM_HALLSENSOR_Init         | 08002624 | T     | FUNC   | 0000005c |      | .text          |
+| LL_TIM_HALLSENSOR_StructInit   | 08002618 | T     | FUNC   | 0000000c |      | .text          |
+| LL_TIM_IC_Init                 | 0800255c | T     | FUNC   | 00000040 |      | .text          |
+| LL_TIM_IC_StructInit           | 0800254c | T     | FUNC   | 00000010 |      | .text          |
+| LL_TIM_Init                    | 0800243c | T     | FUNC   | 000000a0 |      | .text          |
+| LL_TIM_OC_Init                 | 080024f0 | T     | FUNC   | 0000005c |      | .text          |
+| LL_TIM_OC_StructInit           | 080024dc | T     | FUNC   | 00000014 |      | .text          |
+| LL_TIM_StructInit              | 08002428 | T     | FUNC   | 00000012 |      | .text          |
+| LL_USART_ClockInit             | 08002940 | T     | FUNC   | 0000002c |      | .text          |
+| LL_USART_ClockStructInit       | 0800296c | T     | FUNC   | 0000000c |      | .text          |
+| LL_USART_DeInit                | 080027ac | T     | FUNC   | 000000a0 |      | .text          |
+| LL_USART_Init                  | 0800284c | T     | FUNC   | 000000d8 |      | .text          |
+| LL_USART_SetBaudRate           | 0800273c | t     | FUNC   | 00000070 |      | .text          |
+| LL_USART_StructInit            | 08002924 | T     | FUNC   | 0000001a |      | .text          |
+| LoopCopyDataInit               | 08000b1c | t     | NOTYPE |          |      | .text          |
+| LoopFillZerobss                | 08000b2e | t     | NOTYPE |          |      | .text          |
+| LoopForever                    | 08000b3a | t     | NOTYPE |          |      | .text          |
+| l_osc                          | 20000260 | D     | OBJECT | 00000020 |      | .data          |
+| main                           | 0800098c | T     | FUNC   | 00000178 |      | .text          |
+| map_12b_to_hz                  | 08000c6c | T     | FUNC   | 0000001c |      | .text          |
+| memset                         | 08002c40 | T     | FUNC   | 00000010 |      | .text          |
+| _Min_Heap_Size                 | 00000200 | A     | NOTYPE |          |      | *ABS*            |
+| _Min_Stack_Size                | 00000400 | A     | NOTYPE |          |      | *ABS*            |
+| my_clk                         | 200002b8 | B     | OBJECT | 00000010 |      | .bss           |
+| NMI_Handler                    | 08000cbe | T     | FUNC   | 00000002 |      | .text          |
+| noise                          | 08006de0 | R     | OBJECT | 00000100 |      | .rodata        |
+| __NVIC_SetPriority             | 0800016c | t     | FUNC   | 00000060 |      | .text          |
+| OC1Config                      | 08001ebc | t     | FUNC   | 00000090 |      | .text          |
+| OC2Config                      | 08001f4c | t     | FUNC   | 00000098 |      | .text          |
+| OC3Config                      | 08001fe4 | t     | FUNC   | 000000a4 |      | .text          |
+| OC4Config                      | 08002088 | t     | FUNC   | 0000007c |      | .text          |
+| OC5Config                      | 08002104 | t     | FUNC   | 00000078 |      | .text          |
+| OC6Config                      | 0800217c | t     | FUNC   | 0000007c |      | .text          |
+| osc_fine_incs                  | 08002de0 | R     | OBJECT | 00004000 |      | .rodata        |
+| osc_oct_incs                   | 08007240 | R     | OBJECT | 00000030 |      | .rodata        |
+| phase_done_update              | 200006c8 | B     | OBJECT | 00000001 |      | .bss           |
+| pitch_0_cv                     | 20000014 | D     | OBJECT | 00000010 |      | .data          |
+| pitch0cv_in                    | 20000094 | D     | OBJECT | 00000070 |      | .data          |
+| pitch0_value                   | 20000282 | D     | OBJECT | 00000002 |      | .data          |
+| __preinit_array_end            | 080072c4 | d     | NOTYPE |          |      | .preinit_array |
+| __preinit_array_start          | 080072c4 | d     | NOTYPE |          |      | .preinit_array |
+| prev_value                     | 20000280 | D     | OBJECT | 00000002 |      | .data          |
+| RCC_GetHCLKClockFreq           | 08001768 | t     | FUNC   | 00000020 |      | .text          |
+| RCC_GetPCLK1ClockFreq          | 08001788 | t     | FUNC   | 00000020 |      | .text          |
+| RCC_GetSystemClockFreq         | 080017f0 | t     | FUNC   | 00000038 |      | .text          |
+| RCC_PLL_GetFreqDomain_ADC      | 08001828 | t     | FUNC   | 0000004c |      | .text          |
+| RCC_PLL_GetFreqDomain_I2S1     | 08001874 | t     | FUNC   | 0000004c |      | .text          |
+| RCC_PLL_GetFreqDomain_SYS      | 080017a8 | t     | FUNC   | 00000048 |      | .text          |
+| RCC_PLL_GetFreqDomain_TIM1     | 080018c0 | t     | FUNC   | 00000048 |      | .text          |
+| RCC_PLL_GetFreqDomain_TIM15    | 08001908 | t     | FUNC   | 00000048 |      | .text          |
+| r_osc                          | 20000240 | D     | OBJECT | 00000020 |      | .data          |
+| sawdn                          | 08006ee0 | R     | OBJECT | 00000100 |      | .rodata        |
+| sawup                          | 08006fe0 | R     | OBJECT | 00000100 |      | .rodata        |
+| _sbss                          | 200002b8 | B     | NOTYPE |          |      | .bss           |
+| scaled_sin                     | 08002ce0 | R     | OBJECT | 000000f0 |      | .rodata        |
+| _sdata                         | 20000000 | D     | NOTYPE |          |      | .data          |
+| _sidata                        | 080072c4 | A     | NOTYPE |          |      | *ABS*            |
+| sine_wave                      | 080070e0 | R     | OBJECT | 00000100 |      | .rodata        |
+| sys_clock_config               | 0800087c | T     | FUNC   | 00000110 |      | .text          |
+| SystemCoreClock                | 20000284 | D     | OBJECT | 00000004 |      | .data          |
+| SystemCoreClockUpdate          | 08000b68 | T     | FUNC   | 000000b8 |      | .text          |
+| SystemInit                     | 08000b58 | T     | FUNC   | 00000010 |      | .text          |
+| TIM2_IRQHandler                | 08000d74 | T     | FUNC   | 00000044 |      | .text          |
+| tim2_settings                  | 200001d4 | D     | OBJECT | 00000024 |      | .data          |
+| TIM6_DAC_LPTIM1_IRQHandler     | 08000cc0 | T     | FUNC   | 00000018 |      | .text          |
+| tim6_settings                  | 2000021c | D     | OBJECT | 00000024 |      | .data          |
+| TIM7_LPTIM2_IRQHandler         | 08000cd8 | T     | FUNC   | 00000018 |      | .text          |
+| tim7_settings                  | 200001f8 | D     | OBJECT | 00000024 |      | .data          |
+| tim_init                       | 08000488 | T     | FUNC   | 0000013c |      | .text          |
+| timx_set                       | 08000454 | t     | FUNC   | 00000034 |      | .text          |
+| __udivsi3                      | 080000d4 | T     | FUNC   | 00000080 |      | .text          |
+| .udivsi3_skip_div0_test        | 080000d8 | t     | NOTYPE |          |      | .text          |
+| update_ping_pong_buff          | 08000c44 | T     | FUNC   | 00000028 |      | .text          |
+| USART_PRESCALER_TAB            | 08007294 | r     | OBJECT | 00000030 |      | .rodata        |
+| UTILS_EnablePLLAndSwitchSystem | 08002a64 | t     | FUNC   | 000000c8 |      | .text          |
+| UTILS_GetPLLOutputFrequency    | 08002978 | t     | FUNC   | 00000022 |      | .text          |
+| UTILS_PLL_IsBusy               | 0800299c | t     | FUNC   | 00000014 |      | .text          |
+| wave_button_callback           | 08000c22 | T     | FUNC   | 00000022 |      | .text          |
+| wave_choise_dac1               | 2000006c | D     | OBJECT | 00000028 |      | .data          |
+| wave_choise_dac2               | 20000044 | D     | OBJECT | 00000028 |      | .data          |
+| wave_me_d                      | 20000004 | D     | OBJECT | 00000004 |      | .data          |
+| wave_me_d2                     | 20000000 | D     | OBJECT | 00000004 |      | .data          |
+| waves_bank                     | 20000008 | D     | OBJECT | 0000000c |      | .data          |
+#+TBLFM:
