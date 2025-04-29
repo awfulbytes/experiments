@@ -5,9 +5,14 @@ use the same technick but act on separate time-frames...
 ** TODO add more signal mangling algorithms
 ** TODO malform the accumulator to make PD
 =phase distortion= is a nice and easy thing to do now that we have a DDS
-a. using an injection to change the slope of the accumulator mid generation makes the signal kinda folding.
-b. we have to check at which point and onward in the lut i can make this happen... and what different positions do.
-c. make this selectable or even modulated!!
+a. +using an injection to change the slope of the accumulator mid generation makes the signal kinda folding.+
+b. +we have to check at which point and onward in the lut i can make this happen... and what different positions do.+
+c. +make this selectable+
+d. or even modulated!!
+e. use an aggressive mode to make change between distortion modes
+   a. when i do index > amount the result is more aggressive
+   b. if i make index = amount then we get a more normal effect.
+   c. also if i add or subtract the phase differs in the audible output.
 ** MODS should add leds for tracking
 * table increments
 #+begin_src c
