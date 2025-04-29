@@ -1,7 +1,13 @@
 #include <stdint.h>
 #include <stdatomic.h>
 #include <stdint.h>
-enum modes {free, single_octave};
+enum freq_modes {free, single_octave};
+
+struct phase_distortion{
+    volatile bool on;
+    volatile uint8_t amount;
+    volatile uint32_t distortion_value;
+};
 
 struct ping_pong_buff{
     // uint8_t size;
@@ -12,8 +18,9 @@ struct nco {
     volatile uint64_t phase_pending_update_inc;
     volatile uint64_t phase_inc;
     volatile uint32_t phase_accum;
-    enum modes mode;
+    enum freq_modes mode;
     struct ping_pong_buff data_buff;
+    struct phase_distortion distortion;
     volatile bool phase_pending_update;
 };
 
@@ -25,7 +32,7 @@ void update_data_buff (const uint16_t data[static 128],
                             atomic_ushort bufferSection[static 128],
                             uint16_t sectionLength);
 #pragma GCC diagnostic ignored "-Wignored-qualifiers"
-atomic_ushort map_12b_to_hz(uint16_t adc_value, enum modes pitch_modes);
+atomic_ushort map_12b_to_hz(uint16_t adc_value, enum freq_modes pitch_modes);
 
 uint64_t compute_nco_increment(atomic_ushort note, const uint_fast32_t sample_rate);
 void stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate);

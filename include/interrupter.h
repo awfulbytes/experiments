@@ -25,13 +25,17 @@ struct nco l_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
                     .phase_pending_update_inc=0,
                     .phase_pending_update=false,
-                    .mode = free};
+                    .mode = free,
+                    .distortion.amount=72,
+                    .distortion.on=true,};
 struct nco r_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
                     // .phase_inc = 0x01'e0'00'0,
                     .phase_pending_update_inc=0,
                     .phase_pending_update=false,
-                    .mode=free};
+                    .mode=free,
+                    .distortion.amount=64,
+                    .distortion.on=false,};
 
 constexpr  uint_fast32_t master_clock = 198000;
 atomic_ushort dac_double_buff[256] = {0};

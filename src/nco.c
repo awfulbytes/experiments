@@ -4,6 +4,11 @@
 // #define TEST
 inline static uint32_t compute_lut_index(struct nco nco[static 1]);
 
+void apply_pd_alg(struct nco nco[static 1]){
+    nco->distortion.distortion_value = nco->phase_inc >> 1;
+    // nco->phase_inc -= nco->distortion.distortion_value;
+}
+
 void generate_half_signal(volatile const uint16_t data[static 128],
                           uint16_t sectionLength, struct nco nco[static 1]){
 
@@ -22,6 +27,12 @@ void generate_half_signal(volatile const uint16_t data[static 128],
 #endif // TEST
 
         nco->data_buff.ping_buff[i] = (a + ((uint16_t)(((diff * fract) >> 16))));
+        if (i > nco->distortion.amount
+            && nco->distortion.on){
+            apply_pd_alg(nco);
+            nco->phase_inc -= nco->distortion.distortion_value;
+            // GPIOB->ODR ^= (1<<3);
+        }
         nco->phase_accum += nco->phase_inc;
     }
 }
@@ -31,18 +42,18 @@ uint64_t compute_nco_increment(atomic_ushort note, const uint_fast32_t sample_ra
     return (tmp<<16);
 }
 
-atomic_ushort map_12b_to_hz(uint16_t value, enum modes pitch_mode) {
+atomic_ushort map_12b_to_hz(uint16_t value, enum freq_modes mode) {
     atomic_ushort in_max = 0xfff;
     atomic_ushort min;
     atomic_ushort max;
-    switch (pitch_mode) {
+    switch (mode) {
         case free:
             min = 20;
             max = 16000;
             break;
         case single_octave:
             min = 220;
-            max = 415;
+            max = 1661;
             break;
         default:
             min = 100;
