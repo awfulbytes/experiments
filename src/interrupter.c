@@ -33,6 +33,7 @@ void main() {
     while (1) {
         if (l_osc.phase_pending_update) {
             stage_pending_inc(prev_value, &l_osc, master_clock);
+            stage_pending_inc(prev_value, &r_osc, master_clock);
             phase_done_update = true;
         }
         if (wave_choise_dac1.flag == 0x69) {
