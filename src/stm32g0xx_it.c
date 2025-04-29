@@ -1,7 +1,7 @@
 #include "stm32g0xx_it.h"
 #include <stdatomic.h>
 #include <stdint.h>
-#define DEBUG
+// #define DEBUG
 #define abs(x) ((x<0) ? -x : x)
 extern volatile uint16_t prev_value;
 extern volatile uint16_t pitch0_value;
