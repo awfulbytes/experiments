@@ -49,31 +49,21 @@ void DMA1_Channel2_3_IRQHandler(void){
     // HACK:: this could eliminate the latency and sync the oscillators...
     //        if that's the case we can have true sync and not first
     //        second oscillators...
-    // if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) &&
-    //     ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3)) {
-    //     (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
-    //     (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
-    //     update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128);
-    //     update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2, 128);
-    // }
-    // HACK::
-
-    if ((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) {
+    if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) &&
+        ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3)) {
         (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
+        (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
+        update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128);
         update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2, 128);
-        if ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3) {
-            (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
-            update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128);
-        }
     }
-    if ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3){
+    if (((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2) &&
+        ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3)) {
+        (DMA1->IFCR) = (DMA_IFCR_CTCIF2);
         (DMA1->IFCR) = (DMA_IFCR_CTCIF3);
         update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff + 128, 128);
-        if ((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2){
-            (DMA1->IFCR) = (DMA_IFCR_CTCIF2);
-            update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2 + 128, 128);
-        }
+        update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2 + 128, 128);
     }
+    // HACK::
 
 }
 
