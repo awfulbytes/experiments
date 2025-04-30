@@ -12,6 +12,7 @@ extern atomic_ushort dac_double_buff[256], dac_double_buff2[256];
 // extern struct dma dac_1_dma;
 extern struct button wave_choise_dac1;
 extern struct button wave_choise_dac2;
+extern struct button distortion_choice;
 // extern struct gpio led;
 extern struct adc pitch0cv_in;
 
@@ -82,15 +83,20 @@ void EXTI4_15_IRQHandler(void) {
     if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line) {
         (EXTI->RPR1) = (wave_choise_dac1.exti.exti_line);
         wave_button_callback(&wave_choise_dac1);
-        l_osc.mode = free;
-        l_osc.distortion.on = true;
+        // l_osc.mode = free;
+        // l_osc.distortion.on = true;
         wave_choise_dac1.flag = 'i';
     }
     if ((EXTI->RPR1 & wave_choise_dac2.exti.exti_line) == wave_choise_dac2.exti.exti_line) {
         (EXTI->RPR1) = (wave_choise_dac2.exti.exti_line);
         wave_button_callback(&wave_choise_dac2);
-        l_osc.mode = single_octave;
-        l_osc.distortion.on = false;
+        // l_osc.mode = single_octave;
+        // l_osc.distortion.on = false;
         wave_choise_dac2.flag = 'i';
+    }
+    if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line) {
+        (EXTI->RPR1) = (distortion_choice.exti.exti_line);
+        // phase_dist_button_callback(&distortion_choice);
+        distortion_choice.flag = 'i';
     }
 }
