@@ -8,19 +8,19 @@ static void exti_setup(struct button *p){
     NVIC_EnableIRQ(p->exti.exti_irqn);
 }
 
-void gpio_init(struct button **dac1_ch1_2_wave_buttons, struct gpio **dacs, struct gpio *adc_pin){
+void gpio_init(struct button **choice_buttons, struct gpio **dacs, struct gpio *adc_pin){
     LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA |
                             LL_IOP_GRP1_PERIPH_GPIOB |
                             LL_IOP_GRP1_PERIPH_GPIOC);
 
-    for (int i=0; i<2; i++) {
-        LL_GPIO_SetPinMode(dac1_ch1_2_wave_buttons[i]->pin.port_id,
-                           dac1_ch1_2_wave_buttons[i]->pin.pin_id,
-                           dac1_ch1_2_wave_buttons[i]->pin.mode);
-        LL_GPIO_SetPinPull(dac1_ch1_2_wave_buttons[i]->pin.port_id,
-                           dac1_ch1_2_wave_buttons[i]->pin.pin_id,
-                           dac1_ch1_2_wave_buttons[i]->pin.pull);
-        exti_setup(dac1_ch1_2_wave_buttons[i]);
+    for (int i=0; i<3; i++) {
+        LL_GPIO_SetPinMode(choice_buttons[i]->pin.port_id,
+                           choice_buttons[i]->pin.pin_id,
+                           choice_buttons[i]->pin.mode);
+        LL_GPIO_SetPinPull(choice_buttons[i]->pin.port_id,
+                           choice_buttons[i]->pin.pin_id,
+                           choice_buttons[i]->pin.pull);
+        exti_setup(choice_buttons[i]);
         LL_GPIO_SetPinMode(dacs[i]->port_id, dacs[i]->pin_id, dacs[i]->mode);
     }
 
