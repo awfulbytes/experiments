@@ -8,10 +8,18 @@
 extern struct nco l_osc, r_osc;
 struct nco l_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
                     .phase_pending_update=false, .phase_pending_update_inc=0,
-                    .mode=single_octave};
+                    .mode=v_per_octave,
+                    .distortion.amount=64,
+                    .distortion.on=true,
+                    .distortion.distortion_value=0,
+                    .distortion.dante=9,};
 struct nco r_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
                     .phase_pending_update=false, .phase_pending_update_inc=0,
-                    .mode=single_octave};
+                    .mode=v_per_octave,
+                    .distortion.amount=64,
+                    .distortion.on=true,
+                    .distortion.distortion_value=0,
+                    .distortion.dante=9,};
 extern bool phase_pending_update;
 atomic_ushort some[256];
 atomic_ushort some2[256];
@@ -35,14 +43,15 @@ void test_phase_increment_pending_request(){
     }
     assert(l_osc.phase_pending_update == false);
     uint64_t new_req = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits) + 1;
-    if (l_osc.mode == single_octave && adc_data == 0xfff){
+    if (l_osc.mode == v_per_octave && adc_data == 0xfff){
         atomic_ushort osc_max_current_mode = map_12b_to_hz(0xfff, l_osc.mode);
         // printf("%d\n", osc_max_current_mode);
-        assert(new_req + 1 == osc_max_current_mode);
+        // printf("%lu\n", new_req);
+        assert(new_req + 2 == osc_max_current_mode);
     }
     assert(adc_data == 0xfff);
 
-    char *pretty_mode_printer = ((l_osc.mode == 0) ? "free": "single_octave");
+    char *pretty_mode_printer = ((l_osc.mode == 0) ? "free": "v_per_octave");
     printf("pend-val:\t\t\t%lu[Hz]\noscillator-mode:\t%s",
            new_req, pretty_mode_printer);
     uint64_t pending_freq = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits);
@@ -71,7 +80,8 @@ void test_ping_pong(){
         }
         // printf("data-big-buff:\t%d\n", some[i]);
     }
-
+    assert(l_osc.phase_inc > l_osc.phase_pending_update_inc);
+    assert(l_osc.distortion.distortion_value < l_osc.phase_inc);
     assert(some[10] != some[16]);
     assert(sizeof(some)/sizeof(some[0]) == 2 * (sizeof(sine_wave)/sizeof(sine_wave[0])));
 }

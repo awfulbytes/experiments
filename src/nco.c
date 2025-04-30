@@ -5,7 +5,9 @@
 inline static uint32_t compute_lut_index(struct nco nco[static 1]);
 
 void apply_pd_alg(struct nco nco[static 1]){
-    nco->distortion.distortion_value = nco->phase_inc >> 1;
+    // HACK:: make this the 9 circles of hell
+    // nco->distortion.distortion_value = nco->phase_inc << 9;
+    nco->distortion.distortion_value = nco->phase_inc << nco->distortion.dante;
     // nco->phase_inc -= nco->distortion.distortion_value;
 }
 
@@ -27,10 +29,11 @@ void generate_half_signal(volatile const uint16_t data[static 128],
 #endif // TEST
 
         nco->data_buff.ping_buff[i] = (a + ((uint16_t)(((diff * fract) >> 16))));
-        if (i > nco->distortion.amount
+        if (i == nco->distortion.amount
             && nco->distortion.on){
             apply_pd_alg(nco);
-            nco->phase_inc -= nco->distortion.distortion_value;
+            // HACK:: make additive or subtractive it makes nice sounds
+            nco->phase_inc += nco->distortion.distortion_value;
             // GPIOB->ODR ^= (1<<3);
         }
         nco->phase_accum += nco->phase_inc;
@@ -51,13 +54,13 @@ atomic_ushort map_12b_to_hz(uint16_t value, enum freq_modes mode) {
             min = 20;
             max = 16000;
             break;
-        case single_octave:
+        case v_per_octave:
             min = 220;
             max = 1661;
             break;
         default:
-            min = 100;
-            max = 300;
+            min = 2;
+            max = 5;
     }
     atomic_ushort range = max - min;
     return (atomic_ushort)(min + (value * range) / in_max);

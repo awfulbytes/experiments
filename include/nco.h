@@ -1,11 +1,13 @@
 #include <stdint.h>
 #include <stdatomic.h>
 #include <stdint.h>
-enum freq_modes {free, single_octave};
+enum freq_modes {free, v_per_octave};
+enum cyrcles {first, second, third, fourth, fifth, sixth, seventh, eighth, ninth};
 
 struct phase_distortion{
     volatile bool on;
     volatile uint8_t amount;
+    enum cyrcles dante;
     volatile uint32_t distortion_value;
 };
 
