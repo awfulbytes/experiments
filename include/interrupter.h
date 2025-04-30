@@ -19,23 +19,27 @@
 #endif /* USE_FULL_ASSERT */
 volatile bool phase_done_update = false;
 volatile uint16_t pitch0_value = 0xff;
+volatile uint16_t pitch1_value = 0xff;
 volatile uint16_t prev_value = 1;
+volatile uint16_t prev_value_1 = 1;
 
 struct nco l_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
                     .phase_pending_update_inc=0,
                     .phase_pending_update=false,
                     .mode = free,
-                    .distortion.amount=72,
-                    .distortion.on=true,};
+                    .distortion.amount=64,
+                    .distortion.on=false,
+                    .distortion.dante=first};
 struct nco r_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
                     // .phase_inc = 0x01'e0'00'0,
                     .phase_pending_update_inc=0,
                     .phase_pending_update=false,
-                    .mode=free,
+                    .mode=v_per_octave,
                     .distortion.amount=64,
-                    .distortion.on=false,};
+                    .distortion.on=false,
+                    .distortion.dante=0};
 
 constexpr  uint_fast32_t master_clock = 198000;
 atomic_ushort dac_double_buff[256] = {0};
@@ -94,6 +98,12 @@ struct button wave_choise_dac2 = {.state=0, .flag='D',
                                  .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_11, .exti_port_conf=LL_EXTI_CONFIG_PORTC,
                                   .exti_line_conf=LL_EXTI_CONFIG_LINE11},
                                  .pin={.pin_id=LL_GPIO_PIN_11, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
+struct button distortion_choice = {.state=0, .flag='D',
+                                .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_12, .exti_port_conf=LL_EXTI_CONFIG_PORTC,
+                                   .exti_line_conf=LL_EXTI_CONFIG_LINE12},
+                                .pin={.pin_id=LL_GPIO_PIN_12, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
+
 struct gpio dac1 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_4, .mode=LL_GPIO_MODE_ANALOG};
 struct gpio dac2 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_5, .mode=LL_GPIO_MODE_ANALOG};
 struct gpio pitch_0_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_0, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
+struct gpio pitch_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_1, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};

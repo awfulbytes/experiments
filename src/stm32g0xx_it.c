@@ -40,13 +40,12 @@ void DMA1_Channel2_3_IRQHandler(void){
 
     if (phase_done_update) {
         l_osc.phase_inc = l_osc.phase_pending_update_inc;
-        r_osc.phase_inc = l_osc.phase_inc;
+        r_osc.phase_inc = r_osc.phase_pending_update_inc;
         generate_half_signal(wave_me_d, 128, &l_osc);
         generate_half_signal(wave_me_d2, 128, &r_osc);
         phase_done_update = false;
     }
 
-    #warning "check if this is possible"
     // HACK:: this could eliminate the latency and sync the oscillators...
     //        if that's the case we can have true sync and not first
     //        second oscillators...
