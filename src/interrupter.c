@@ -27,6 +27,9 @@ void main() {
     tim_init(master_clock, &tim2_settings);
     adc_init_settings(&pitch0cv_in);
 
+    tim_init(44000, &tim3_settings);
+    // adc_init_settings(&pitch1cv_in);
+
     for (int i=0; i<2; i++){
         dac_config(dacs_settings[i]);
         dac_act(dacs_settings[i]);
@@ -38,22 +41,23 @@ void main() {
             phase_done_update = true;
         }
         if (wave_choise_dac1.flag == 0x69) {
-            wave_me_d = waves_bank[wave_choise_dac1.state];
+            if (wave_me_d != waves_bank[wave_choise_dac1.state])
+                wave_me_d = waves_bank[wave_choise_dac1.state];
+            wave_choise_dac1.flag = 'D';
         }
         if (wave_choise_dac2.flag == 0x69) {
             // wave_me_d2 = waves_bank[wave_choise_dac2.state];
         }
-        if (distortion_choice.flag == 0x69) {
-            if (!l_osc.distortion.on){
-                l_osc.distortion.on = true;
-                ++l_osc.distortion.dante;
-                if(l_osc.distortion.dante > ninth){
-                    l_osc.distortion.dante = first;
-                }
-            }
+        if (distortion_choice.flag == 0x69 && l_osc.distortion.on) {
+            // if (!l_osc.distortion.on){
+            //     l_osc.distortion.on = true;
+            if (l_osc.distortion.dante == ninth)
+                l_osc.distortion.dante = entrance;
             else
-                l_osc.distortion.on = false;
-            distortion_choice.flag = 'D';
+                ++l_osc.distortion.dante;
         }
+        // else
+        //     l_osc.distortion.on = false;
+        distortion_choice.flag = 'D';
     }
 }
