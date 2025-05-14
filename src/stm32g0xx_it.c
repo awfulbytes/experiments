@@ -2,9 +2,12 @@
 #include <stdatomic.h>
 #include <stdint.h>
 // #define DEBUG
+#define encoder
 #define abs(x) ((x<0) ? -x : x)
 extern volatile uint16_t prev_value;
+extern volatile uint16_t prev_value_1;
 extern volatile uint16_t pitch0_value;
+extern volatile uint16_t pitch1_value;
 extern struct nco l_osc, r_osc;
 extern volatile bool phase_done_update;
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
@@ -38,12 +41,15 @@ void TIM7_LPTIM2_IRQHandler(void){
 }
 void DMA1_Channel2_3_IRQHandler(void){
 
-    if (phase_done_update) {
+    if (l_osc.phase_done_update) {
         l_osc.phase_inc = l_osc.phase_pending_update_inc;
-        r_osc.phase_inc = r_osc.phase_pending_update_inc;
         generate_half_signal(wave_me_d, 128, &l_osc);
+        l_osc.phase_done_update = false;
+    }
+    if (r_osc.phase_done_update) {
+        r_osc.phase_inc = r_osc.phase_pending_update_inc;
         generate_half_signal(wave_me_d2, 128, &r_osc);
-        phase_done_update = false;
+        r_osc.phase_done_update = false;
     }
 
     // HACK:: this could eliminate the latency and sync the oscillators...
@@ -70,8 +76,13 @@ void DMA1_Channel2_3_IRQHandler(void){
 void TIM2_IRQHandler(void) {
     if (TIM2->SR & TIM_SR_UIF) {
         TIM2->SR &= ~(TIM_SR_UIF);
-        prev_value = pitch0_value;
-        l_osc.phase_pending_update = true;
+        if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
+            (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
+            prev_value = pitch0_value;
+            prev_value_1 = pitch1_value;
+            l_osc.phase_pending_update = true;
+            r_osc.phase_pending_update = true;
+        }
 #ifdef DEBUG
         GPIOB->ODR ^= (1 << 3);
 #endif // DEBUG
@@ -79,21 +90,34 @@ void TIM2_IRQHandler(void) {
 }
 
 void EXTI4_15_IRQHandler(void) {
-    if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line) {
+    if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line){
         (EXTI->RPR1) = (wave_choise_dac1.exti.exti_line);
         wave_button_callback(&wave_choise_dac1);
-        // l_osc.mode = free;
-        // l_osc.distortion.on = true;
         wave_choise_dac1.flag = 'i';
     }
     if ((EXTI->RPR1 & wave_choise_dac2.exti.exti_line) == wave_choise_dac2.exti.exti_line) {
         (EXTI->RPR1) = (wave_choise_dac2.exti.exti_line);
         wave_button_callback(&wave_choise_dac2);
-        // l_osc.mode = single_octave;
-        // l_osc.distortion.on = false;
+
+        if (!l_osc.distortion.on){
+#ifdef encoder
+            GPIOB->ODR |= (1 << 3);
+            GPIOB->ODR &= ~(1 << 5);
+#endif // encoder
+            l_osc.distortion.on = true;
+        }
+        else{
+#ifdef encoder
+            GPIOB->ODR &= ~(1 << 3);
+            GPIOB->ODR |= (1 << 5);
+#endif // encoder
+            l_osc.distortion.on = false;
+        }
+
         wave_choise_dac2.flag = 'i';
     }
-    if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line) {
+    if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line
+        && (EXTI->RPR1 & wave_choise_dac1.exti.exti_line) != wave_choise_dac1.exti.exti_line) {
         (EXTI->RPR1) = (distortion_choice.exti.exti_line);
         // phase_dist_button_callback(&distortion_choice);
         distortion_choice.flag = 'i';

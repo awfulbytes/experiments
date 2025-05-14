@@ -13,7 +13,7 @@ void main() {
     struct dac *dacs_settings[2] = {&dac_ch1_settings, &dac_ch2_settings};
     struct dma *dma_chans[2] = {&dac_1_dma, &dac_2_dma};
     sys_clock_config();
-    gpio_init(wave_buttons, dacs, adcs[0]);
+    gpio_init(wave_buttons, dacs, adcs);
 
 #if defined(DEBUG) || defined(DEBUGDAC)
     debug_tim2_pin31();
@@ -24,23 +24,32 @@ void main() {
         tim_init(master_clock, timers[i]);
     }
 
-    tim_init(master_clock, &tim2_settings);
+    tim_init(44000, &tim2_settings);
     adc_init_settings(&pitch0cv_in);
 
-    tim_init(44000, &tim3_settings);
-    // adc_init_settings(&pitch1cv_in);
 
     for (int i=0; i<2; i++){
         dac_config(dacs_settings[i]);
         dac_act(dacs_settings[i]);
     }
     while (1) {
-        if (l_osc.phase_pending_update) {
+        if (l_osc.phase_pending_update &&
+            !l_osc.phase_done_update) {
             stage_pending_inc(prev_value, &l_osc, master_clock);
+            l_osc.phase_done_update = true;
+        }
+        if (r_osc.phase_pending_update &&
+            !r_osc.phase_done_update) {
             stage_pending_inc(prev_value_1, &r_osc, master_clock);
-            phase_done_update = true;
+            r_osc.phase_done_update = true;
         }
         if (wave_choise_dac1.flag == 0x69) {
+            if (l_osc.distortion.on == true){
+                if (l_osc.mode == free)
+                    l_osc.mode = v_per_octave;
+                else
+                    l_osc.mode = free;
+            }
             if (wave_me_d != waves_bank[wave_choise_dac1.state])
                 wave_me_d = waves_bank[wave_choise_dac1.state];
             wave_choise_dac1.flag = 'D';
@@ -55,9 +64,10 @@ void main() {
                 l_osc.distortion.dante = entrance;
             else
                 ++l_osc.distortion.dante;
+
+            distortion_choice.flag = 'D';
         }
         // else
         //     l_osc.distortion.on = false;
-        distortion_choice.flag = 'D';
     }
 }

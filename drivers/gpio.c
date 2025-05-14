@@ -8,7 +8,7 @@ static void exti_setup(struct button *p){
     NVIC_EnableIRQ(p->exti.exti_irqn);
 }
 
-void gpio_init(struct button **choice_buttons, struct gpio **dacs, struct gpio *adc_pin){
+void gpio_init(struct button **choice_buttons, struct gpio **dacs, struct gpio **adc_pin){
     LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA |
                             LL_IOP_GRP1_PERIPH_GPIOB |
                             LL_IOP_GRP1_PERIPH_GPIOC);
@@ -24,10 +24,13 @@ void gpio_init(struct button **choice_buttons, struct gpio **dacs, struct gpio *
         LL_GPIO_SetPinMode(dacs[i]->port_id, dacs[i]->pin_id, dacs[i]->mode);
     }
 
-    LL_GPIO_SetPinMode(adc_pin->port_id,
-                       adc_pin->pin_id,
-                       adc_pin->mode);
-    LL_GPIO_SetPinPull(adc_pin->port_id,
-                       adc_pin->pin_id,
-                       adc_pin->pull);
+    for (int i=0; i < 2; ++i){
+
+        LL_GPIO_SetPinMode(adc_pin[i]->port_id,
+                           adc_pin[i]->pin_id,
+                           adc_pin[i]->mode);
+        LL_GPIO_SetPinPull(adc_pin[i]->port_id,
+                           adc_pin[i]->pin_id,
+                           adc_pin[i]->pull);
+    }
 }

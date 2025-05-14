@@ -24,6 +24,7 @@ struct nco {
     struct ping_pong_buff data_buff;
     struct phase_distortion distortion;
     volatile bool phase_pending_update;
+    volatile bool phase_done_update;
 };
 
 #pragma GCC diagnostic ignored "-Wconversion"

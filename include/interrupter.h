@@ -17,9 +17,8 @@
 #if defined(USE_FULL_ASSERT)
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
-volatile bool phase_done_update = false;
 volatile uint16_t pitch0_value = 0xff;
-volatile uint16_t pitch1_value = 0xff;
+volatile uint16_t pitch1_value = 0x7f;
 volatile uint16_t prev_value = 1;
 volatile uint16_t prev_value_1 = 1;
 
@@ -27,19 +26,21 @@ struct nco l_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
                     .phase_pending_update_inc=0,
                     .phase_pending_update=false,
+                    .phase_done_update=false,
                     .mode = free,
                     .distortion.amount=64,
                     .distortion.on=false,
-                    .distortion.dante=first};
+                    .distortion.dante=entrance};
 struct nco r_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
                     // .phase_inc = 0x01'e0'00'0,
                     .phase_pending_update_inc=0,
                     .phase_pending_update=false,
+                    .phase_done_update=false,
                     .mode=v_per_octave,
                     .distortion.amount=64,
                     .distortion.on=false,
-                    .distortion.dante=0};
+                    .distortion.dante=entrance};
 
 constexpr  uint_fast32_t master_clock = 198000;
 atomic_ushort dac_double_buff[256] = {0};
@@ -48,8 +49,8 @@ atomic_ushort dac_double_buff2[256] = {0};
 struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim7_settings = {.timx=TIM7, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim2_settings = {.timx=TIM2, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2, .trigger_output=LL_TIM_TRGO_UPDATE};
-struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1, .trg_src=LL_DAC_TRIG_EXT_TIM6_TRGO,
-                               .bus_clk_abp=LL_APB1_GRP1_PERIPH_DAC1, .timx_dac_irq=TIM6_DAC_LPTIM1_IRQn,
+
+struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1, .trg_src=LL_DAC_TRIG_EXT_TIM6_TRGO, .bus_clk_abp=LL_APB1_GRP1_PERIPH_DAC1, .timx_dac_irq=TIM6_DAC_LPTIM1_IRQn,
                                .dacx_settings=
                                {.OutputMode=LL_DAC_OUTPUT_MODE_NORMAL,
                                 .OutputBuffer=LL_DAC_OUTPUT_BUFFER_ENABLE,
@@ -78,18 +79,21 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *
                                         .MemoryOrM2MDstDataSize=LL_DMA_MDATAALIGN_HALFWORD,
                                         .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
-struct adc pitch0cv_in = {.adcx=ADC1, .data = &pitch0_value, .channel=LL_ADC_CHANNEL_0, .roof='D',
+// LL_ADC_REG_TRIG_EXT_TIM3_TRGO
+struct adc pitch0cv_in = {.adcx=ADC1, .data = {&pitch0_value, &pitch1_value}, .channel=LL_ADC_CHANNEL_0, .roof='D',
                           .settings={.Clock=LL_ADC_CLOCK_SYNC_PCLK_DIV1, .Resolution=LL_ADC_RESOLUTION_12B,
                                      .DataAlignment=LL_ADC_DATA_ALIGN_RIGHT, .LowPowerMode=LL_ADC_LP_MODE_NONE},
                           .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_EXT_TIM2_TRGO, .ContinuousMode=LL_ADC_REG_CONV_SINGLE,
-                                         .SequencerLength=LL_ADC_REG_SEQ_SCAN_DISABLE, .SequencerDiscont=LL_ADC_REG_SEQ_DISCONT_DISABLE,
-                                         .DMATransfer=LL_ADC_REG_DMA_TRANSFER_UNLIMITED, .Overrun=LL_ADC_REG_OVR_DATA_OVERWRITTEN},
+                                         .SequencerLength=LL_ADC_REG_SEQ_SCAN_ENABLE_2RANKS, .SequencerDiscont=LL_ADC_REG_SEQ_DISCONT_1RANK,
+                                         .DMATransfer=LL_ADC_REG_DMA_TRANSFER_UNLIMITED, .Overrun=LL_ADC_REG_OVR_DATA_PRESERVED},
+                          .dma_channel=LL_DMA_CHANNEL_4,
                           .dmax=DMA1, .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_ADC1, .Direction=LL_DMA_DIRECTION_PERIPH_TO_MEMORY,
-                                                      .NbData=1, .Mode=LL_DMA_MODE_CIRCULAR,
+                                                      .NbData=2, .Mode=LL_DMA_MODE_CIRCULAR,
                                                       .PeriphOrM2MSrcDataSize=LL_DMA_PDATAALIGN_HALFWORD,
                                                       .MemoryOrM2MDstDataSize=LL_DMA_MDATAALIGN_HALFWORD,
                                                       .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT,
-                                                      .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_NOINCREMENT}};
+                                                      .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT}};
+
 struct button wave_choise_dac1 = {.state=0, .flag='D',
                                  .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_10, .exti_port_conf=LL_EXTI_CONFIG_PORTC,
                                   .exti_line_conf=LL_EXTI_CONFIG_LINE10},
@@ -97,7 +101,7 @@ struct button wave_choise_dac1 = {.state=0, .flag='D',
 struct button wave_choise_dac2 = {.state=0, .flag='D',
                                  .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_11, .exti_port_conf=LL_EXTI_CONFIG_PORTC,
                                   .exti_line_conf=LL_EXTI_CONFIG_LINE11},
-                                 .pin={.pin_id=LL_GPIO_PIN_11, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
+                                 .pin={.pin_id=LL_GPIO_PIN_11, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_DOWN}};
 struct button distortion_choice = {.state=0, .flag='D',
                                 .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_12, .exti_port_conf=LL_EXTI_CONFIG_PORTC,
                                    .exti_line_conf=LL_EXTI_CONFIG_LINE12},
