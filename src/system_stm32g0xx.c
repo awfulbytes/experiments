@@ -74,6 +74,8 @@
   * @{
   */
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #include "stm32g0xx.h"
 /* #include "stm32g0xx_hal_conf.h" */
 /* #include "stm32g071xx.h" */

@@ -10,5 +10,5 @@ o = executable('oscillators', src_f,
                include_directories : inc_f)
 g = executable('generate_stuff', src_f_g,
                include_directories : inc_f)
-test('nco', o, suite: 'core')
-test('generators', g, suite: 'core')
+test('nco', o, suite: ['core', 'gen'])
+test('generators', g, suite: 'gen')

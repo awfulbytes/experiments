@@ -5,11 +5,11 @@
 #include "stm32g0xx_ll_bus.h"
 
 // #define DEBUGDAC
-#if defined(DEBUG) || defined(DEBUGDAC) || defined(DEBUGDAC1)
+#if defined(DEBUG) || defined(DEBUGDAC) || defined(DEBUGDAC1) || defined (encoder)
 void debug_tim2_pin31(void){
     LL_GPIO_InitTypeDef gpio_init = {0};
 #if defined(DEBUG) || defined(DEBUGDAC)
-    gpio_init.Pin = LL_GPIO_PIN_3;
+    gpio_init.Pin = LL_GPIO_PIN_3 | LL_GPIO_PIN_5;
 #endif // DEBUG
     gpio_init.Mode = LL_GPIO_MODE_OUTPUT;
     gpio_init.Speed = LL_GPIO_SPEED_FREQ_HIGH;

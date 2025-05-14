@@ -52,7 +52,7 @@ atomic_ushort map_12b_to_hz(uint16_t value, enum freq_modes mode) {
     atomic_ushort max;
     switch (mode) {
         case free:
-            min = 20;
+            min = 110;
             max = 16000;
             break;
         case v_per_octave:

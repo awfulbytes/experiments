@@ -61,7 +61,7 @@ void test_phase_increment_pending_request(){
     printf("o_g_val_incr:\t%lx\n", l_osc.phase_inc);
 }
 
-void test_ping_pong(){
+void test_signal_generation_and_dac_buffer(){
     l_osc.phase_inc = l_osc.phase_pending_update_inc;
     generate_half_signal(sine_wave, 128, &l_osc);
     update_data_buff(l_osc.data_buff.ping_buff, some, 128);
@@ -80,13 +80,13 @@ void test_ping_pong(){
         }
         // printf("data-big-buff:\t%d\n", some[i]);
     }
-    assert(l_osc.phase_inc > l_osc.phase_pending_update_inc);
-    assert(l_osc.distortion.distortion_value < l_osc.phase_inc);
-    assert(some[10] != some[16]);
-    assert(sizeof(some)/sizeof(some[0]) == 2 * (sizeof(sine_wave)/sizeof(sine_wave[0])));
 }
 
 int main(void){
     test_phase_increment_pending_request();
-    test_ping_pong();
+    test_signal_generation_and_dac_buffer();
+    assert(l_osc.phase_inc > l_osc.phase_pending_update_inc);
+    assert(l_osc.distortion.distortion_value < l_osc.phase_inc);
+    assert(some[10] != some[16]);
+    assert(sizeof(some)/sizeof(some[0]) == 2 * (sizeof(sine_wave)/sizeof(sine_wave[0])));
 }
