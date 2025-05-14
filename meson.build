@@ -1,5 +1,5 @@
 project('tryC', 'c',
-  version : '0.0.1',
+  version : '0.1.0',
   meson_version : '>=0.60.0')
 
 # Include directories
