@@ -3,6 +3,7 @@
 #include "string.h"
 // #define TEST
 inline static uint32_t compute_lut_index(struct nco nco[static 1]);
+inline static uint64_t compute_nco_increment(atomic_ushort note, const uint_fast32_t sample_rate);
 
 void apply_pd_alg(struct nco nco[static 1]){
     // HACK:: make this the 9 circles of hell
@@ -39,11 +40,6 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         }
         nco->phase_accum += nco->phase_inc;
     }
-}
-
-uint64_t compute_nco_increment(atomic_ushort note, const uint_fast32_t sample_rate){
-    atomic_uint_fast32_t tmp = ((note * (1<<16))/sample_rate);
-    return (tmp<<16);
 }
 
 atomic_ushort map_12b_to_hz(uint16_t value, enum freq_modes mode) {

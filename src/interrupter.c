@@ -44,14 +44,13 @@ void main() {
             r_osc.phase_done_update = true;
         }
         if (wave_choise_dac1.flag == 0x69) {
+            wave_me_d = waves_bank[wave_choise_dac1.state];
             if (l_osc.distortion.on == true){
                 if (l_osc.mode == free)
                     l_osc.mode = v_per_octave;
                 else
                     l_osc.mode = free;
             }
-            if (wave_me_d != waves_bank[wave_choise_dac1.state])
-                wave_me_d = waves_bank[wave_choise_dac1.state];
             wave_choise_dac1.flag = 'D';
         }
         if (wave_choise_dac2.flag == 0x69) {

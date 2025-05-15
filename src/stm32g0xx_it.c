@@ -80,8 +80,7 @@ void TIM2_IRQHandler(void) {
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
             prev_value = pitch0_value;
             prev_value_1 = pitch1_value;
-            l_osc.phase_pending_update = true;
-            r_osc.phase_pending_update = true;
+            l_osc.phase_pending_update = r_osc.phase_pending_update = true;
         }
 #ifdef DEBUG
         GPIOB->ODR ^= (1 << 3);
