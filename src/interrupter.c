@@ -15,6 +15,8 @@ void main() {
     sys_clock_config();
     gpio_init(wave_buttons, dacs, adcs);
 
+    enc_init(&pd_enc);
+
 #if defined(DEBUG) || defined(DEBUGDAC)
     debug_tim2_pin31();
 #else
@@ -35,13 +37,17 @@ void main() {
     while (1) {
         if (l_osc.phase_pending_update &&
             !l_osc.phase_done_update) {
-            stage_pending_inc(prev_value, &l_osc, master_clock);
-            l_osc.phase_done_update = true;
+            bool staged = false;
+            staged = stage_pending_inc(prev_value, &l_osc, master_clock);
+            l_osc.phase_done_update = staged;
+            l_osc.phase_pending_update = false;
         }
         if (r_osc.phase_pending_update &&
             !r_osc.phase_done_update) {
-            stage_pending_inc(prev_value_1, &r_osc, master_clock);
-            r_osc.phase_done_update = true;
+            bool staged = false;
+            staged = stage_pending_inc(prev_value_1, &r_osc, master_clock);
+            r_osc.phase_done_update = staged;
+            r_osc.phase_pending_update = false;
         }
         if (wave_choise_dac1.flag == 0x69) {
             wave_me_d = waves_bank[wave_choise_dac1.state];
@@ -53,20 +59,19 @@ void main() {
             }
             wave_choise_dac1.flag = 'D';
         }
-        if (wave_choise_dac2.flag == 0x69) {
-            // wave_me_d2 = waves_bank[wave_choise_dac2.state];
-        }
-        if (distortion_choice.flag == 0x69 && l_osc.distortion.on) {
-            // if (!l_osc.distortion.on){
-            //     l_osc.distortion.on = true;
-            if (l_osc.distortion.dante == ninth)
-                l_osc.distortion.dante = entrance;
-            else
-                ++l_osc.distortion.dante;
+        // if (wave_choise_dac2.flag == 0x69) {
+        //     // wave_me_d2 = waves_bank[wave_choise_dac2.state];
+        // }
 
-            distortion_choice.flag = 'D';
+        if (pd_enc.A.flag == 0x69) {
+            pd_enc.A.flag = 'D';
+            if (l_osc.distortion.dante < ninth){
+                l_osc.distortion.dante = pd_enc.increment;
+            } else {
+                l_osc.distortion.dante = pd_enc.increment = entrance;
+                distortion_choice.flag = 'D';
+                pd_enc.A.flag = 'D';
+            }
         }
-        // else
-        //     l_osc.distortion.on = false;
     }
 }

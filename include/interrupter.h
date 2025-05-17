@@ -6,13 +6,13 @@
 #include "stm32g0xx_ll_adc.h"
 #include "stm32g0xx_ll_dma.h"
 #include "stm32g0xx_ll_dmamux.h"
-#include "ui.h"
 #include "adc.h"
 #include "forms.h"
 #include "timx.h"
 #include "dma.h"
 #include "nco.h"
 #include <stdint.h>
+#include "ui.h"
 
 // enum modes pitch_modes =free;
 
@@ -107,9 +107,20 @@ struct button wave_choise_dac2 = {.state=0, .flag='D',
 struct button distortion_choice = {.state=0, .flag='D',
                                 .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_12, .exti_port_conf=LL_EXTI_CONFIG_PORTC,
                                    .exti_line_conf=LL_EXTI_CONFIG_LINE12},
-                                .pin={.pin_id=LL_GPIO_PIN_12, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
+                                .pin={.pin_id=LL_GPIO_PIN_12, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_DOWN}};
 
 struct gpio dac1 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_4, .mode=LL_GPIO_MODE_ANALOG};
 struct gpio dac2 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_5, .mode=LL_GPIO_MODE_ANALOG};
 struct gpio pitch_0_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_0, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 struct gpio pitch_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_1, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
+
+struct encoder pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_4, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
+                               .value=0, .flag='D',
+                               .it_settings = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_4,
+                                            .exti_port_conf=LL_EXTI_CONFIG_PORTC,
+                                            .exti_line_conf=LL_EXTI_CONFIG_LINE4}},
+                         .B.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_5, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
+                         .B.value = 0,
+                         .B.it_settings = { },
+                         .B.flag = 'D',
+                         .increment=0, .direction=false};

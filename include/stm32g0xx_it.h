@@ -3,6 +3,7 @@
 #include "dma.h"
 #include "nco.h"
 
+extern struct encoder pd_enc;
 void NMI_Handler(void);
 void HardFault_Handler(void);
 void SVC_Handler(void);

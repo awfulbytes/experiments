@@ -9,7 +9,6 @@ extern volatile uint16_t prev_value_1;
 extern volatile uint16_t pitch0_value;
 extern volatile uint16_t pitch1_value;
 extern struct nco l_osc, r_osc;
-extern volatile bool phase_done_update;
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
 extern atomic_ushort dac_double_buff[256], dac_double_buff2[256];
 // extern struct dma dac_1_dma;
@@ -52,7 +51,7 @@ void DMA1_Channel2_3_IRQHandler(void){
         r_osc.phase_done_update = false;
     }
 
-    // HACK:: this could eliminate the latency and sync the oscillators...
+    // toro:: this could eliminate the latency and sync the oscillators...
     //        if that's the case we can have true sync and not first
     //        second oscillators...
     if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) &&
@@ -69,7 +68,6 @@ void DMA1_Channel2_3_IRQHandler(void){
         update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff + 128, 128);
         update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2 + 128, 128);
     }
-    // HACK::
 
 }
 
@@ -82,13 +80,24 @@ void TIM2_IRQHandler(void) {
             prev_value_1 = pitch1_value;
             l_osc.phase_pending_update = r_osc.phase_pending_update = true;
         }
-#ifdef DEBUG
-        GPIOB->ODR ^= (1 << 3);
-#endif // DEBUG
     }
 }
 
 void EXTI4_15_IRQHandler(void) {
+    if ((EXTI->FPR1 & pd_enc.A.it_settings.exti_line) == pd_enc.A.it_settings.exti_line){
+        (EXTI->FPR1) = (pd_enc.A.it_settings.exti_line);
+        pd_enc.B.value = ((pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
+        if (l_osc.distortion.on){
+            pd_enc.A.flag = 'i';
+            if (pd_enc.B.value)
+                ++pd_enc.increment;
+            else
+                --pd_enc.increment;
+        }
+#ifdef DEBUG
+        GPIOB->ODR ^= (1 << 3);
+#endif // DEBUG
+    }
     if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line){
         (EXTI->RPR1) = (wave_choise_dac1.exti.exti_line);
         wave_button_callback(&wave_choise_dac1);
@@ -97,13 +106,20 @@ void EXTI4_15_IRQHandler(void) {
     if ((EXTI->RPR1 & wave_choise_dac2.exti.exti_line) == wave_choise_dac2.exti.exti_line) {
         (EXTI->RPR1) = (wave_choise_dac2.exti.exti_line);
         wave_button_callback(&wave_choise_dac2);
+        wave_choise_dac2.flag = 'i';
 
+    }
+    if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line) {
+        (EXTI->RPR1) = (distortion_choice.exti.exti_line);
         if (!l_osc.distortion.on){
 #ifdef encoder
             GPIOB->ODR |= (1 << 3);
             GPIOB->ODR &= ~(1 << 5);
 #endif // encoder
             l_osc.distortion.on = true;
+            // wtf dont need the flag here... the interrupt IS the flag
+            // this is a bug waiting...
+            distortion_choice.flag = 'i';
         }
         else{
 #ifdef encoder
@@ -111,14 +127,7 @@ void EXTI4_15_IRQHandler(void) {
             GPIOB->ODR |= (1 << 5);
 #endif // encoder
             l_osc.distortion.on = false;
+            distortion_choice.flag = 'D';
         }
-
-        wave_choise_dac2.flag = 'i';
-    }
-    if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line
-        && (EXTI->RPR1 & wave_choise_dac1.exti.exti_line) != wave_choise_dac1.exti.exti_line) {
-        (EXTI->RPR1) = (distortion_choice.exti.exti_line);
-        // phase_dist_button_callback(&distortion_choice);
-        distortion_choice.flag = 'i';
     }
 }

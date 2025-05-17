@@ -13,7 +13,7 @@ static void dac_chx_priority(struct dac *dac){
 
 void dac_config
 (struct dac *gdac){
-    // HACK:: put the priority different...
+    // hack:: put the priority different...
     // __XXX__:: i think that there is a race condition
     //           for the timers of the dac (6, 7)
     // I may be able to make this via code for the channels.

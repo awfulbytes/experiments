@@ -2,11 +2,11 @@
 #include "nco.h"
 #include "string.h"
 // #define TEST
-inline static uint32_t compute_lut_index(struct nco nco[static 1]);
-inline static uint64_t compute_nco_increment(atomic_ushort note, const uint_fast32_t sample_rate);
+__attribute__((pure, always_inline)) inline static uint32_t compute_lut_index(struct nco nco[static 1]);
+__attribute__((pure, always_inline)) inline static uint64_t compute_nco_increment(atomic_ushort note, const uint_fast32_t sample_rate);
 
 void apply_pd_alg(struct nco nco[static 1]){
-    // HACK:: make this the 9 circles of hell
+    // hack:: make this the 9 circles of hell
     // nco->distortion.distortion_value = nco->phase_inc << 1;
     nco->distortion.distortion_value = nco->phase_inc << nco->distortion.dante;
     // nco->phase_inc -= nco->distortion.distortion_value;
@@ -34,7 +34,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         if (i == nco->distortion.amount
             && nco->distortion.on){
             apply_pd_alg(nco);
-            // HACK:: make additive or subtractive it makes nice sounds
+            // hack:: make additive or subtractive it makes nice sounds
             nco->phase_inc -= nco->distortion.distortion_value;
             // GPIOB->ODR ^= (1<<3);
         }
@@ -63,10 +63,10 @@ atomic_ushort map_12b_to_hz(uint16_t value, enum freq_modes mode) {
     return (atomic_ushort)(min + (value * range) / in_max);
 }
 
-void stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate){
+bool stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate){
     atomic_ushort note = map_12b_to_hz(adc_raw_value, nco->mode);
     nco->phase_pending_update_inc = compute_nco_increment(note, sample_rate);
-    nco->phase_pending_update = false;
+    return true;
 }
 
 inline void update_data_buff(const uint16_t data[static 128],
