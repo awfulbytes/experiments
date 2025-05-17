@@ -35,7 +35,7 @@ void update_data_buff (const uint16_t data[static 128],
                             atomic_ushort bufferSection[static 128],
                             uint16_t sectionLength);
 #pragma GCC diagnostic ignored "-Wignored-qualifiers"
-atomic_ushort map_12b_to_hz(uint16_t adc_value, enum freq_modes pitch_modes)__attribute__((pure));
+__attribute__((pure))atomic_ushort map_12b_to_hz(uint16_t adc_value, enum freq_modes pitch_modes);
 bool stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate);
 
 __attribute__((pure, always_inline)) inline static uint64_t compute_nco_increment(atomic_ushort note, const uint_fast32_t sample_rate){

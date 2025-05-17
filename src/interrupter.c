@@ -34,20 +34,20 @@ void main() {
         dac_config(dacs_settings[i]);
         dac_act(dacs_settings[i]);
     }
-    while (1) {
+    do {
         if (l_osc.phase_pending_update &&
             !l_osc.phase_done_update) {
             bool staged = false;
             staged = stage_pending_inc(prev_value, &l_osc, master_clock);
             l_osc.phase_done_update = staged;
-            l_osc.phase_pending_update = false;
+            l_osc.phase_pending_update = !staged;
         }
         if (r_osc.phase_pending_update &&
             !r_osc.phase_done_update) {
             bool staged = false;
             staged = stage_pending_inc(prev_value_1, &r_osc, master_clock);
             r_osc.phase_done_update = staged;
-            r_osc.phase_pending_update = false;
+            r_osc.phase_pending_update = !staged;
         }
         if (wave_choise_dac1.flag == 0x69) {
             wave_me_d = waves_bank[wave_choise_dac1.state];
@@ -73,5 +73,5 @@ void main() {
                 pd_enc.A.flag = 'D';
             }
         }
-    }
+    } while (1);
 }

@@ -42,7 +42,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
     }
 }
 
-atomic_ushort map_12b_to_hz(uint16_t value, enum freq_modes mode) {
+__attribute__((pure)) atomic_ushort map_12b_to_hz(uint16_t value, enum freq_modes mode) {
     atomic_ushort in_max = 0xfff;
     atomic_ushort min;
     atomic_ushort max;
@@ -63,7 +63,7 @@ atomic_ushort map_12b_to_hz(uint16_t value, enum freq_modes mode) {
     return (atomic_ushort)(min + (value * range) / in_max);
 }
 
-bool stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate){
+__attribute__((pure)) bool stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate){
     atomic_ushort note = map_12b_to_hz(adc_raw_value, nco->mode);
     nco->phase_pending_update_inc = compute_nco_increment(note, sample_rate);
     return true;
