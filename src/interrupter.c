@@ -34,7 +34,34 @@ void main() {
         dac_config(dacs_settings[i]);
         dac_act(dacs_settings[i]);
     }
+
     do {
+        if (pd_enc.A.flag == 0x69) {
+            pd_enc.A.flag = 'D';
+            l_osc.phase_done_update = l_osc.phase_pending_update = false;
+            // need to make this also respect the bounds...
+            // future toro
+            if (l_osc.distortion.on){
+                if (pd_enc.B.value)
+                    ++pd_enc.increment;
+                else
+                    --pd_enc.increment;
+            } else {
+                if (l_osc.mode == free)
+                    l_osc.mode = v_per_octave;
+                else
+                    l_osc.mode = free;
+            }
+            switch (l_osc.distortion.dante) {
+                case hell:
+                    l_osc.distortion.dante = pd_enc.increment = ninth;
+                    break;
+                default:
+                    l_osc.distortion.dante = pd_enc.increment;
+                    break;
+            }
+        }
+
         if (l_osc.phase_pending_update &&
             !l_osc.phase_done_update) {
             bool staged = false;
@@ -51,27 +78,8 @@ void main() {
         }
         if (wave_choise_dac1.flag == 0x69) {
             wave_me_d = waves_bank[wave_choise_dac1.state];
-            if (l_osc.distortion.on == true){
-                if (l_osc.mode == free)
-                    l_osc.mode = v_per_octave;
-                else
-                    l_osc.mode = free;
-            }
             wave_choise_dac1.flag = 'D';
         }
-        // if (wave_choise_dac2.flag == 0x69) {
-        //     // wave_me_d2 = waves_bank[wave_choise_dac2.state];
-        // }
 
-        if (pd_enc.A.flag == 0x69) {
-            pd_enc.A.flag = 'D';
-            if (l_osc.distortion.dante < ninth){
-                l_osc.distortion.dante = pd_enc.increment;
-            } else {
-                l_osc.distortion.dante = pd_enc.increment = entrance;
-                distortion_choice.flag = 'D';
-                pd_enc.A.flag = 'D';
-            }
-        }
     } while (1);
 }

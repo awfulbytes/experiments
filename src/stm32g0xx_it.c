@@ -32,12 +32,12 @@ void TIM6_DAC_LPTIM1_IRQHandler(void){
    //     DAC1->SR &= DAC_SR_DMAUDR2;
    // }
 }
-
 void TIM7_LPTIM2_IRQHandler(void){
     if (TIM7->SR & TIM_SR_UIF){
         TIM7->SR &= ~(TIM_SR_UIF);
     }
 }
+
 void DMA1_Channel2_3_IRQHandler(void){
 
     if (l_osc.phase_done_update) {
@@ -87,16 +87,10 @@ void EXTI4_15_IRQHandler(void) {
     if ((EXTI->FPR1 & pd_enc.A.it_settings.exti_line) == pd_enc.A.it_settings.exti_line){
         (EXTI->FPR1) = (pd_enc.A.it_settings.exti_line);
         pd_enc.B.value = ((pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
-        if (l_osc.distortion.on){
-            pd_enc.A.flag = 'i';
-            if (pd_enc.B.value)
-                ++pd_enc.increment;
-            else
-                --pd_enc.increment;
-        }
-#ifdef DEBUG
-        GPIOB->ODR ^= (1 << 3);
-#endif // DEBUG
+        // toro
+        //      i can use the pd_enc.direction and increment in the main loop.
+        //      this will signal a pipelined process of the encoder.
+        pd_enc.A.flag = 'i';
     }
     if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line){
         (EXTI->RPR1) = (wave_choise_dac1.exti.exti_line);
@@ -107,11 +101,12 @@ void EXTI4_15_IRQHandler(void) {
         (EXTI->RPR1) = (wave_choise_dac2.exti.exti_line);
         wave_button_callback(&wave_choise_dac2);
         wave_choise_dac2.flag = 'i';
-
     }
     if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line) {
         (EXTI->RPR1) = (distortion_choice.exti.exti_line);
-        if (!l_osc.distortion.on){
+
+        // todo need to make this more reliable... check timers....
+        if (!l_osc.distortion.on) {
 #ifdef encoder
             GPIOB->ODR |= (1 << 3);
             GPIOB->ODR &= ~(1 << 5);

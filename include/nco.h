@@ -2,7 +2,7 @@
 #include <stdatomic.h>
 #include <stdint.h>
 enum freq_modes {free, v_per_octave};
-enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth};
+enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, hell};
 
 struct phase_distortion{
     volatile bool on;
