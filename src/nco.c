@@ -30,7 +30,6 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         printf("interp-factor:\t%d\n", (diff * fract)>>16);
 #endif // TEST
 
-        nco->data_buff.ping_buff[i] = (a + ((uint16_t)(((diff * fract) >> 16))));
         if (i == nco->distortion.amount
             && nco->distortion.on){
             apply_pd_alg(nco);
@@ -38,6 +37,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
             nco->phase_inc -= nco->distortion.distortion_value;
             // GPIOB->ODR ^= (1<<3);
         }
+        nco->data_buff.ping_buff[i] = (a + ((uint16_t)(((diff * fract) >> 16))));
         nco->phase_accum += nco->phase_inc;
     }
 }
