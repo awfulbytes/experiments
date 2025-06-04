@@ -4,7 +4,7 @@ static void exti_setup(struct button *p){
     LL_EXTI_SetEXTISource(p->exti.exti_port_conf, p->exti.exti_line_conf);
     LL_EXTI_EnableRisingTrig_0_31(p->exti.exti_line);
     LL_EXTI_EnableIT_0_31(p->exti.exti_line);
-    NVIC_SetPriority(p->exti.exti_irqn, 0x05);
+    NVIC_SetPriority(p->exti.exti_irqn, 0x00);
     NVIC_EnableIRQ(p->exti.exti_irqn);
 }
 

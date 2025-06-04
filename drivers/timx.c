@@ -30,11 +30,11 @@ void tim_init
     if (tim->timx == TIM2) {
         LL_APB1_GRP1_EnableClock(setted->apb_clock_reg);
 
-        NVIC_SetPriority(TIM2_IRQn, 4);
+        NVIC_SetPriority(TIM2_IRQn, 0x40);
         NVIC_EnableIRQ(TIM2_IRQn);
-        NVIC_SetPriority(TIM6_DAC_LPTIM1_IRQn, 2);
+        NVIC_SetPriority(TIM6_DAC_LPTIM1_IRQn, 0x00);
         NVIC_EnableIRQ(TIM6_DAC_LPTIM1_IRQn);
-        NVIC_SetPriority(TIM7_LPTIM2_IRQn, 3);
+        NVIC_SetPriority(TIM7_LPTIM2_IRQn, 0x00);
         NVIC_EnableIRQ(TIM7_LPTIM2_IRQn);
         LL_TIM_Init(tim->timx, &tim->timx_settings);
         LL_TIM_EnableARRPreload(tim->timx);

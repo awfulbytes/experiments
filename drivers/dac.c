@@ -3,10 +3,10 @@
 
 static void dac_chx_priority(struct dac *dac){
     if (dac->channel == LL_DAC_CHANNEL_1){
-        NVIC_SetPriority(dac->timx_dac_irq, 3);
+        NVIC_SetPriority(dac->timx_dac_irq, 0x40);
         NVIC_EnableIRQ(dac->timx_dac_irq);
     } else {
-        NVIC_SetPriority(dac->timx_dac_irq, 2);
+        NVIC_SetPriority(dac->timx_dac_irq, 0x00);
         NVIC_EnableIRQ(dac->timx_dac_irq);
     }
 }
