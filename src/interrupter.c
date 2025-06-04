@@ -1,4 +1,5 @@
 #include "interrupter.h"
+#include "stm32g0xx_ll_utils.h"
 #include "sysclk.c"
 const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn, pulse};
 volatile const uint16_t *wave_me_d = sine_wave;
@@ -36,34 +37,42 @@ void main() {
     }
 
     do {
-        if (pd_enc.A.flag == 0x69) {
-            pd_enc.A.flag = 'D';
-            l_osc.phase_done_update = l_osc.phase_pending_update = false;
+        if (pd_enc.A.flag == 0x69 && l_osc.phase_pending_update) {
             // need to make this also respect the bounds...
             // future toro
             if (l_osc.distortion.on){
+                // l_osc.phase_pending_update = true;
                 if (pd_enc.B.value)
                     ++pd_enc.increment;
                 else
                     --pd_enc.increment;
-            } else {
-                if (l_osc.mode == free)
-                    l_osc.mode = v_per_octave;
-                else
-                    l_osc.mode = free;
+
+                if (pd_enc.increment > hell && pd_enc.increment < hell + 0xfff)
+                    pd_enc.increment = hell;
+                else if (pd_enc.increment > hell + 0xfff)
+                    pd_enc.increment = entrance;
             }
-            switch (l_osc.distortion.dante) {
+            else
+                l_osc.mode = (l_osc.mode == free) ? v_per_octave : free;
+
+            switch (l_osc.distortion.past_dante) {
                 case hell:
-                    l_osc.distortion.dante = pd_enc.increment = ninth;
+                    l_osc.distortion.dante = pd_enc.increment = ninteenth;
                     break;
+                // case entrance:
+                //     pd_enc.increment = first;
+                //     break;
                 default:
                     l_osc.distortion.dante = pd_enc.increment;
+                    // l_osc.distortion.amount = pd_enc.increment + 64;
                     break;
             }
+            pd_enc.A.flag = 'D';
+            l_osc.distortion.past_dante = l_osc.distortion.dante;
         }
 
-        if (l_osc.phase_pending_update &&
-            !l_osc.phase_done_update) {
+        if (l_osc.phase_pending_update) {
+            // && !l_osc.phase_done_update
             bool staged = false;
             staged = stage_pending_inc(prev_value, &l_osc, master_clock);
             l_osc.phase_done_update = staged;
@@ -80,6 +89,5 @@ void main() {
             wave_me_d = waves_bank[wave_choise_dac1.state];
             wave_choise_dac1.flag = 'D';
         }
-
     } while (1);
 }

@@ -32,6 +32,7 @@ struct nco l_osc = {.phase_accum = 0,
                     .mode = free,
                     .distortion.amount=64,
                     .distortion.on=false,
+                    .distortion.past_dante = entrance,
                     .distortion.dante=entrance};
 struct nco r_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
@@ -42,6 +43,7 @@ struct nco r_osc = {.phase_accum = 0,
                     .mode=v_per_octave,
                     .distortion.amount=64,
                     .distortion.on=false,
+                    .distortion.past_dante = entrance,
                     .distortion.dante=entrance};
 
 constexpr  uint_fast32_t master_clock = 198000;

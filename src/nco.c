@@ -1,4 +1,3 @@
-#include <stdint.h>
 #include "nco.h"
 #include "string.h"
 // #define TEST
@@ -16,25 +15,35 @@ void apply_pd_alg(struct nco nco[static 1]){
 void generate_half_signal(volatile const uint16_t data[static 128],
                           uint16_t sectionLength, struct nco nco[static 1]){
 
+    register uint32_t index, n_index, fract;
+    register uint16_t a, b;
+    register int16_t  diff;
+
     for (uint16_t i = 0; i < sectionLength; ++i) {
-        uint32_t index = compute_lut_index(nco);
-        uint32_t n_index = index + 1;
-        uint16_t a = data[index];
-        uint16_t b = data[n_index & 0x7f];
-        int16_t diff = (int16_t) (b-a);
-        uint32_t fract = ((uint64_t)((nco->phase_accum) * (1<<7)) >> 16) & 0xffff;
+        index   = compute_lut_index(nco);
+        n_index = index + 1;
+        a       = data[index];
+        b       = data[n_index & 0x7f];
+        diff    = (int16_t) (b-a);
+        fract   = ((uint64_t)((nco->phase_accum) * (1<<7)) >> 16) & 0xffff;
 
 #ifdef TEST
 #include <stdio.h>
         printf("fract:\t%d\n", fract);
         printf("interp-factor:\t%d\n", (diff * fract)>>16);
 #endif // TEST
-
+        // wtf:::
+        //       - 1 makes the bug non audible...;
+        // wtf:::
+        // ^ not true ... unfortunatly this is audible only when
+        // distortion.amount is half the signal and the phase increment
+        // is multiplied by two...
         if (i == nco->distortion.amount
+            // && n_index < nco->distortion.amount
             && nco->distortion.on){
             apply_pd_alg(nco);
             // hack:: make additive or subtractive it makes nice sounds
-            nco->phase_inc -= nco->distortion.distortion_value;
+            nco->phase_inc -= (nco->distortion.distortion_value);
             // GPIOB->ODR ^= (1<<3);
         }
         nco->data_buff.ping_buff[i] = (a + ((uint16_t)(((diff * fract) >> 16))));

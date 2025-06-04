@@ -2,7 +2,7 @@
 #include <stdatomic.h>
 #include <stdint.h>
 // #define DEBUG
-#define encoder
+#define encoder_leds
 #define abs(x) ((x<0) ? -x : x)
 extern volatile uint16_t prev_value;
 extern volatile uint16_t prev_value_1;
@@ -68,7 +68,6 @@ void DMA1_Channel2_3_IRQHandler(void){
         update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff + 128, 128);
         update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2 + 128, 128);
     }
-
 }
 
 void TIM2_IRQHandler(void) {
@@ -76,9 +75,17 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
-            prev_value = pitch0_value;
-            prev_value_1 = pitch1_value;
-            l_osc.phase_pending_update = r_osc.phase_pending_update = true;
+            if (prev_value != pitch0_value){
+                // find out wtf is happening here
+                // todo:: how offten we are here??
+                //        and why the fuck im getting floating frequencies...
+                prev_value = pitch0_value;
+                l_osc.phase_pending_update = true;
+            }else if (prev_value_1 != pitch1_value) {
+                prev_value_1 = pitch1_value;
+                r_osc.phase_pending_update = true;
+            } else
+                l_osc.phase_pending_update = r_osc.phase_pending_update = false;
         }
     }
 }
@@ -86,10 +93,11 @@ void TIM2_IRQHandler(void) {
 void EXTI4_15_IRQHandler(void) {
     if ((EXTI->FPR1 & pd_enc.A.it_settings.exti_line) == pd_enc.A.it_settings.exti_line){
         (EXTI->FPR1) = (pd_enc.A.it_settings.exti_line);
-        pd_enc.B.value = ((pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
+        // pd_enc.B.value = ((pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
         // toro
         //      i can use the pd_enc.direction and increment in the main loop.
         //      this will signal a pipelined process of the encoder.
+        pd_enc.B.value = ((pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
         pd_enc.A.flag = 'i';
     }
     if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line){
@@ -107,20 +115,20 @@ void EXTI4_15_IRQHandler(void) {
 
         // todo need to make this more reliable... check timers....
         if (!l_osc.distortion.on) {
-#ifdef encoder
+#ifdef encoder_leds
             GPIOB->ODR |= (1 << 3);
             GPIOB->ODR &= ~(1 << 5);
-#endif // encoder
+#endif // encoder_leds
             l_osc.distortion.on = true;
             // wtf dont need the flag here... the interrupt IS the flag
             // this is a bug waiting...
             distortion_choice.flag = 'i';
         }
         else{
-#ifdef encoder
+#ifdef encoder_leds
             GPIOB->ODR &= ~(1 << 3);
             GPIOB->ODR |= (1 << 5);
-#endif // encoder
+#endif // encoder_leds
             l_osc.distortion.on = false;
             distortion_choice.flag = 'D';
         }
