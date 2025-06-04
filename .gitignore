@@ -10,3 +10,5 @@ builddir
 ventor/*
 
 *.~undo-tree~
+
+*.gv
