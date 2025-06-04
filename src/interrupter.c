@@ -28,7 +28,7 @@ void main() {
     }
 
     tim_init(44000, &tim2_settings);
-    adc_init_settings(&pitch0cv_in);
+    adc_init_settings(&adc_settings);
 
 
     for (int i=0; i<2; i++){

@@ -84,7 +84,7 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *
                                         .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
 // LL_ADC_REG_TRIG_EXT_TIM3_TRGO
-struct adc pitch0cv_in = {.adcx=ADC1, .data = {&pitch0_value, &pitch1_value}, .channel=LL_ADC_CHANNEL_0, .roof='D',
+struct adc adc_settings = {.adcx=ADC1, .data = {&pitch0_value, &pitch1_value}, .channel=LL_ADC_CHANNEL_0, .roof='D',
                           .settings={.Clock=LL_ADC_CLOCK_SYNC_PCLK_DIV1, .Resolution=LL_ADC_RESOLUTION_12B,
                                      .DataAlignment=LL_ADC_DATA_ALIGN_RIGHT, .LowPowerMode=LL_ADC_LP_MODE_NONE},
                           .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_EXT_TIM2_TRGO, .ContinuousMode=LL_ADC_REG_CONV_SINGLE,
