@@ -75,17 +75,9 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
-            if (prev_value != pitch0_value){
-                // find out wtf is happening here
-                // todo:: how offten we are here??
-                //        and why the fuck im getting floating frequencies...
-                prev_value = pitch0_value;
-                l_osc.phase_pending_update = true;
-            }else if (prev_value_1 != pitch1_value) {
-                prev_value_1 = pitch1_value;
-                r_osc.phase_pending_update = true;
-            } else
-                l_osc.phase_pending_update = r_osc.phase_pending_update = false;
+            prev_value = pitch0_value;
+            prev_value_1 = pitch1_value;
+            l_osc.phase_pending_update = r_osc.phase_pending_update = true;
         }
     }
 }
