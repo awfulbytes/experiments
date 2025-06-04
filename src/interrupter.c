@@ -73,6 +73,7 @@ void main() {
 
         if (l_osc.phase_pending_update) {
             // && !l_osc.phase_done_update
+            l_osc.distortion.amount = map_12b_to_distortion_amount(prev_value_1);
             bool staged = false;
             staged = stage_pending_inc(prev_value, &l_osc, master_clock);
             l_osc.phase_done_update = staged;

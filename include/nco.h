@@ -6,7 +6,7 @@ enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eig
 
 struct phase_distortion{
     volatile bool on;
-    volatile uint8_t amount;
+    volatile atomic_ushort amount;
     enum cyrcles dante;
     enum cyrcles past_dante;
     volatile uint32_t distortion_value;
@@ -36,6 +36,8 @@ void update_data_buff (const uint16_t data[static 128],
                             atomic_ushort bufferSection[static 128],
                             uint16_t sectionLength);
 #pragma GCC diagnostic ignored "-Wignored-qualifiers"
+
+__attribute__((pure)) atomic_ushort map_12b_to_distortion_amount(uint16_t value);
 __attribute__((pure))atomic_ushort map_12b_to_hz(uint16_t adc_value, enum freq_modes pitch_modes);
 bool stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate);
 

@@ -45,6 +45,16 @@ void generate_half_signal(volatile const uint16_t data[static 128],
     }
 }
 
+__attribute__((pure)) atomic_ushort map_12b_to_distortion_amount(uint16_t value) {
+    atomic_ushort in_max = 0xfff;
+    atomic_ushort min;
+    atomic_ushort max;
+    min = 63;
+    max = 127;
+    atomic_ushort range = max - min;
+    return (atomic_ushort)(min + (value * range) / in_max);
+}
+
 __attribute__((pure)) atomic_ushort map_12b_to_hz(uint16_t value, enum freq_modes mode) {
     atomic_ushort in_max = 0xfff;
     atomic_ushort min;
