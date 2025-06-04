@@ -32,12 +32,6 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         printf("fract:\t%d\n", fract);
         printf("interp-factor:\t%d\n", (diff * fract)>>16);
 #endif // TEST
-        // wtf:::
-        //       - 1 makes the bug non audible...;
-        // wtf:::
-        // ^ not true ... unfortunatly this is audible only when
-        // distortion.amount is half the signal and the phase increment
-        // is multiplied by two...
         if (i == nco->distortion.amount
             // && n_index < nco->distortion.amount
             && nco->distortion.on){
