@@ -16,7 +16,7 @@ extern struct button wave_choise_dac1;
 extern struct button wave_choise_dac2;
 extern struct button distortion_choice;
 // extern struct gpio led;
-extern struct adc pitch0cv_in;
+extern struct adc adc_settings;
 
 void HardFault_Handler(void){while(1);}
 void NMI_Handler(void){}

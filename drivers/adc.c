@@ -3,7 +3,7 @@
 #include "stm32g0xx_ll_bus.h"
 
 extern volatile uint16_t pitch0_value;
-extern struct adc pitch0cv_in;
+extern struct adc adc_settings;
 static ErrorStatus adc_dma_setup(struct adc *adc);
 
 void adc_init_settings(struct adc *adc){
@@ -21,11 +21,11 @@ void adc_init_settings(struct adc *adc){
     while (LL_ADC_REG_Init(adc->adcx, &adc->reg_settings) != SUCCESS){};
     LL_ADC_ClearFlag_CCRDY(adc->adcx);
 
-    LL_ADC_SetChannelSamplingTime(adc->adcx, LL_ADC_CHANNEL_0, LL_ADC_SAMPLINGTIME_COMMON_2);
+    LL_ADC_SetChannelSamplingTime(adc->adcx, LL_ADC_CHANNEL_0, LL_ADC_SAMPLINGTIME_COMMON_1);
 
-    LL_ADC_SetChannelSamplingTime(adc->adcx, LL_ADC_CHANNEL_1, LL_ADC_SAMPLINGTIME_COMMON_2);
+    LL_ADC_SetChannelSamplingTime(adc->adcx, LL_ADC_CHANNEL_1, LL_ADC_SAMPLINGTIME_COMMON_1);
 
-    LL_ADC_SetSamplingTimeCommonChannels(adc->adcx, LL_ADC_SAMPLINGTIME_COMMON_2,
+    LL_ADC_SetSamplingTimeCommonChannels(adc->adcx, LL_ADC_SAMPLINGTIME_COMMON_1,
                                          LL_ADC_SAMPLINGTIME_12CYCLES_5);
     LL_ADC_Enable(adc->adcx);
     while (adc_dma_setup(adc) &&

@@ -79,8 +79,7 @@ void main() {
             l_osc.phase_done_update = staged;
             l_osc.phase_pending_update = !staged;
         }
-        if (r_osc.phase_pending_update &&
-            !r_osc.phase_done_update) {
+        if (r_osc.phase_pending_update) {
             bool staged = false;
             staged = stage_pending_inc(prev_value_1, &r_osc, master_clock);
             r_osc.phase_done_update = staged;

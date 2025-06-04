@@ -20,7 +20,7 @@
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
 volatile uint16_t pitch0_value = 0xff;
-volatile uint16_t pitch1_value = 0x7f;
+volatile uint16_t pitch1_value = 0xff;
 volatile uint16_t prev_value = 1;
 volatile uint16_t prev_value_1 = 1;
 
@@ -87,9 +87,9 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *
 struct adc adc_settings = {.adcx=ADC1, .data = {&pitch0_value, &pitch1_value}, .channel=LL_ADC_CHANNEL_0, .roof='D',
                           .settings={.Clock=LL_ADC_CLOCK_SYNC_PCLK_DIV1, .Resolution=LL_ADC_RESOLUTION_12B,
                                      .DataAlignment=LL_ADC_DATA_ALIGN_RIGHT, .LowPowerMode=LL_ADC_LP_MODE_NONE},
-                          .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_EXT_TIM2_TRGO, .ContinuousMode=LL_ADC_REG_CONV_SINGLE,
-                                         .SequencerLength=LL_ADC_REG_SEQ_SCAN_ENABLE_2RANKS, .SequencerDiscont=LL_ADC_REG_SEQ_DISCONT_1RANK,
-                                         .DMATransfer=LL_ADC_REG_DMA_TRANSFER_UNLIMITED, .Overrun=LL_ADC_REG_OVR_DATA_PRESERVED},
+                          .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_EXT_TIM2_TRGO, .ContinuousMode=LL_ADC_REG_CONV_CONTINUOUS,
+                                         .SequencerLength=LL_ADC_REG_SEQ_SCAN_ENABLE_2RANKS, .SequencerDiscont=LL_ADC_REG_SEQ_DISCONT_DISABLE,
+                                         .DMATransfer=LL_ADC_REG_DMA_TRANSFER_UNLIMITED, .Overrun=LL_ADC_REG_OVR_DATA_OVERWRITTEN},
                           .dma_channel=LL_DMA_CHANNEL_4,
                           .dmax=DMA1, .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_ADC1, .Direction=LL_DMA_DIRECTION_PERIPH_TO_MEMORY,
                                                       .NbData=2, .Mode=LL_DMA_MODE_CIRCULAR,
