@@ -4,10 +4,10 @@
 // #define DEBUG
 #define encoder_leds
 #define abs(x) ((x<0) ? -x : x)
-extern volatile uint16_t prev_value;
-extern volatile uint16_t prev_value_1;
-extern volatile uint16_t pitch0_value;
-extern volatile uint16_t pitch1_value;
+extern volatile uint16_t prev_value_cv_0_pitch;
+extern volatile uint16_t prev_value_cv_distortion_amount;
+extern volatile uint16_t pitch0_cv;
+extern volatile uint16_t distortion_amount_cv;
 extern struct nco l_osc, r_osc;
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
 extern atomic_ushort dac_double_buff[256], dac_double_buff2[256];
@@ -75,8 +75,8 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
-            prev_value = pitch0_value;
-            prev_value_1 = pitch1_value;
+            prev_value_cv_0_pitch = pitch0_cv;
+            prev_value_cv_distortion_amount = distortion_amount_cv;
             l_osc.phase_pending_update = r_osc.phase_pending_update = true;
         }
     }

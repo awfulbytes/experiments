@@ -19,10 +19,10 @@
 #if defined(USE_FULL_ASSERT)
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
-volatile uint16_t pitch0_value = 0xff;
-volatile uint16_t pitch1_value = 0xff;
-volatile uint16_t prev_value = 1;
-volatile uint16_t prev_value_1 = 1;
+volatile uint16_t pitch0_cv = 0xff;
+volatile uint16_t distortion_amount_cv = 0xff;
+volatile uint16_t prev_value_cv_0_pitch = 1;
+volatile uint16_t prev_value_cv_distortion_amount = 1;
 
 struct nco l_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
@@ -84,7 +84,7 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *
                                         .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
 // LL_ADC_REG_TRIG_EXT_TIM3_TRGO
-struct adc adc_settings = {.adcx=ADC1, .data = {&pitch0_value, &pitch1_value}, .channel=LL_ADC_CHANNEL_0, .roof='D',
+struct adc adc_settings = {.adcx=ADC1, .data = {&pitch0_cv, &distortion_amount_cv}, .channel=LL_ADC_CHANNEL_0, .roof='D',
                           .settings={.Clock=LL_ADC_CLOCK_SYNC_PCLK_DIV1, .Resolution=LL_ADC_RESOLUTION_12B,
                                      .DataAlignment=LL_ADC_DATA_ALIGN_RIGHT, .LowPowerMode=LL_ADC_LP_MODE_NONE},
                           .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_EXT_TIM2_TRGO, .ContinuousMode=LL_ADC_REG_CONV_CONTINUOUS,
