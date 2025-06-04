@@ -89,5 +89,9 @@ void main() {
             wave_me_d = waves_bank[wave_choise_dac1.state];
             wave_choise_dac1.flag = 'D';
         }
+        if (wave_choise_dac2.flag == 0x69) {
+            wave_me_d2 = waves_bank[wave_choise_dac2.state];
+            wave_choise_dac2.flag = 'D';
+        }
     } while (1);
 }
