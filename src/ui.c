@@ -1,5 +1,7 @@
 #include "ui.h"
 #include "stm32g071xx.h"
+#include "nco.h"
+#include <stdint.h>
 
 static void exti_enc_setup(struct encoder_channel channel[static 1]);
 
@@ -39,7 +41,26 @@ void enc_init(struct encoder *enc){
     exti_enc_setup(&enc->A);
 }
 
-// void decode_enc(struct encoder *enc){
-//     enc->A.value = (enc->A.pin.port_id->IDR) & (GPIO_IDR_ID4);
-//     enc->B.value = ((enc->B.pin.port_id->IDR) & (1<<5)) << 1;
-// }
+__attribute__((pure, always_inline)) inline bool read_b_on_falling_a(struct encoder encoder[static 1]){
+    register bool clockwise;
+    clockwise = (encoder->B.value == 1) ? true : false;
+    return clockwise;
+}
+
+void increment_encoder(struct encoder encoder[static 1]){
+    encoder->direction = read_b_on_falling_a(encoder);
+    if (!encoder->direction)
+        --encoder->increment;
+    else
+        ++encoder->increment;
+}
+
+void constrain_encoder_to_distortion_level(struct encoder enc[static 1]){
+    register uint16_t incr = enc->increment;
+    if (incr > hell && incr < hell + 0xfff)
+        incr = hell;
+    else if (incr > hell + 0xfff)
+        incr = entrance;
+
+    enc->increment = incr;
+}

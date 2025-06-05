@@ -38,19 +38,9 @@ void main() {
 
     do {
         if (pd_enc.A.flag == 0x69 && l_osc.phase_pending_update) {
-            // need to make this also respect the bounds...
-            // future toro
             if (l_osc.distortion.on){
-                // l_osc.phase_pending_update = true;
-                if (pd_enc.B.value)
-                    ++pd_enc.increment;
-                else
-                    --pd_enc.increment;
-
-                if (pd_enc.increment > hell && pd_enc.increment < hell + 0xfff)
-                    pd_enc.increment = hell;
-                else if (pd_enc.increment > hell + 0xfff)
-                    pd_enc.increment = entrance;
+                increment_encoder(&pd_enc);
+                constrain_encoder_to_distortion_level(&pd_enc);
             }
             else
                 l_osc.mode = (l_osc.mode == free) ? v_per_octave : free;
@@ -59,12 +49,8 @@ void main() {
                 case hell:
                     l_osc.distortion.dante = pd_enc.increment = ninteenth;
                     break;
-                // case entrance:
-                //     pd_enc.increment = first;
-                //     break;
                 default:
                     l_osc.distortion.dante = pd_enc.increment;
-                    // l_osc.distortion.amount = pd_enc.increment + 64;
                     break;
             }
             pd_enc.A.flag = 'D';
