@@ -9,11 +9,11 @@ void main() {
     struct timer *timers[2] = {&tim6_settings, &tim7_settings};
     struct button *wave_buttons[3] = {&wave_choise_dac1, &wave_choise_dac2, &distortion_choice};
     struct gpio *dacs[2] = {&dac1, &dac2};
-    struct gpio *adcs[2] = {&pitch_0_cv, &dist_amount_0_cv};
+    struct gpio *l_osc_cvs[2] = {&pitch_0_cv, &dist_amount_0_cv};
     struct dac *dacs_settings[2] = {&dac_ch1_settings, &dac_ch2_settings};
     struct dma *dma_chans[2] = {&dac_1_dma, &dac_2_dma};
     sys_clock_config();
-    gpio_init(wave_buttons, dacs, adcs);
+    gpio_init(wave_buttons, dacs, l_osc_cvs);
 
     enc_init(&pd_enc);
 

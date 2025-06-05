@@ -46,6 +46,10 @@ __attribute__((pure, always_inline)) inline bool read_b_on_falling_a(struct enco
     return clockwise;
 }
 
+__attribute((pure, always_inline)) inline enum freq_modes change_osc_pitch_mode(struct nco oscillator[static 1]){
+    return (oscillator->mode == free) ? v_per_octave : free;
+}
+
 static void increment_encoder(struct encoder encoder[static 1]){
     encoder->direction = read_b_on_falling_a(encoder);
     if (!encoder->direction)
@@ -76,7 +80,7 @@ void scan_and_apply_oscillator_settings(struct encoder enc[static 1], struct nco
             bit_bang_encoder(enc);
         }
         else
-            osillator->mode = (osillator->mode == free) ? v_per_octave : free;
+            osillator->mode = change_osc_pitch_mode(osillator);
         switch (osillator->distortion.past_dante) {
 
             case hell:
