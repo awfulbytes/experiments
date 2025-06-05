@@ -1,22 +1,8 @@
 #include "stm32g0xx_it.h"
 #include <stdatomic.h>
-#include <stdint.h>
 // #define DEBUG
 #define encoder_leds
 #define abs(x) ((x<0) ? -x : x)
-extern volatile uint16_t prev_value_cv_0_pitch;
-extern volatile uint16_t prev_value_cv_distortion_amount;
-extern volatile uint16_t pitch0_cv;
-extern volatile uint16_t distortion_amount_cv;
-extern struct nco l_osc, r_osc;
-extern volatile const uint16_t *wave_me_d, *wave_me_d2;
-extern atomic_ushort dac_double_buff[256], dac_double_buff2[256];
-// extern struct dma dac_1_dma;
-extern struct button wave_choise_dac1;
-extern struct button wave_choise_dac2;
-extern struct button distortion_choice;
-// extern struct gpio led;
-extern struct adc adc_settings;
 
 void HardFault_Handler(void){while(1);}
 void NMI_Handler(void){}
@@ -28,10 +14,8 @@ void TIM6_DAC_LPTIM1_IRQHandler(void){
     if (TIM6->SR & TIM_SR_UIF) {
         TIM6->SR &= ~(TIM_SR_UIF);
     }
-   // else if (DAC1->SR & DAC_SR_DMAUDR2){
-   //     DAC1->SR &= DAC_SR_DMAUDR2;
-   // }
 }
+
 void TIM7_LPTIM2_IRQHandler(void){
     if (TIM7->SR & TIM_SR_UIF){
         TIM7->SR &= ~(TIM_SR_UIF);
@@ -85,10 +69,6 @@ void TIM2_IRQHandler(void) {
 void EXTI4_15_IRQHandler(void) {
     if ((EXTI->FPR1 & pd_enc.A.it_settings.exti_line) == pd_enc.A.it_settings.exti_line){
         (EXTI->FPR1) = (pd_enc.A.it_settings.exti_line);
-        // pd_enc.B.value = ((pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
-        // toro
-        //      i can use the pd_enc.direction and increment in the main loop.
-        //      this will signal a pipelined process of the encoder.
         pd_enc.B.value = ((pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
         pd_enc.A.flag = 'i';
     }

@@ -5,10 +5,7 @@ __attribute__((pure, always_inline)) inline static uint32_t compute_lut_index(st
 __attribute__((pure, always_inline)) inline static uint64_t compute_nco_increment(atomic_ushort note, const uint_fast32_t sample_rate);
 
 void apply_pd_alg(struct nco nco[static 1]){
-    // hack:: make this the 9 circles of hell
-    // nco->distortion.distortion_value = nco->phase_inc << 1;
     nco->distortion.distortion_value = nco->phase_inc << nco->distortion.dante;
-    // nco->phase_inc -= nco->distortion.distortion_value;
 }
 
 #pragma GCC diagnostic ignored "-Wsign-conversion"
@@ -33,12 +30,10 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         printf("interp-factor:\t%d\n", (diff * fract)>>16);
 #endif // TEST
         if (i == nco->distortion.amount
-            // && n_index < nco->distortion.amount
             && nco->distortion.on){
             apply_pd_alg(nco);
             // hack:: make additive or subtractive it makes nice sounds
             nco->phase_inc -= (nco->distortion.distortion_value);
-            // GPIOB->ODR ^= (1<<3);
         }
         nco->data_buff.ping_buff[i] = (a + ((uint16_t)(((diff * fract) >> 16))));
         nco->phase_accum += nco->phase_inc;

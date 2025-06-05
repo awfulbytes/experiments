@@ -1,12 +1,6 @@
 #include "timx.h"
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_bus.h"
-extern struct timer tim6_settings;
-extern volatile uint64_t phase_inc;
-
-/* #define WAVEFORM_TIMER_FREQUENCY                (WAVEFORM_FREQUENCY * WAVEFORM_SAMPLES_SIZE) */
-#define WAVEFORM_TIMER_PR_MAX_VAL               ((uint32_t)0xFFFF-1)
-#define WAVEFORM_TIMER_FREQUENCY_RANGE_MIN      ((uint32_t)    1)
 
 static struct timer* timx_set(struct timer *timer) {
     timer->timx_clk_freq = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock, LL_RCC_GetAPB1Prescaler());
@@ -42,14 +36,9 @@ void tim_init
         LL_TIM_EnableUpdateEvent(tim->timx);
         LL_TIM_SetPrescaler(tim->timx, 0);
         LL_TIM_SetAutoReload(tim->timx, period);
-        LL_TIM_SetTriggerOutput(tim->timx, tim->trigger_output); // TRGO on update event
+        LL_TIM_SetTriggerOutput(tim->timx, tim->trigger_output);
         LL_TIM_EnableCounter(tim->timx);
         return;
-    } else{
-        // setted->timx_settings.Autoreload =
-        //     __LL_TIM_CALC_ARR(setted->timx_clk_freq,
-        //                       setted->timx_settings.Prescaler,
-        //                       output_freq * DATA_SIZE(scaled_sin));
     }
     LL_APB1_GRP1_EnableClock(setted->apb_clock_reg);
     LL_TIM_SetPrescaler(setted->timx, 0);
