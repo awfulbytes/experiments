@@ -39,14 +39,13 @@ void emulate_adc_timer2_interrupt(void){
 void test_phase_increment_pending_request(){
     emulate_adc_timer2_interrupt();
     if (l_osc.phase_pending_update){
-        stage_pending_inc(adc_data, &l_osc, master_clock);
+        l_osc.phase_done_update = stage_pending_inc(adc_data, &l_osc, master_clock);
+        l_osc.phase_pending_update = !l_osc.phase_done_update;
     }
     assert(l_osc.phase_pending_update == false);
     uint64_t new_req = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits) + 1;
     if (l_osc.mode == v_per_octave && adc_data == 0xfff){
         atomic_ushort osc_max_current_mode = map_12b_to_hz(0xfff, l_osc.mode);
-        // printf("%d\n", osc_max_current_mode);
-        // printf("%lu\n", new_req);
         assert(new_req + 2 == osc_max_current_mode);
     }
     assert(adc_data == 0xfff);
@@ -62,23 +61,22 @@ void test_phase_increment_pending_request(){
 }
 
 void test_signal_generation_and_dac_buffer(){
+    assert(l_osc.phase_done_update);
     l_osc.phase_inc = l_osc.phase_pending_update_inc;
     generate_half_signal(sine_wave, 128, &l_osc);
     update_data_buff(l_osc.data_buff.ping_buff, some, 128);
     update_data_buff(l_osc.data_buff.ping_buff, some + 128, 128);
 
     for (int i=0; i<256; ++i) {
-        if (i > 128)
+        if (i > 128){
             assert(some[i] == l_osc.data_buff.ping_buff[i-128]);
+        }
         else if (i < 128){
             assert(some[i] == l_osc.data_buff.ping_buff[i]);
-            // printf("b:\t %u\n", l_osc.data_buff.ping_buff[i]);
         }
         else {
-            // assert(l_osc.data_buff.ping_buff[i] == 0);
             assert(some[i] == l_osc.data_buff.ping_buff[0]);
         }
-        // printf("data-big-buff:\t%d\n", some[i]);
     }
 }
 

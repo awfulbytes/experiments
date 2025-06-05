@@ -15,7 +15,7 @@ void main() {
     sys_clock_config();
     gpio_init(wave_buttons, dacs, l_osc_cvs);
 
-    enc_init(&pd_enc);
+    enc_init(&osc_0_pd_enc);
 
 #if defined(DEBUG) || defined(DEBUGDAC)
     debug_tim2_pin31();
@@ -36,7 +36,7 @@ void main() {
     }
 
     do {
-        scan_and_apply_oscillator_settings(&pd_enc, &l_osc);
+        scan_and_apply_oscillator_modulations(&osc_0_pd_enc, &l_osc);
 
         if (l_osc.phase_pending_update) {
             l_osc.distortion.amount = map_12b_to_distortion_amount(prev_value_cv_distortion_amount);

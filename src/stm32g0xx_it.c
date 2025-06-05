@@ -67,10 +67,10 @@ void TIM2_IRQHandler(void) {
 }
 
 void EXTI4_15_IRQHandler(void) {
-    if ((EXTI->FPR1 & pd_enc.A.it_settings.exti_line) == pd_enc.A.it_settings.exti_line){
-        (EXTI->FPR1) = (pd_enc.A.it_settings.exti_line);
-        pd_enc.B.value = ((pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
-        pd_enc.A.flag = 'i';
+    if ((EXTI->FPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
+        (EXTI->FPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
+        osc_0_pd_enc.B.value = ((osc_0_pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
+        osc_0_pd_enc.A.flag = 'i';
     }
     if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line){
         (EXTI->RPR1) = (wave_choise_dac1.exti.exti_line);

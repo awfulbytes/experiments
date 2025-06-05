@@ -4,18 +4,6 @@
 
 static void exti_enc_setup(struct encoder_channel channel[static 1]);
 
-void phase_dist_button_callback(struct button *abut){
-    switch (abut->state) {
-        case 8:
-            abut->state >>= abut->state;
-            break;
-        default:
-            ++abut->state;
-            break;
-    }
-    // abut->flag = 'D';
-}
-
 inline void wave_button_callback
 (struct button *abut) {
     // NOTE:: need some more work but elswhere..
@@ -74,7 +62,7 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
 }
 
 
-void scan_and_apply_oscillator_settings(struct encoder enc[static 1], struct nco osillator[static 1]){
+void scan_and_apply_oscillator_modulations(struct encoder enc[static 1], struct nco osillator[static 1]){
     if (enc->A.flag == 0x69 && osillator->phase_pending_update){
         if(osillator->distortion.on){
             bit_bang_encoder(enc);
