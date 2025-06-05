@@ -37,17 +37,11 @@ void main() {
 
     do {
         scan_and_apply_oscillator_modulations(&osc_0_pd_enc, &l_osc);
+        stage_modulated_signal_values(&l_osc, prev_value_cv_distortion_amount, prev_value_cv_0_pitch, master_clock);
 
-        if (l_osc.phase_pending_update) {
-            l_osc.distortion.amount = map_12b_to_distortion_amount(prev_value_cv_distortion_amount);
-            bool staged = false;
-            staged = stage_pending_inc(prev_value_cv_0_pitch, &l_osc, master_clock);
-            l_osc.phase_done_update = staged;
-            l_osc.phase_pending_update = !staged;
-        }
+        // todo::: align with above pipelined process and make this separate from distortion amount
         if (r_osc.phase_pending_update) {
             bool staged = false;
-            // todo::: make this separate from distortion amount
             staged = stage_pending_inc(prev_value_cv_distortion_amount, &r_osc, master_clock);
             r_osc.phase_done_update = staged;
             r_osc.phase_pending_update = !staged;
