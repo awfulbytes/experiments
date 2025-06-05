@@ -26,9 +26,8 @@ static void exti_enc_setup(struct encoder_channel channel[static 1]){
 }
 
 void enc_init(struct encoder *enc);
-void increment_encoder(struct encoder encoder[static 1]);
-void constrain_encoder_to_distortion_level(struct encoder enc[static 1]);
+static void increment_encoder(struct encoder encoder[static 1]);
+static void constrain_encoder_to_distortion_level(struct encoder enc[static 1]);
 
-void phase_dist_button_callback(struct button *abut);
 void wave_button_callback(struct button *abut);
 void WaitForUserButtonPress (struct button *button);
