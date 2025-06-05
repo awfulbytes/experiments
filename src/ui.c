@@ -1,5 +1,4 @@
 #include "ui.h"
-#include "stm32g071xx.h"
 #include "nco.h"
 #include <stdint.h>
 
@@ -47,7 +46,7 @@ __attribute__((pure, always_inline)) inline bool read_b_on_falling_a(struct enco
     return clockwise;
 }
 
-void increment_encoder(struct encoder encoder[static 1]){
+static void increment_encoder(struct encoder encoder[static 1]){
     encoder->direction = read_b_on_falling_a(encoder);
     if (!encoder->direction)
         --encoder->increment;
@@ -55,12 +54,39 @@ void increment_encoder(struct encoder encoder[static 1]){
         ++encoder->increment;
 }
 
-void constrain_encoder_to_distortion_level(struct encoder enc[static 1]){
-    register uint16_t incr = enc->increment;
+static void constrain_encoder_to_distortion_level(struct encoder encoder[static 1]){
+    register uint16_t incr = encoder->increment;
     if (incr > hell && incr < hell + 0xfff)
         incr = hell;
     else if (incr > hell + 0xfff)
         incr = entrance;
 
-    enc->increment = incr;
+    encoder->increment = incr;
+}
+
+static void bit_bang_encoder(struct encoder enc[static 1]){
+    increment_encoder(enc);
+    constrain_encoder_to_distortion_level(enc);
+}
+
+
+void scan_and_apply_oscillator_settings(struct encoder enc[static 1], struct nco osillator[static 1]){
+    if (enc->A.flag == 0x69 && osillator->phase_pending_update){
+        if(osillator->distortion.on){
+            bit_bang_encoder(enc);
+        }
+        else
+            osillator->mode = (osillator->mode == free) ? v_per_octave : free;
+        switch (osillator->distortion.past_dante) {
+
+            case hell:
+                osillator->distortion.dante = enc->increment = ninteenth;
+                break;
+            default:
+                osillator->distortion.dante = enc->increment;
+                break;
+        }
+        enc->A.flag = 'D';
+        osillator->distortion.past_dante = osillator->distortion.dante;
+    }
 }

@@ -1,5 +1,4 @@
 #include "interrupter.h"
-#include "stm32g0xx_ll_utils.h"
 #include "sysclk.c"
 const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn, pulse};
 volatile const uint16_t *wave_me_d = sine_wave;
@@ -37,28 +36,9 @@ void main() {
     }
 
     do {
-        if (pd_enc.A.flag == 0x69 && l_osc.phase_pending_update) {
-            if (l_osc.distortion.on){
-                increment_encoder(&pd_enc);
-                constrain_encoder_to_distortion_level(&pd_enc);
-            }
-            else
-                l_osc.mode = (l_osc.mode == free) ? v_per_octave : free;
-
-            switch (l_osc.distortion.past_dante) {
-                case hell:
-                    l_osc.distortion.dante = pd_enc.increment = ninteenth;
-                    break;
-                default:
-                    l_osc.distortion.dante = pd_enc.increment;
-                    break;
-            }
-            pd_enc.A.flag = 'D';
-            l_osc.distortion.past_dante = l_osc.distortion.dante;
-        }
+        scan_and_apply_oscillator_settings(&pd_enc, &l_osc);
 
         if (l_osc.phase_pending_update) {
-            // && !l_osc.phase_done_update
             l_osc.distortion.amount = map_12b_to_distortion_amount(prev_value_cv_distortion_amount);
             bool staged = false;
             staged = stage_pending_inc(prev_value_cv_0_pitch, &l_osc, master_clock);

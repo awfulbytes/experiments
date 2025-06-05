@@ -12,7 +12,9 @@
 #include "dma.h"
 #include "nco.h"
 #include <stdint.h>
-#include "ui.h"
+
+#include "src/ui.c"
+
 
 // enum modes pitch_modes =free;
 

@@ -1,8 +1,11 @@
 #include <stdint.h>
 #include <stdatomic.h>
+
+#pragma once
 enum freq_modes {free, v_per_octave};
-enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
-              tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth, hell};
+enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh,
+              eighth, ninth, tenth, eleventh, twelve, thirteenth, fourteenth,
+              fifteenth, seventeenthh, eighteenth, ninteenth, hell};
 
 struct phase_distortion{
     volatile bool on;
