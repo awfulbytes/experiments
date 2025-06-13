@@ -26,6 +26,9 @@ volatile uint16_t distortion_amount_cv = 0xff;
 volatile uint16_t prev_value_cv_0_pitch = 1;
 volatile uint16_t prev_value_cv_distortion_amount = 1;
 
+volatile uint16_t pitch1_cv = 0xff;
+volatile uint16_t prev_value_cv_1_pitch = 1;
+
 struct nco l_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
                     .phase_pending_update_inc=0,
@@ -85,20 +88,34 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *
                                         .MemoryOrM2MDstDataSize=LL_DMA_MDATAALIGN_HALFWORD,
                                         .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
-// LL_ADC_REG_TRIG_EXT_TIM3_TRGO
-struct adc adc_settings = {.adcx=ADC1, .data = {&pitch0_cv, &distortion_amount_cv}, .channel=LL_ADC_CHANNEL_0, .roof='D',
-                          .settings={.Clock=LL_ADC_CLOCK_SYNC_PCLK_DIV1, .Resolution=LL_ADC_RESOLUTION_12B,
-                                     .DataAlignment=LL_ADC_DATA_ALIGN_RIGHT, .LowPowerMode=LL_ADC_LP_MODE_NONE},
-                          .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_EXT_TIM2_TRGO, .ContinuousMode=LL_ADC_REG_CONV_CONTINUOUS,
-                                         .SequencerLength=LL_ADC_REG_SEQ_SCAN_ENABLE_2RANKS, .SequencerDiscont=LL_ADC_REG_SEQ_DISCONT_DISABLE,
-                                         .DMATransfer=LL_ADC_REG_DMA_TRANSFER_UNLIMITED, .Overrun=LL_ADC_REG_OVR_DATA_OVERWRITTEN},
+
+volatile uint16_t cv_array_adc_test[3] = { 0, 0, 0 };
+//                         wtf is happening brotheeer!
+struct adc adc_settings = {.adcx=ADC1,
+                          .data = cv_array_adc_test,
+                          .roof='D',
+                          .settings={.Clock=LL_ADC_CLOCK_SYNC_PCLK_DIV1,
+                                     .Resolution=LL_ADC_RESOLUTION_12B,
+                                     .DataAlignment=LL_ADC_DATA_ALIGN_RIGHT,
+                                     .LowPowerMode=LL_ADC_LP_MODE_NONE},
+
+                          .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_EXT_TIM2_TRGO,
+                                         .ContinuousMode=LL_ADC_REG_CONV_SINGLE,
+                                         .SequencerLength=LL_ADC_REG_SEQ_SCAN_ENABLE_3RANKS,
+                                         .SequencerDiscont=LL_ADC_REG_SEQ_DISCONT_DISABLE,
+                                         .DMATransfer=LL_ADC_REG_DMA_TRANSFER_UNLIMITED,
+                                         .Overrun=LL_ADC_REG_OVR_DATA_OVERWRITTEN},
+
                           .dma_channel=LL_DMA_CHANNEL_4,
-                          .dmax=DMA1, .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_ADC1, .Direction=LL_DMA_DIRECTION_PERIPH_TO_MEMORY,
-                                                      .NbData=2, .Mode=LL_DMA_MODE_CIRCULAR,
-                                                      .PeriphOrM2MSrcDataSize=LL_DMA_PDATAALIGN_HALFWORD,
-                                                      .MemoryOrM2MDstDataSize=LL_DMA_MDATAALIGN_HALFWORD,
-                                                      .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT,
-                                                      .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT}};
+                          .dmax=DMA1,
+                          .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_ADC1,
+                                          .Direction=LL_DMA_DIRECTION_PERIPH_TO_MEMORY,
+                                          .NbData=3,
+                                          .Mode=LL_DMA_MODE_CIRCULAR,
+                                          .PeriphOrM2MSrcDataSize=LL_DMA_PDATAALIGN_HALFWORD,
+                                          .MemoryOrM2MDstDataSize=LL_DMA_MDATAALIGN_HALFWORD,
+                                          .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT,
+                                          .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT}};
 
 struct button wave_choise_dac1 = {.state=0, .flag='D',
                                  .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_10, .exti_port_conf=LL_EXTI_CONFIG_PORTC,
@@ -129,8 +146,9 @@ struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN
                          .B.flag = 'D',
                          .increment=0, .direction=false};
 
+// nxt:: for some reason the PA_2 is busy!!
+struct gpio pitch_1_cv = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_1, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 #warning "unusable yet"
-struct gpio pitch_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_0, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 struct gpio dist_amount_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_1, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 
 struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_4, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},

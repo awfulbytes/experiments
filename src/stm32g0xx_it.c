@@ -59,10 +59,36 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
-            prev_value_cv_0_pitch = pitch0_cv;
-            prev_value_cv_distortion_amount = distortion_amount_cv;
+            prev_value_cv_0_pitch = cv_array_adc_test[0];
+            prev_value_cv_distortion_amount = cv_array_adc_test[1];
+            prev_value_cv_1_pitch = cv_array_adc_test[2];
+            // prev_value_cv_0_pitch = pitch0_cv;
+            // prev_value_cv_distortion_amount = distortion_amount_cv;
+            // prev_value_cv_1_pitch = pitch1_cv;
             l_osc.phase_pending_update = r_osc.phase_pending_update = true;
         }
+    }
+}
+
+static inline void enable_distortion_for_oscillator(struct nco nco[static 1]){
+    if (!nco->distortion.on) {
+
+#ifdef encoder_leds
+        GPIOB->ODR |= (1 << 3);
+        GPIOB->ODR &= ~(1 << 5);
+#endif // encoder_leds
+        nco->distortion.on = true;
+        // wtf dont need the flag here... the interrupt IS the flag
+        // this is a bug waiting...
+        distortion_choice.flag = 'i';
+    }
+    else{
+#ifdef encoder_leds
+        GPIOB->ODR &= ~(1 << 3);
+        GPIOB->ODR |= (1 << 5);
+#endif // encoder_leds
+        nco->distortion.on = false;
+        distortion_choice.flag = 'D';
     }
 }
 
@@ -86,23 +112,7 @@ void EXTI4_15_IRQHandler(void) {
         (EXTI->RPR1) = (distortion_choice.exti.exti_line);
 
         // todo need to make this more reliable... check timers....
-        if (!l_osc.distortion.on) {
-#ifdef encoder_leds
-            GPIOB->ODR |= (1 << 3);
-            GPIOB->ODR &= ~(1 << 5);
-#endif // encoder_leds
-            l_osc.distortion.on = true;
-            // wtf dont need the flag here... the interrupt IS the flag
-            // this is a bug waiting...
-            distortion_choice.flag = 'i';
-        }
-        else{
-#ifdef encoder_leds
-            GPIOB->ODR &= ~(1 << 3);
-            GPIOB->ODR |= (1 << 5);
-#endif // encoder_leds
-            l_osc.distortion.on = false;
-            distortion_choice.flag = 'D';
-        }
+        enable_distortion_for_oscillator(&l_osc);
+        enable_distortion_for_oscillator(&r_osc);
     }
 }
