@@ -9,7 +9,7 @@ struct adc {
     LL_ADC_REG_InitTypeDef reg_settings;
     DMA_TypeDef *dmax;
     LL_DMA_InitTypeDef dmax_settings;
-    volatile uint16_t *data[2];
+    volatile uint16_t *data;
     unsigned int dma_channel;
     unsigned long channel;
     volatile char roof;

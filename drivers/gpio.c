@@ -24,7 +24,7 @@ void gpio_init(struct button **choice_buttons, struct gpio **dacs, struct gpio *
         LL_GPIO_SetPinMode(dacs[i]->port_id, dacs[i]->pin_id, dacs[i]->mode);
     }
 
-    for (int i=0; i < 2; ++i){
+    for (int i=0; i < 3; ++i){
 
         LL_GPIO_SetPinMode(adc_pin[i]->port_id,
                            adc_pin[i]->pin_id,
