@@ -50,6 +50,7 @@ static void constrain_encoder_to_distortion_level(struct encoder encoder[static 
     register uint16_t incr = encoder->increment;
     if (incr > hell && incr < hell + 0xfff)
         incr = hell;
+    // todo dont be so stupid the next time!!
     else if (incr > hell + 0xfff)
         incr = entrance;
 

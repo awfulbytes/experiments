@@ -51,7 +51,9 @@ struct nco r_osc = {.phase_accum = 0,
                     .distortion.past_dante = entrance,
                     .distortion.dante=entrance};
 
+// nxt check this more reliably!!
 const uint_fast32_t dac1_clock = 198'000;
+// const uint_fast32_t dac1_clock = 44'000;
 const uint_fast32_t adc1_clock = 44'000;
 atomic_ushort dac_double_buff[256] = {0};
 atomic_ushort dac_double_buff2[256] = {0};
