@@ -44,8 +44,10 @@ __attribute__((pure)) atomic_ushort map_12b_to_distortion_amount(uint16_t value)
     atomic_ushort in_max = 0xfff;
     atomic_ushort min;
     atomic_ushort max;
-    min = 63;
-    max = 127;
+    // todo (nxt)
+    //     test the levels better!!
+    min = 25;
+    max = 129;
     atomic_ushort range = max - min;
     return (atomic_ushort)(min + (value * range) / in_max);
 }
@@ -56,8 +58,8 @@ __attribute__((pure)) atomic_ushort map_12b_to_hz(uint16_t value, enum freq_mode
     atomic_ushort max;
     switch (mode) {
         case free:
-            min = 110;
-            max = 16000;
+            min = 100;
+            max = 14000;
             break;
         case v_per_octave:
             min = 220;
