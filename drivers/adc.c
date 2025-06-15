@@ -4,8 +4,10 @@
 #include "stm32g0xx_ll_bus.h"
 
 extern struct adc adc_settings;
+extern volatile uint16_t cv_raw_adc_inp;
+
 static ErrorStatus adc_dma_setup(struct adc *adc);
-extern volatile uint16_t cv_array_adc_test;
+
 void adc_init_settings(struct adc *adc){
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC);
 
@@ -60,7 +62,7 @@ static ErrorStatus adc_dma_setup(struct adc *adc) {
 
     adc->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &adc->adcx->DR;
     // for (int i=0; i < 3; ++i) {
-    adc->dmax_settings.MemoryOrM2MDstAddress = (uint32_t) &cv_array_adc_test;
+    adc->dmax_settings.MemoryOrM2MDstAddress = (uint32_t) &cv_raw_adc_inp;
     // }
     LL_DMA_Init(adc->dmax, adc->dma_channel, &adc->dmax_settings);
 

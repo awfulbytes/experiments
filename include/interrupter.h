@@ -51,7 +51,8 @@ struct nco r_osc = {.phase_accum = 0,
                     .distortion.past_dante = entrance,
                     .distortion.dante=entrance};
 
-constexpr  uint_fast32_t master_clock = 198000;
+const uint_fast32_t dac1_clock = 198'000;
+const uint_fast32_t adc1_clock = 44'000;
 atomic_ushort dac_double_buff[256] = {0};
 atomic_ushort dac_double_buff2[256] = {0};
 
@@ -89,10 +90,10 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *
                                         .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
 
-volatile uint16_t cv_array_adc_test[3] = { 0, 0, 0 };
+volatile uint16_t cv_raw_adc_inp[3] = { 0, 0, 0 };
 //                         wtf is happening brotheeer!
 struct adc adc_settings = {.adcx=ADC1,
-                          .data = cv_array_adc_test,
+                          .data = cv_raw_adc_inp,
                           .roof='D',
                           .settings={.Clock=LL_ADC_CLOCK_SYNC_PCLK_DIV1,
                                      .Resolution=LL_ADC_RESOLUTION_12B,

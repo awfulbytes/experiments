@@ -4,7 +4,7 @@
 #include "ui.h"
 #include "nco.h"
 
-extern void scan_and_apply_oscillator_modulations(struct encoder enc[static 1], struct nco osillator[static 1]);
+extern void scan_and_apply_current_modulations(struct encoder enc[static 1], struct nco osillator[static 1]);
 struct nco l_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
                     .phase_pending_update=true, .phase_pending_update_inc=0,
                     .mode=free,
@@ -53,7 +53,7 @@ void emulate_distortion_enable_button(struct button *abut){
 
 void test_cw_encoder(void){
     emulate_encoder_cw(&osc_0_pd_enc);
-    scan_and_apply_oscillator_modulations(&osc_0_pd_enc, &l_osc);
+    scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
 
     assert(osc_0_pd_enc.A.flag == 'D');
     assert(osc_0_pd_enc.direction == true);
@@ -63,7 +63,7 @@ void test_cw_encoder(void){
 
 void test_ccw_encoder(void){
     emulate_encoder_ccw(&osc_0_pd_enc);
-    scan_and_apply_oscillator_modulations(&osc_0_pd_enc, &l_osc);
+    scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
 
     assert(osc_0_pd_enc.direction == false);
     assert(osc_0_pd_enc.increment == 0);

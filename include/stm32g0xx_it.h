@@ -11,7 +11,7 @@ extern volatile uint16_t prev_value_cv_distortion_amount;
 extern volatile uint16_t pitch1_cv;
 extern volatile uint16_t prev_value_cv_1_pitch;
 
-extern volatile uint16_t cv_array_adc_test[3];
+extern volatile uint16_t cv_raw_adc_inp[3];
 
 extern struct nco l_osc, r_osc;
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;

@@ -59,18 +59,15 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
-            prev_value_cv_0_pitch = cv_array_adc_test[0];
-            prev_value_cv_distortion_amount = cv_array_adc_test[1];
-            prev_value_cv_1_pitch = cv_array_adc_test[2];
-            // prev_value_cv_0_pitch = pitch0_cv;
-            // prev_value_cv_distortion_amount = distortion_amount_cv;
-            // prev_value_cv_1_pitch = pitch1_cv;
+            prev_value_cv_0_pitch = cv_raw_adc_inp[0];
+            prev_value_cv_distortion_amount = cv_raw_adc_inp[1];
+            prev_value_cv_1_pitch = cv_raw_adc_inp[2];
             l_osc.phase_pending_update = r_osc.phase_pending_update = true;
         }
     }
 }
 
-static inline void enable_distortion_for_oscillator(struct nco nco[static 1]){
+static inline void handle_osc_distortion(struct nco nco[static 1]){
     if (!nco->distortion.on) {
 
 #ifdef encoder_leds
@@ -112,7 +109,7 @@ void EXTI4_15_IRQHandler(void) {
         (EXTI->RPR1) = (distortion_choice.exti.exti_line);
 
         // todo need to make this more reliable... check timers....
-        enable_distortion_for_oscillator(&l_osc);
-        enable_distortion_for_oscillator(&r_osc);
+        handle_osc_distortion(&l_osc);
+        handle_osc_distortion(&r_osc);
     }
 }
