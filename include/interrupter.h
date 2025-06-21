@@ -1,6 +1,5 @@
 #include "stm32g0xx_ll_dac.h"
 #include "stm32g0xx_ll_gpio.h"
-#include <stdatomic.h>
 #define DEBUGDAC
 #include "gpio.h"
 #include "stm32g0xx_ll_adc.h"
@@ -55,8 +54,8 @@ struct nco r_osc = {.phase_accum = 0,
 const uint_fast32_t dac1_clock = 198'000;
 // const uint_fast32_t dac1_clock = 44'000;
 const uint_fast32_t adc1_clock = 44'000;
-atomic_ushort dac_double_buff[256] = {0};
-atomic_ushort dac_double_buff2[256] = {0};
+unsigned int dac_double_buff[256] = {0};
+unsigned int dac_double_buff2[256] = {0};
 
 struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
 struct timer tim7_settings = {.timx=TIM7, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7, .trigger_output=LL_TIM_TRGO_UPDATE};

@@ -1,5 +1,4 @@
 #include "stm32g0xx_it.h"
-#include <stdatomic.h>
 // #define DEBUG
 #define encoder_leds
 #define abs(x) ((x<0) ? -x : x)

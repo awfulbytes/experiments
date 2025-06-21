@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <stdatomic.h>
 #include <stdint.h>
 #include <stdio.h>
 #include "nco.h"
@@ -21,10 +20,10 @@ struct nco r_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
                     .distortion.distortion_value=0,
                     .distortion.dante=9,};
 extern bool phase_pending_update;
-atomic_ushort some[256];
-atomic_ushort some2[256];
-atomic_ushort full[256];
-atomic_ushort sine_upd[256];
+unsigned int some[256];
+unsigned int some2[256];
+unsigned int full[256];
+unsigned int sine_upd[256];
 
 uint16_t adc_data = 0x000;
 
@@ -45,7 +44,7 @@ void test_phase_increment_pending_request(){
     assert(l_osc.phase_pending_update == false);
     uint64_t new_req = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits) + 1;
     if (l_osc.mode == v_per_octave && adc_data == 0xfff){
-        atomic_ushort osc_max_current_mode = map_12b_to_hz(0xfff, l_osc.mode);
+        unsigned int osc_max_current_mode = map_12b_to_hz(0xfff, l_osc.mode);
         assert(new_req + 2 == osc_max_current_mode);
     }
     assert(adc_data == 0xfff);
