@@ -15,7 +15,7 @@ extern volatile uint16_t cv_raw_adc_inp[3];
 
 extern struct nco l_osc, r_osc;
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
-extern unsigned int dac_double_buff[256], dac_double_buff2[256];
+extern uint16_t dac_double_buff[256], dac_double_buff2[256];
 extern struct button wave_choise_dac1;
 extern struct button wave_choise_dac2;
 extern struct button distortion_choice;

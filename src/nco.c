@@ -4,7 +4,7 @@
 #include <stdint.h>
 // #define TEST
 __attribute__((pure, always_inline)) inline static uint32_t compute_lut_index(struct nco nco[static 1]);
-__attribute__((pure, always_inline)) inline static uint64_t compute_nco_increment(unsigned int note, const uint_fast32_t sample_rate);
+__attribute__((pure, always_inline)) inline static uint64_t compute_nco_increment(uint16_t note, const uint_fast32_t sample_rate);
 
 void apply_pd_alg(struct nco nco[static 1]){
     nco->distortion.distortion_value = nco->phase_inc << nco->distortion.dante;
@@ -42,22 +42,22 @@ void generate_half_signal(volatile const uint16_t data[static 128],
     }
 }
 
-__attribute__((pure)) unsigned int map_12b_to_distortion_amount(uint16_t value) {
-    unsigned int in_max = 0xfff;
-    unsigned int min;
-    unsigned int max;
+__attribute__((pure)) uint16_t map_12b_to_distortion_amount(uint16_t value) {
+    uint16_t in_max = 0xfff;
+    uint16_t min;
+    uint16_t max;
     // todo (nxt)
     //     test the levels better!!
     min = 25;
     max = 129;
-    unsigned int range = max - min;
-    return (unsigned int)(min + (value * range) / in_max);
+    uint16_t range = max - min;
+    return (uint16_t)(min + (value * range) / in_max);
 }
 
-__attribute__((pure)) unsigned int map_12b_to_hz(uint16_t value, enum freq_modes mode) {
-    unsigned int in_max = 0xfff;
-    unsigned int min;
-    unsigned int max;
+__attribute__((pure)) uint16_t map_12b_to_hz(uint16_t value, enum freq_modes mode) {
+    uint16_t in_max = 0xfff;
+    uint16_t min;
+    uint16_t max;
     switch (mode) {
         case free:
             min = 100;
@@ -71,23 +71,23 @@ __attribute__((pure)) unsigned int map_12b_to_hz(uint16_t value, enum freq_modes
             min = 2;
             max = 5;
     }
-    unsigned int range = max - min;
-    return (unsigned int)(min + (value * range) / in_max);
+    uint16_t range = max - min;
+    return (uint16_t)(min + (value * range) / in_max);
 }
 
 __attribute__((pure)) bool stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate){
-    unsigned int note = map_12b_to_hz(adc_raw_value, nco->mode);
+    uint16_t note = map_12b_to_hz(adc_raw_value, nco->mode);
     nco->phase_pending_update_inc = compute_nco_increment(note, sample_rate);
     return true;
 }
 
 inline void update_data_buff(const uint16_t data[static 128],
-                                  unsigned int bufferSection[static 128],
+                                  uint16_t bufferSection[static 128],
                                   uint16_t sectionLength) {
     memcpy(bufferSection, data, sizeof(uint16_t) * sectionLength);
 }
 
-void stage_modulated_signal_values(struct nco osc[static 1], unsigned int distortion_cv, volatile uint16_t pitch_cv, uint32_t master_clock){
+void stage_modulated_signal_values(struct nco osc[static 1], uint16_t distortion_cv, volatile uint16_t pitch_cv, uint32_t master_clock){
     if(osc->phase_pending_update){
         osc->distortion.amount = map_12b_to_distortion_amount(distortion_cv);
         bool staged = stage_pending_inc(pitch_cv, osc, master_clock);

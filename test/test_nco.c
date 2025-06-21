@@ -20,10 +20,10 @@ struct nco r_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
                     .distortion.distortion_value=0,
                     .distortion.dante=9,};
 extern bool phase_pending_update;
-unsigned int some[256];
-unsigned int some2[256];
-unsigned int full[256];
-unsigned int sine_upd[256];
+uint16_t some[256];
+uint16_t some2[256];
+uint16_t full[256];
+uint16_t sine_upd[256];
 
 uint16_t adc_data = 0x000;
 
@@ -44,7 +44,7 @@ void test_phase_increment_pending_request(){
     assert(l_osc.phase_pending_update == false);
     uint64_t new_req = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits) + 1;
     if (l_osc.mode == v_per_octave && adc_data == 0xfff){
-        unsigned int osc_max_current_mode = map_12b_to_hz(0xfff, l_osc.mode);
+        uint16_t osc_max_current_mode = map_12b_to_hz(0xfff, l_osc.mode);
         assert(new_req + 2 == osc_max_current_mode);
     }
     assert(adc_data == 0xfff);
@@ -67,7 +67,7 @@ void test_signal_generation_and_dac_buffer(){
     update_data_buff(l_osc.data_buff.ping_buff, some + 128, 128);
 
     for (int i=0; i<256; ++i) {
-        if (i > 128){
+        if (i >= 128){
             assert(some[i] == l_osc.data_buff.ping_buff[i-128]);
         }
         else if (i < 128){
