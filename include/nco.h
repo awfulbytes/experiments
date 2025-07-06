@@ -2,15 +2,15 @@
 
 #pragma once
 enum freq_modes {free, v_per_octave};
-enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh,
-              eighth, ninth, tenth, eleventh, twelve, thirteenth, fourteenth,
-              fifteenth, seventeenthh, eighteenth, ninteenth, hell};
+enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
+              // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
+              hell};
 
 struct phase_distortion{
-    volatile bool on;
+    volatile bool     on;
     volatile uint16_t amount;
-    enum cyrcles dante;
-    enum cyrcles past_dante;
+    enum     cyrcles  dante;
+    enum     cyrcles  past_dante;
     volatile uint32_t distortion_value;
 };
 
@@ -20,14 +20,14 @@ struct ping_pong_buff{
 };
 
 struct nco {
-    volatile uint64_t phase_pending_update_inc;
-    volatile uint64_t phase_inc;
-    volatile uint32_t phase_accum;
-    enum freq_modes mode;
-    struct ping_pong_buff data_buff;
-    struct phase_distortion distortion;
-    volatile bool phase_pending_update;
-    volatile bool phase_done_update;
+    volatile uint64_t         phase_pending_update_inc;
+    volatile uint64_t         phase_inc;
+    volatile uint32_t         phase_accum;
+    enum     freq_modes       mode;
+    struct   ping_pong_buff   data_buff;
+    struct   phase_distortion distortion;
+    volatile bool             phase_pending_update;
+    volatile bool             phase_done_update;
 };
 
 #pragma GCC diagnostic ignored "-Wconversion"

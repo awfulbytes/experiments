@@ -70,7 +70,7 @@ void scan_and_apply_current_modulations(struct encoder enc[static 1], struct nco
         switch (osillator->distortion.past_dante) {
 
             case hell:
-                osillator->distortion.dante = enc->increment = ninteenth;
+                osillator->distortion.dante = enc->increment = ninth;
                 break;
             default:
                 osillator->distortion.dante = enc->increment;
