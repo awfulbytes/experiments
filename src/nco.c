@@ -1,7 +1,5 @@
 #include "nco.h"
-#include "bits/types.h"
 #include "string.h"
-#include <stdint.h>
 // #define TEST
 __attribute__((pure, always_inline)) inline static uint32_t compute_lut_index(struct nco nco[static 1]);
 __attribute__((pure, always_inline)) inline static uint64_t compute_nco_increment(uint16_t note, const uint_fast32_t sample_rate);
@@ -55,8 +53,7 @@ __attribute__((pure)) uint16_t map_12b_to_distortion_amount(uint16_t value) {
 
 __attribute__((pure)) uint16_t map_12b_to_hz(uint16_t value, enum freq_modes mode) {
     uint16_t in_max = 0xfff;
-    uint16_t min;
-    uint16_t max;
+    uint16_t min, max;
     switch (mode) {
         case free:
             min = 100;
