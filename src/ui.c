@@ -40,10 +40,7 @@ __attribute((pure, always_inline)) inline enum freq_modes change_pitch_mode(stru
 
 static void increment_directionally(struct encoder encoder[static 1]){
     encoder->direction = determine_direction(encoder);
-    if (!encoder->direction)
-        --encoder->increment;
-    else
-        ++encoder->increment;
+    (!encoder->direction) ? --encoder->increment : ++encoder->increment;
 }
 
 static void constrain_encoder_to_distortion_level(struct encoder encoder[static 1]){
