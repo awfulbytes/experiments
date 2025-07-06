@@ -13,12 +13,11 @@ void apply_pd_alg(struct nco nco[static 1]){
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 void generate_half_signal(volatile const uint16_t data[static 128],
                           uint16_t sectionLength, struct nco nco[static 1]){
-
     register uint32_t index, n_index, fract;
-    register uint16_t a, b;
+    register uint16_t a, b, y;
     register int16_t  diff;
 
-    for (uint16_t i = 0; i < sectionLength; ++i) {
+    for (y = 0; y < sectionLength; ++y) {
         index   = compute_lut_index(nco);
         n_index = index + 1;
         a       = data[index];
@@ -31,13 +30,13 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         printf("fract:\t%d\n", fract);
         printf("interp-factor:\t%d\n", (diff * fract)>>16);
 #endif // TEST
-        if (i == nco->distortion.amount
+        if (y == nco->distortion.amount
             && nco->distortion.on){
             apply_pd_alg(nco);
             // hack:: make additive or subtractive it makes nice sounds
             nco->phase_inc -= (nco->distortion.distortion_value);
         }
-        nco->data_buff.ping_buff[i] = (a + ((uint16_t)(((diff * fract) >> 16))));
+        nco->data_buff.ping_buff[y] = (a + ((uint16_t)(((diff * fract) >> 16))));
         nco->phase_accum += nco->phase_inc;
     }
 }
