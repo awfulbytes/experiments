@@ -51,36 +51,27 @@ __attribute__((pure)) uint16_t map_12b_to_distortion_amount(uint16_t value) {
     return (uint16_t)(min + (value * range) / in_max);
 }
 
-__attribute__((pure)) uint16_t map_12b_to_hz(uint16_t value, enum freq_modes mode) {
+__attribute__((pure)) uint16_t map_12b_to_hz(uint16_t value,
+                                             struct limits freq_bounds[static 1]) {
     uint16_t in_max = 0xfff;
-    uint16_t min, max;
-    switch (mode) {
-        case free:
-            min = 100;
-            max = 14000;
-            break;
-        case v_per_octave:
-            min = 220;
-            max = 1661;
-            break;
-        default:
-            min = 2;
-            max = 5;
-    }
-    uint16_t range = max - min;
-    return (uint16_t)(min + (value * range) / in_max);
+
+    uint16_t range = freq_bounds->max - freq_bounds->min;
+    return (uint16_t)(freq_bounds->min + (value * range) / in_max);
 }
 
 __attribute__((pure)) bool stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate){
-    uint16_t note = map_12b_to_hz(adc_raw_value, nco->mode);
+    uint16_t note =
+        (nco->mode == free) ?
+        map_12b_to_hz(adc_raw_value, &nco->bandwidth.free) :
+        map_12b_to_hz(adc_raw_value, &nco->bandwidth.tracking);
     nco->phase_pending_update_inc = compute_nco_increment(note, sample_rate);
     return true;
 }
 
 inline void update_data_buff(const uint16_t data[static 128],
-                                  uint16_t bufferSection[static 128],
-                                  uint16_t sectionLength) {
-    memcpy(bufferSection, data, sizeof(uint16_t) * sectionLength);
+                             uint16_t buffer_sector[static 128],
+                             uint16_t sector_length) {
+    memcpy(buffer_sector, data, sizeof(uint16_t) * sector_length);
 }
 
 void stage_modulated_signal_values(struct nco osc[static 1], uint16_t distortion_cv, volatile uint16_t pitch_cv, uint32_t master_clock){

@@ -19,6 +19,15 @@ struct ping_pong_buff{
     uint16_t ping_buff[128];
 };
 
+struct limits {
+    uint8_t min;
+    uint16_t max;
+};
+struct bandwidth {
+    struct limits free;
+    struct limits tracking;
+};
+
 struct nco {
     volatile uint64_t         phase_pending_update_inc;
     volatile uint64_t         phase_inc;
@@ -26,6 +35,7 @@ struct nco {
     enum     freq_modes       mode;
     struct   ping_pong_buff   data_buff;
     struct   phase_distortion distortion;
+    struct   bandwidth        bandwidth;
     volatile bool             phase_pending_update;
     volatile bool             phase_done_update;
 };
@@ -40,7 +50,7 @@ void update_data_buff (const uint16_t data[static 128],
 #pragma GCC diagnostic ignored "-Wignored-qualifiers"
 
 __attribute__((pure)) uint16_t map_12b_to_distortion_amount(uint16_t value);
-__attribute__((pure))uint16_t map_12b_to_hz(uint16_t adc_value, enum freq_modes pitch_modes);
+__attribute__((pure))uint16_t map_12b_to_hz(uint16_t adc_value, struct limits freq_bounds[static 1]);
 bool stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate);
 void stage_modulated_signal_values(struct nco osc[static 1], uint16_t distortion_cv, volatile uint16_t pitch_cv, uint32_t master_clock);
 
