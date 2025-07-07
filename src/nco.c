@@ -71,10 +71,10 @@ inline void update_data_buff(const uint16_t data[static 128],
     memcpy(buffer_sector, data, sizeof(uint16_t) * sector_length);
 }
 
-void stage_modulated_signal_values(struct nco osc[static 1],
-                                   uint16_t distortion_cv,
+void stage_modulated_signal_values(struct   nco      osc[static 1],
                                    volatile uint16_t pitch_cv,
-                                   uint32_t master_clock){
+                                   uint16_t          distortion_cv,
+                                   uint32_t          master_clock){
     if(osc->phase_pending_update){
         osc->distortion.amount = map_12b_to_distortion_amount(distortion_cv, &osc->distortion.level_range);
         bool staged = stage_pending_inc(pitch_cv, osc, master_clock);
