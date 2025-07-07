@@ -11,6 +11,8 @@ struct nco l_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
                     .distortion.amount=64,
                     .distortion.on=true,
                     .distortion.distortion_value=0,
+                    .bandwidth={.free.min=100, .free.max=14'000,
+                                .tracking.min=220, .tracking.max=1'661},
                     .distortion.dante=9,};
 struct nco r_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
                     .phase_pending_update=false, .phase_pending_update_inc=0,
@@ -44,7 +46,7 @@ void test_phase_increment_pending_request(){
     assert(l_osc.phase_pending_update == false);
     uint64_t new_req = ((l_osc.phase_pending_update_inc * master_clock) >> acc_bits) + 1;
     if (l_osc.mode == v_per_octave && adc_data == 0xfff){
-        uint16_t osc_max_current_mode = map_12b_to_hz(0xfff, l_osc.mode);
+        uint16_t osc_max_current_mode = map_12b_to_hz(0xfff, &l_osc.bandwidth.tracking);
         assert(new_req + 2 == osc_max_current_mode);
     }
     assert(adc_data == 0xfff);
