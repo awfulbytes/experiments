@@ -6,14 +6,6 @@ enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eig
               // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
               hell};
 
-struct phase_distortion{
-    volatile bool     on;
-    volatile uint16_t amount;
-    enum     cyrcles  dante;
-    enum     cyrcles  past_dante;
-    volatile uint32_t distortion_value;
-};
-
 struct ping_pong_buff{
     // uint8_t size;
     uint16_t ping_buff[128];
@@ -23,6 +15,16 @@ struct limits {
     uint8_t min;
     uint16_t max;
 };
+
+struct phase_distortion{
+    volatile bool     on;
+    volatile uint16_t amount;
+    enum     cyrcles  dante;
+    enum     cyrcles  past_dante;
+    struct   limits   level_range;
+    volatile uint32_t distortion_value;
+};
+
 struct bandwidth {
     struct limits free;
     struct limits tracking;
@@ -49,7 +51,7 @@ void update_data_buff (const uint16_t data[static 128],
                             uint16_t sectionLength);
 #pragma GCC diagnostic ignored "-Wignored-qualifiers"
 
-__attribute__((pure)) uint16_t map_12b_to_distortion_amount(uint16_t value);
+__attribute__((pure)) uint16_t map_12b_to_distortion_amount(uint16_t value, struct limits *level_range);
 __attribute__((pure))uint16_t map_12b_to_hz(uint16_t adc_value, struct limits freq_bounds[static 1]);
 bool stage_pending_inc(volatile uint16_t adc_raw_value, struct nco nco[static 1], const uint_fast32_t sample_rate);
 void stage_modulated_signal_values(struct nco osc[static 1], uint16_t distortion_cv, volatile uint16_t pitch_cv, uint32_t master_clock);
