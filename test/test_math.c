@@ -1,13 +1,15 @@
 #include <assert.h>
 #include "nco.h"
 
-struct nco dummy = {.mode=free, .bandwidth={.free.min=100, .free.max=14'000,
-                                            .tracking.min=220, .tracking.max=1'661}};
+struct nco dummy = {.mode=free,
+                    .bandwidth={.free.min=100, .free.max=14'000,
+                                .tracking.min=220, .tracking.max=1'661},
+                    .distortion.level_range={.min=25, .max=129}};
 
 void test_distortion_amount_mapper(void){
-    unsigned int distortion_amount = map_12b_to_distortion_amount(0xfff);
+    unsigned int distortion_amount = map_12b_to_distortion_amount(0xfff, &dummy.distortion.level_range);
     assert(distortion_amount > 127);
-    distortion_amount = map_12b_to_distortion_amount(0x000);
+    distortion_amount = map_12b_to_distortion_amount(0x000, &dummy.distortion.level_range);
     assert(distortion_amount < 63);
 }
 
