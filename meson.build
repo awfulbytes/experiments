@@ -12,10 +12,8 @@ src_files = files(
   'src/interrupter.c',
   'src/startup_stm32g071xx.s',
   'src/system_stm32g0xx.c',
-  # 'src/ui.c',
   'src/nco.c',
   'src/stm32g0xx_it.c',
-  # 'src/msp_init.c'
   )
 src_deps = files(
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_adc.c',
