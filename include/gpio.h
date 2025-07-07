@@ -21,23 +21,25 @@ void debug_tim2_pin31(void){
 #endif // DEBUG || DEBUGDAC
 
 struct gpio {
-    uint32_t pin_id;
-    uint32_t mode;
-    uint32_t pull;
+    uint32_t      pin_id;
+    uint32_t      mode;
+    uint32_t      pull;
     GPIO_TypeDef *port_id;
 };
 struct exti {
-    volatile uint32_t exti_line;
-    volatile uint32_t exti_irqn;
-    volatile uint32_t exti_port_conf;
-    volatile uint32_t exti_line_conf;
-    EXTI_TypeDef *exti;
+    volatile uint32_t  exti_line;
+    volatile uint32_t  exti_irqn;
+    volatile uint32_t  exti_port_conf;
+    volatile uint32_t  exti_line_conf;
+    EXTI_TypeDef      *exti;
 };
 struct button {
-    struct gpio pin;
-    struct exti exti;
+    struct   gpio     pin;
+    struct   exti     exti;
     volatile uint16_t state;
-    volatile uint8_t flag;
+    volatile uint8_t  flag;
 };
 
-void gpio_init(struct button **p, struct gpio **led, struct gpio **adc_pin);
+void gpio_init(struct button **p,
+               struct gpio   **led,
+               struct gpio   **adc_pin);

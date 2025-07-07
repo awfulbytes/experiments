@@ -6,11 +6,12 @@
 #include "stm32g071xx.h"
 
 struct timer {
-    TIM_TypeDef *timx;
-    LL_TIM_InitTypeDef timx_settings;
-    uint32_t timx_clk_freq;
-    unsigned long apb_clock_reg;
-    unsigned long trigger_output;
+    TIM_TypeDef        *timx;
+    LL_TIM_InitTypeDef  timx_settings;
+    uint32_t            timx_clk_freq;
+    uint32_t            apb_clock_reg;
+    uint32_t            trigger_output;
 };
 
-void tim_init (uint32_t out_freq, struct timer *timx);
+void tim_init (uint32_t      out_freq,
+               struct timer *timx);

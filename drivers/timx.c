@@ -3,21 +3,21 @@
 #include "stm32g0xx_ll_bus.h"
 
 static struct timer* timx_set(struct timer *timer) {
-    timer->timx_clk_freq = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock, LL_RCC_GetAPB1Prescaler());
-    timer->timx_settings.Prescaler = 1;
-    timer->timx_settings.Autoreload = 0;
+    timer->timx_clk_freq             = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock,
+                                                                LL_RCC_GetAPB1Prescaler());
+    timer->timx_settings.Prescaler   = 1;
+    timer->timx_settings.Autoreload  = 0;
     timer->timx_settings.CounterMode = LL_TIM_COUNTERMODE_UP;
     return timer;
 }
 
-void tim_init
-(uint32_t output_freq, struct timer *tim){
-    struct timer *setted = timx_set(tim);
+void tim_init(uint32_t      output_freq,
+              struct timer *tim){
 
+    struct timer *setted = timx_set(tim);
     if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_2){
         setted->timx_clk_freq *= 2;
-    } else {
-    }
+    } else {}
 
     uint32_t period = (SystemCoreClock / output_freq) - 1;
     setted->timx_settings.Autoreload = period;

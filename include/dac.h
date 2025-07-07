@@ -3,12 +3,12 @@
 #include <stdint.h>
 
 struct dac {
-    DAC_TypeDef *dacx;
-    LL_DAC_InitTypeDef dacx_settings;
-    uint32_t channel;
-    unsigned long bus_clk_abp;
-    unsigned long trg_src;
-    int timx_dac_irq;
+    DAC_TypeDef        *dacx;
+    LL_DAC_InitTypeDef  dacx_settings;
+    uint32_t            channel;
+    uint32_t            bus_clk_abp;
+    uint32_t            trg_src;
+    int                 timx_dac_irq;
 };
 
 
