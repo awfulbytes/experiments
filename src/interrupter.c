@@ -40,9 +40,15 @@ void main() {
         stage_modulated_signal_values(&l_osc, prev_value_cv_distortion_amount, prev_value_cv_0_pitch, dac1_clock);
 
         // todo::: hook up independent encoder
+        //         nxt make more controlled loop...
+        // todo:::
+        // (nxt) we seem to fuck the values when used twice for the second
+        //       oscillator. This seems to lag the whole program and skipping
+        //       some of the first oscillator selection... from a step and beyond
+        //       there is no hope!
         // make @osc_1_pd_enc do the thing lets say.
-        scan_and_apply_current_modulations(&osc_0_pd_enc, &r_osc);
-        stage_modulated_signal_values(&r_osc, prev_value_cv_distortion_amount, prev_value_cv_1_pitch, dac1_clock);
+        // scan_and_apply_current_modulations(&osc_0_pd_enc, &r_osc);
+        // stage_modulated_signal_values(&r_osc, 0, prev_value_cv_1_pitch, dac1_clock);
 
         if (wave_choise_dac1.flag == 0x69) {
             wave_me_d = waves_bank[wave_choise_dac1.state];

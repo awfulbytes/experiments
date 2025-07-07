@@ -1,8 +1,11 @@
 #include "nco.h"
 #include "string.h"
 // #define TEST
-__attribute__((pure, always_inline)) inline static uint32_t compute_lut_index(struct nco nco[static 1]);
-__attribute__((pure, always_inline)) inline static uint64_t compute_nco_increment(uint16_t note, const uint_fast32_t sample_rate);
+__attribute__((pure, always_inline))
+inline static uint32_t compute_lut_index(struct nco nco[static 1]);
+__attribute__((pure, always_inline))
+inline static uint64_t compute_nco_increment(uint16_t note,
+                                             const uint_fast32_t sample_rate);
 
 void apply_pd_alg(struct nco nco[static 1]){
     nco->distortion.distortion_value = nco->phase_inc << nco->distortion.dante;
@@ -10,7 +13,8 @@ void apply_pd_alg(struct nco nco[static 1]){
 
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 void generate_half_signal(volatile const uint16_t data[static 128],
-                          uint16_t sectionLength, struct nco nco[static 1]){
+                          uint16_t sectionLength,
+                          struct nco nco[static 1]){
     register uint32_t index, n_index, fract;
     register uint16_t a, b, y;
     register int16_t  diff;

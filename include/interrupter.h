@@ -186,19 +186,27 @@ struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                .increment=0, .direction=false};
 
 // nxt:: for some reason the PA_2 is busy!!
-struct gpio pitch_1_cv = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_1, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
+struct gpio pitch_1_cv = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_1,
+                          .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 
 #warning "need to implement second oscillator distortion CV input."
-struct gpio dist_amount_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_1, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
+struct gpio dist_amount_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_1,
+                                .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 
 #warning "need to get a second encoder for the second oscillator modulation."
-struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_4, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
+struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC,
+                                             .pin_id=LL_GPIO_PIN_4,
+                                             .mode = LL_GPIO_MODE_INPUT,
+                                             .pull = LL_GPIO_PULL_UP},
                                .value=0, .flag='D',
-                               .it_settings = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_4,
-                                            .exti_port_conf=LL_EXTI_CONFIG_PORTC,
-                                            .exti_line_conf=LL_EXTI_CONFIG_LINE4}},
-                         .B.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_5, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
-                         .B.value = 0,
-                         .B.it_settings = { },
-                         .B.flag = 'D',
-                         .increment=0, .direction=false};
+                               .it_settings = {.exti_irqn=EXTI4_15_IRQn,
+                                               .exti_line=LL_EXTI_LINE_4,
+                                               .exti_port_conf=LL_EXTI_CONFIG_PORTC,
+                                               .exti_line_conf=LL_EXTI_CONFIG_LINE4}},
+                               .B.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_5,
+                                         .mode = LL_GPIO_MODE_INPUT,
+                                         .pull = LL_GPIO_PULL_UP},
+                               .B.value = 0,
+                               .B.it_settings = { },
+                               .B.flag = 'D',
+                               .increment=0, .direction=false};
