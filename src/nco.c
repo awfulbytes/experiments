@@ -13,13 +13,13 @@ void apply_pd_alg(struct nco nco[static 1]){
 
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 void generate_half_signal(volatile const uint16_t data[static 128],
-                          uint16_t sectionLength,
+                          uint16_t sector_length,
                           struct nco nco[static 1]){
     register uint32_t index, n_index, fract;
     register uint16_t a, b, y;
     register int16_t  diff;
 
-    for (y = 0; y < sectionLength; ++y) {
+    for (y = 0; y < sector_length; ++y) {
         index   = compute_lut_index(nco);
         n_index = index + 1;
         a       = data[index];
