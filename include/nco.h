@@ -12,7 +12,7 @@ struct ping_pong_buff{
 };
 
 struct limits {
-    uint8_t min;
+    uint8_t  min;
     uint16_t max;
     uint16_t cv_raw_max;
 };
@@ -45,27 +45,32 @@ struct nco {
 
 #pragma GCC diagnostic ignored "-Wconversion"
 void generate_half_signal(volatile const uint16_t data[static 128],
-                          uint16_t sectionLength, struct nco nco[static 1]);
+                          uint16_t                sector_length,
+                          struct   nco            nco[static 1]);
 
 void update_data_buff (const uint16_t data[static 128],
-                            uint16_t bufferSection[static 128],
-                            uint16_t sectionLength);
+                       uint16_t       buffer_sector[static 128],
+                       uint16_t       sector_length);
 #pragma GCC diagnostic ignored "-Wignored-qualifiers"
 
 __attribute__((pure))
-uint16_t map_12b_to_distortion_amount(uint16_t value, struct limits *level_range);
+uint16_t map_12b_to_distortion_amount(uint16_t       value,
+                                      struct limits  level_range[static 1]);
 __attribute__((pure))
-uint16_t map_12b_to_hz(uint16_t adc_value, struct limits freq_bounds[static 1]);
-bool stage_pending_inc(volatile uint16_t adc_raw_value,
-                       struct nco nco[static 1],
-                       const uint_fast32_t sample_rate);
-void stage_modulated_signal_values(struct nco osc[static 1],
-                                   uint16_t distortion_cv,
+uint16_t map_12b_to_hz(uint16_t      adc_value,
+                       struct limits freq_bounds[static 1]);
+
+bool stage_pending_inc(volatile uint16_t      adc_raw_value,
+                       struct   nco           nco[static 1],
+                       const    uint_fast32_t sample_rate);
+
+void stage_modulated_signal_values(struct   nco      osc[static 1],
+                                   uint16_t          distortion_cv,
                                    volatile uint16_t pitch_cv,
-                                   uint32_t master_clock);
+                                   uint32_t          master_clock);
 
 __attribute__((pure, always_inline))
-inline static uint64_t compute_nco_increment(uint16_t note,
+inline static uint64_t compute_nco_increment(uint16_t            note,
                                              const uint_fast32_t sample_rate){
     int32_t tmp = ((note * (1<<16))/sample_rate);
     return (tmp<<16);
@@ -74,7 +79,7 @@ inline static uint64_t compute_nco_increment(uint16_t note,
 
 __attribute__((pure, always_inline))
 inline static uint32_t compute_lut_index(struct nco nco[static 1]){
-    // uint32_t index = (uint32_t) (((uint64_t) nco->phase_accum * (1 << 7)) >> 32) % 128;
+
     return (uint32_t) (((uint64_t) nco->phase_accum * (1<<7))>>32);
 }
 

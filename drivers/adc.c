@@ -61,9 +61,8 @@ void adc_init_settings(struct adc *adc){
 static ErrorStatus adc_dma_setup(struct adc *adc) {
 
     adc->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &adc->adcx->DR;
-    // for (int i=0; i < 3; ++i) {
     adc->dmax_settings.MemoryOrM2MDstAddress = (uint32_t) &cv_raw_adc_inp;
-    // }
+
     LL_DMA_Init(adc->dmax, adc->dma_channel, &adc->dmax_settings);
 
     LL_DMA_EnableIT_TE(adc->dmax, adc->dma_channel);

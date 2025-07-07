@@ -11,24 +11,19 @@ static void dac_chx_priority(struct dac *dac){
     }
 }
 
-void dac_config
-(struct dac *gdac){
-    // hack:: put the priority different...
-    // __XXX__:: i think that there is a race condition
-    //           for the timers of the dac (6, 7)
-    // I may be able to make this via code for the channels.
-    // The other wave does not have any issue... so mayby i
-    // have to use the lowest priority for left and higher for
-    // right channels????
+void dac_config (struct dac *gdac){
     dac_chx_priority(gdac);
     LL_APB1_GRP1_EnableClock(gdac->bus_clk_abp);
 
     LL_DAC_SetTriggerSource(gdac->dacx, gdac->channel, gdac->trg_src);
 
-    LL_DAC_ConfigOutput(gdac->dacx, gdac->channel, gdac->dacx_settings.OutputMode,
+    LL_DAC_ConfigOutput(gdac->dacx,
+                        gdac->channel,
+                        gdac->dacx_settings.OutputMode,
                         gdac->dacx_settings.OutputBuffer,
                         gdac->dacx_settings.OutputConnection);
-    LL_DAC_EnableDMAReq(gdac->dacx, gdac->channel);
+    LL_DAC_EnableDMAReq(gdac->dacx,
+                        gdac->channel);
 
     if (gdac->channel == LL_DAC_CHANNEL_1)
         LL_DAC_EnableIT_DMAUDR1(gdac->dacx);
