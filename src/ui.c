@@ -28,13 +28,15 @@ void enc_init(struct encoder *enc){
     exti_enc_setup(&enc->A);
 }
 
-__attribute__((pure, always_inline)) inline bool determine_direction(struct encoder encoder[static 1]){
+__attribute__((pure, always_inline))
+inline bool determine_direction(struct encoder encoder[static 1]){
     register bool clockwise;
     clockwise = (encoder->B.value == 1) ? true : false;
     return clockwise;
 }
 
-__attribute((pure, always_inline)) inline enum freq_modes change_pitch_mode(struct nco oscillator[static 1]){
+__attribute((pure, always_inline))
+inline enum freq_modes change_pitch_mode(struct nco oscillator[static 1]){
     return (oscillator->mode == free) ? v_per_octave : free;
 }
 
@@ -60,15 +62,16 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
 }
 
 
-void scan_and_apply_current_modulations(struct encoder enc[static 1], struct nco osillator[static 1]){
+void scan_and_apply_current_modulations(struct encoder enc[static 1],
+                                        struct nco osillator[static 1]){
     if (enc->A.flag == 0x69 && osillator->phase_pending_update){
-        if(osillator->distortion.on){
+
+        if (osillator->distortion.on)
             bit_bang_encoder(enc);
-        }
         else
             osillator->mode = change_pitch_mode(osillator);
-        switch (osillator->distortion.past_dante) {
 
+        switch (osillator->distortion.past_dante) {
             case hell:
                 osillator->distortion.dante = enc->increment = ninth;
                 break;

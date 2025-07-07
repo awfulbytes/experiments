@@ -1,11 +1,6 @@
 #include "nco.h"
 #include "string.h"
 // #define TEST
-__attribute__((pure, always_inline))
-inline static uint32_t compute_lut_index(struct nco nco[static 1]);
-__attribute__((pure, always_inline))
-inline static uint64_t compute_nco_increment(uint16_t note,
-                                             const uint_fast32_t sample_rate);
 
 void apply_pd_alg(struct nco nco[static 1]){
     nco->distortion.distortion_value = nco->phase_inc << nco->distortion.dante;
@@ -69,6 +64,7 @@ bool stage_pending_inc(volatile uint16_t adc_raw_value,
     return true;
 }
 
+__attribute__((always_inline))
 inline void update_data_buff(const uint16_t data[static 128],
                              uint16_t buffer_sector[static 128],
                              uint16_t sector_length) {
