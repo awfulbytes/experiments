@@ -45,10 +45,10 @@ static void increment_directionally(struct encoder encoder[static 1]){
 
 static void constrain_encoder_to_distortion_level(struct encoder encoder[static 1]){
     register uint16_t incr = encoder->increment;
-    if (incr > hell && incr < hell + 0xfff)
+    if (incr > hell && incr < hell + 0xf)
         incr = hell;
     // todo dont be so stupid the next time!!
-    else if (incr > hell + 0xfff)
+    else if (incr > hell + 0xf)
         incr = entrance;
 
     encoder->increment = incr;

@@ -55,6 +55,10 @@ void test_cw_encoder(void){
     emulate_encoder_cw(&osc_0_pd_enc);
     scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
 
+    if (!osc_0_pd_enc.direction) {
+        fprintf(stderr,  "FAIL: Clockwise direction should be true!!\n");
+        assert(0);
+    }
     assert(osc_0_pd_enc.A.flag == 'D');
     assert(osc_0_pd_enc.direction == true);
     assert(osc_0_pd_enc.increment == 1);
