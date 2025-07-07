@@ -1,8 +1,5 @@
 #include "interrupter.h"
 #include "sysclk.c"
-const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn, pulse};
-volatile const uint16_t *wave_me_d = sine_wave;
-volatile const uint16_t *wave_me_d2 = sine_wave;
 
 
 void main() {

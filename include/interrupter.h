@@ -14,19 +14,23 @@
 
 #include "src/ui.c"
 
-
-// enum modes pitch_modes =free;
-
 #if defined(USE_FULL_ASSERT)
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
+
+const uint_fast32_t dac1_clock = 198'000;
+const uint_fast32_t adc1_clock = 44'000;
+
 volatile uint16_t pitch0_cv = 0xff;
 volatile uint16_t distortion_amount_cv = 0xff;
 volatile uint16_t prev_value_cv_0_pitch = 1;
 volatile uint16_t prev_value_cv_distortion_amount = 1;
-
 volatile uint16_t pitch1_cv = 0xff;
 volatile uint16_t prev_value_cv_1_pitch = 1;
+
+const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn, pulse};
+volatile const uint16_t *wave_me_d = sine_wave;
+volatile const uint16_t *wave_me_d2 = sine_wave;
 
 struct nco l_osc = {.phase_accum = 0,
                     .phase_inc = 0x01'00'00'00,
@@ -34,32 +38,34 @@ struct nco l_osc = {.phase_accum = 0,
                     .phase_pending_update=false,
                     .phase_done_update=false,
                     .mode = free,
-                    .bandwidth.free = {.min=100, .max=14'000},
-                    .bandwidth.tracking = {.min=220, .max=1'661},
+                    .bandwidth.free = {.min=100, .max=14'000,
+                                       .cv_raw_max=0xfff},
+                    .bandwidth.tracking = {.min=220, .max=1'661,
+                                           .cv_raw_max=0xfff},
                     .distortion.amount=64,
-                    .distortion.level_range={.min=23, .max=129},
-                    .distortion.on=false,
-                    .distortion.past_dante = entrance,
-                    .distortion.dante=entrance};
-struct nco r_osc = {.phase_accum = 0,
-                    .phase_inc = 0x01'00'00'00,
-                    // .phase_inc = 0x01'e0'00'0,
-                    .phase_pending_update_inc=0,
-                    .phase_pending_update=false,
-                    .phase_done_update=false,
-                    .mode=v_per_octave,
-                    .bandwidth.free = {.min=100, .max=14'000},
-                    .bandwidth.tracking = {.min=220, .max=1'661},
-                    .distortion.amount=64,
-                    .distortion.level_range={.min=23, .max=129},
+                    .distortion.level_range={.min=23, .max=129,
+                                             .cv_raw_max=0xfff},
                     .distortion.on=false,
                     .distortion.past_dante = entrance,
                     .distortion.dante=entrance};
 
-// nxt check this more reliably!!
-const uint_fast32_t dac1_clock = 198'000;
-// const uint_fast32_t dac1_clock = 44'000;
-const uint_fast32_t adc1_clock = 44'000;
+struct nco r_osc = {.phase_accum = 0,
+                    .phase_inc = 0x01'00'00'00,
+                    .phase_pending_update_inc=0,
+                    .phase_pending_update=false,
+                    .phase_done_update=false,
+                    .mode=v_per_octave,
+                    .bandwidth.free = {.min=100, .max=14'000,
+                                       .cv_raw_max=0xfff},
+                    .bandwidth.tracking = {.min=220, .max=1'661,
+                                           .cv_raw_max=0xfff},
+                    .distortion.amount=64,
+                    .distortion.level_range={.min=23, .max=129,
+                                             .cv_raw_max=0xfff},
+                    .distortion.on=false,
+                    .distortion.past_dante = entrance,
+                    .distortion.dante=entrance};
+
 uint16_t dac_double_buff[256] = {0};
 uint16_t dac_double_buff2[256] = {0};
 
