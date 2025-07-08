@@ -7,24 +7,27 @@ struct nco dummy = {.mode=free,
                     .distortion.level_range={.min=25, .max=129, .cv_raw_max=0xfff}};
 
 void test_distortion_amount_mapper(void){
-    unsigned int distortion_amount = map_12b_to_distortion_amount(0xfff, &dummy.distortion.level_range);
-    assert(distortion_amount > 127);
+    uint16_t distortion_amount = map_12b_to_distortion_amount(0xfff, &dummy.distortion.level_range);
+    assert(distortion_amount == dummy.distortion.level_range.max);
+
     distortion_amount = map_12b_to_distortion_amount(0x000, &dummy.distortion.level_range);
-    assert(distortion_amount < 63);
+    assert(distortion_amount == dummy.distortion.level_range.min);
 }
 
 void test_pitch_free_mode_mapper(void){
-    unsigned int note = map_12b_to_hz(0xfff, &dummy.bandwidth.free);
-    assert(note < 16'000);
+    uint16_t note = map_12b_to_hz(0xfff, &dummy.bandwidth.free);
+    assert(note == dummy.bandwidth.free.max);
+
     note = map_12b_to_hz(0x000, &dummy.bandwidth.free);
-    assert(note < 110);
+    assert(note == dummy.bandwidth.free.min);
 }
 
 void test_pitch_v_per_oct_mode_mapper(void){
-    unsigned int note = map_12b_to_hz(0xfff, &dummy.bandwidth.tracking);
-    assert(note > 500);
+    uint16_t note = map_12b_to_hz(0xfff, &dummy.bandwidth.tracking);
+    assert(note == dummy.bandwidth.tracking.max);
+
     note = map_12b_to_hz(0x000, &dummy.bandwidth.tracking);
-    assert(note < 500);
+    assert(note == dummy.bandwidth.tracking.min);
 }
 
 int main(void){
