@@ -1,4 +1,5 @@
 #include "nco_general_stuff.h"
+#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
 #include "ui.h"
 #include <assert.h>
 
