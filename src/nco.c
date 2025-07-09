@@ -40,7 +40,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
 
 __attribute__((pure))
 uint16_t map_12b_to_distortion_amount(uint16_t      value,
-                                      struct limits *level_range) {
+                                      struct limits level_range[static 1]) {
     uint16_t range = level_range->max - level_range->min;
     return (uint16_t)(level_range->min + (value * range) / level_range->cv_raw_max);
 }
@@ -79,6 +79,6 @@ void stage_modulated_signal_values(struct   nco      osc[static 1],
         osc->distortion.amount = map_12b_to_distortion_amount(distortion_cv, &osc->distortion.level_range);
         bool staged = stage_pending_inc(pitch_cv, osc, master_clock);
         osc->phase_done_update = staged;
-        osc->phase_pending_update = !staged;
+        osc->phase_pending_update = !osc->phase_done_update;
     }
 }

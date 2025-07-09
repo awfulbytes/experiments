@@ -13,14 +13,17 @@ struct nco l_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
                     .distortion.distortion_value=0,
                     .bandwidth={.free.min=100, .free.max=14'000, .free.cv_raw_max=0xfff,
                                 .tracking.min=220, .tracking.max=1'661, .tracking.cv_raw_max=0xfff},
-                    .distortion.dante=9,};
+                    .distortion.dante=9,
+                    .distortion.level_range={.min=23, .max=129, .cv_raw_max=0xfff},
+};
 struct nco r_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
                     .phase_pending_update=false, .phase_pending_update_inc=0,
                     .mode=v_per_octave,
                     .distortion.amount=64,
                     .distortion.on=true,
                     .distortion.distortion_value=0,
-                    .distortion.dante=9,};
+                    .distortion.dante=9,
+};
 
 uint16_t some[256];
 uint16_t some2[256];

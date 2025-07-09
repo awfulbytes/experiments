@@ -7,7 +7,7 @@ src_f_s = files('./test_signal_generation.c', '../src/nco.c')
 src_f_enc = files('./test_distortion_encoder.c', '../src/ui.c')
 src_f_math = files('./test_math.c', '../src/nco.c')
 
-src_f_d = files('./test_generation_option.c')
+src_f_d = files('./test_distortion_on_signal.c', '../src/nco.c', '../src/ui.c')
 
 inc_f_all = include_directories('../include', '../ventor/stm32g0xx_hal_driver/Inc',
                             '../ventor/cmsis_device_g0/Include/', '../include/Core/Include/')
@@ -20,12 +20,14 @@ e = executable('encoder', src_f_enc,
                include_directories : inc_f_all)
 m = executable('math', src_f_math,
                include_directories : inc_f_all)
-
-d = executable('generate_stuff', src_f_d,
+d = executable('distorted-signal', src_f_d,
                include_directories : inc_f_all)
+
+# d = executable('generate_stuff', src_f_d,
+#                include_directories : inc_f_all)
 
 test('nco-increment', g, suite: ['core', 'nco'])
 test('signal-generation', s, suite: ['core', 'nco'])
-test('generators', d, suite: 'gen')
+test('distorded-signal', d, suite: ['core', 'nco'])
 test('distortion-encoder', e, suite: 'core')
 test('maths', m, suite: 'core')

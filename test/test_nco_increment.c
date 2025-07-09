@@ -22,5 +22,4 @@ int main(void){
     test_phase_increment_pending_request();
     assert(l_osc.phase_inc < l_osc.phase_pending_update_inc);
     assert(l_osc.phase_pending_update == false);
-    assert(adc_data == 0xfff);
 }

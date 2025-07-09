@@ -35,8 +35,8 @@ void main() {
     do {
         scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
         stage_modulated_signal_values(&l_osc,
-                                      prev_value_cv_distortion_amount,
-                                      prev_value_cv_0_pitch,
+                                      current_value_cv_distortion_amount,
+                                      current_value_cv_0_pitch,
                                       dac1_clock);
 
         // todo::: hook up independent encoder

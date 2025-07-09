@@ -58,9 +58,9 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
-            prev_value_cv_0_pitch = cv_raw_adc_inp[0];
-            prev_value_cv_distortion_amount = cv_raw_adc_inp[1];
-            prev_value_cv_1_pitch = cv_raw_adc_inp[2];
+            current_value_cv_0_pitch = cv_raw_adc_inp[0];
+            current_value_cv_distortion_amount = cv_raw_adc_inp[1];
+            current_value_cv_1_pitch = cv_raw_adc_inp[2];
             l_osc.phase_pending_update = r_osc.phase_pending_update = true;
         }
     }
