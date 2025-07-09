@@ -23,10 +23,10 @@ const uint_fast32_t adc1_clock = 44'000;
 
 volatile uint16_t pitch0_cv = 0xff;
 volatile uint16_t distortion_amount_cv = 0xff;
-volatile uint16_t prev_value_cv_0_pitch = 1;
-volatile uint16_t prev_value_cv_distortion_amount = 1;
+volatile uint16_t current_value_cv_0_pitch = 1;
+volatile uint16_t current_value_cv_distortion_amount = 1;
 volatile uint16_t pitch1_cv = 0xff;
-volatile uint16_t prev_value_cv_1_pitch = 1;
+volatile uint16_t current_value_cv_1_pitch = 1;
 
 const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn, pulse};
 volatile const uint16_t *wave_me_d = sine_wave;
