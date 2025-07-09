@@ -33,8 +33,7 @@ void DMA1_Channel2_3_IRQHandler(void){
         generate_half_signal(wave_me_d2, 128, &r_osc);
         r_osc.phase_done_update = false;
     }
-
-    // toro:: this could eliminate the latency and sync the oscillators...
+    // nxt:: this could eliminate the latency and sync the oscillators...
     //        if that's the case we can have true sync and not first
     //        second oscillators...
     if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) &&

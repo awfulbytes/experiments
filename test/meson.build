@@ -26,8 +26,8 @@ d = executable('distorted-signal', src_f_d,
 # d = executable('generate_stuff', src_f_d,
 #                include_directories : inc_f_all)
 
-test('nco-increment', g, suite: ['core', 'nco'])
-test('signal-generation', s, suite: ['core', 'nco'])
-test('distorded-signal', d, suite: ['core', 'nco'])
-test('distortion-encoder', e, suite: 'core')
-test('maths', m, suite: 'core')
+test('nco-increment', g, suite: ['nco'])
+test('signal-generation', s, suite: ['nco'])
+test('distorded-signal', d, suite: ['nco'])
+test('distortion-encoder', e, suite: 'ui')
+test('maths', m, suite: 'math')
