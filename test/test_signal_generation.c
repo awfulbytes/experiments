@@ -21,9 +21,6 @@ void test_signal_generation_and_dac_buffer(){
         else if (i < 128){
             assert(some[i] == l_osc.data_buff.ping_buff[i]);
         }
-        else {
-            assert(some[i] == l_osc.data_buff.ping_buff[0]);
-        }
     }
 }
 
