@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 
 #pragma once
 enum freq_modes {free, v_per_octave};

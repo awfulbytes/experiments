@@ -18,8 +18,8 @@
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
 
-const uint_fast32_t dac1_clock = 198'000;
-const uint_fast32_t adc1_clock = 44'000;
+const uint_fast32_t dac1_clock = 198000;
+const uint_fast32_t adc1_clock = 44000;
 
 volatile uint16_t pitch0_cv = 0xff;
 volatile uint16_t distortion_amount_cv = 0xff;
@@ -33,14 +33,14 @@ volatile const uint16_t *wave_me_d = sine_wave;
 volatile const uint16_t *wave_me_d2 = sine_wave;
 
 struct nco l_osc = {.phase_accum = 0,
-                    .phase_inc = 0x01'00'00'00,
+                    .phase_inc = 0x01000000,
                     .phase_pending_update_inc=0,
                     .phase_pending_update=false,
                     .phase_done_update=false,
                     .mode = free,
-                    .bandwidth.free = {.min=100, .max=14'000,
+                    .bandwidth.free = {.min=100, .max=14000,
                                        .cv_raw_max=0xfff},
-                    .bandwidth.tracking = {.min=220, .max=1'661,
+                    .bandwidth.tracking = {.min=220, .max=1661,
                                            .cv_raw_max=0xfff},
                     .distortion.amount=64,
                     .distortion.level_range={.min=23, .max=129,
@@ -50,14 +50,14 @@ struct nco l_osc = {.phase_accum = 0,
                     .distortion.dante=entrance};
 
 struct nco r_osc = {.phase_accum = 0,
-                    .phase_inc = 0x01'00'00'00,
+                    .phase_inc = 0x01000000,
                     .phase_pending_update_inc=0,
                     .phase_pending_update=false,
                     .phase_done_update=false,
                     .mode=v_per_octave,
-                    .bandwidth.free = {.min=100, .max=14'000,
+                    .bandwidth.free = {.min=100, .max=14000,
                                        .cv_raw_max=0xfff},
-                    .bandwidth.tracking = {.min=220, .max=1'661,
+                    .bandwidth.tracking = {.min=220, .max=1661,
                                            .cv_raw_max=0xfff},
                     .distortion.amount=64,
                     .distortion.level_range={.min=23, .max=129,

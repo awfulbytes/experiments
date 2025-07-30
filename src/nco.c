@@ -1,5 +1,5 @@
 #include "nco.h"
-#include "string.h"
+#include <string.h>
 // #define TEST
 
 void apply_pd_alg(struct nco nco[static 1]){

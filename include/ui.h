@@ -1,4 +1,5 @@
 #include "gpio.h"
+#include <stdbool.h>
 
 struct encoder_channel {
     struct gpio pin;

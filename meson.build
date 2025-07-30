@@ -41,14 +41,16 @@ src_deps = files(
 )
 arm_sources = []
 arm_sources += files(
-  'ventor/cmsis-core/DSP/Source/FastMathFunctions/FastMathFunctions.c',
-  'ventor/cmsis-core/DSP/Source/CommonTables/arm_common_tables.c',
+  # 'ventor/cmsis-core/DSP/Source/FastMathFunctions/FastMathFunctions.c',
+  # 'ventor/cmsis-core/DSP/Source/CommonTables/arm_common_tables.c',
 )
 inc_dir = include_directories('include')
 core_inc_dir = include_directories('include/Core/Include',
-                                  '/usr/include')
+                                   # '/usr/lib',
+                                   '/usr/local/arm-none-eabi/lib',
+                                   '/usr/include')
 cmsis_dev_inc = include_directories('ventor/cmsis_device_g0/Include',
-                                   'ventor/cmsis-core/DSP/Include',
+                                   # 'ventor/cmsis-core/DSP/Include',
                                    )
 hal_dev_inc = include_directories('ventor/stm32g0xx_hal_driver/Inc',
                                   'ventor/stm32g0xx_hal_driver/Inc/Legacy')
@@ -62,14 +64,18 @@ lib_dirs = [core_inc_dir, hal_dev_inc, cmsis_dev_inc]  # Adjust paths based on y
 #   lib_includes += include_directories(d)
 # endforeach
 
+#
+# do not move this
+# '-llibc', '-lmath', '
+
 # Executable target
 elf = executable('testershit', src_files + src_deps,
                  # link_with: hal,
                  include_directories : lib_dirs + inc_dir,
                  override_options: [],
-                 link_args : ['-nostdlib', '-nostartfiles', '-nodefaultlibs',
-                              '--data-sections', '-std=c23',
-                              '--specs=nano.specs', '-Wl,-Map=output.map'],
+                 link_args : ['-nostartfiles', '-nodefaultlibs',
+                              '--data-sections', '-std=c99',
+                              '-Wl,-Map=output.map'],
                  build_by_default: true
                 )
 
@@ -106,12 +112,12 @@ run_target(
   'bin_size',
   command: [size, '--format=sysv', '--common', 'testershit', 'stripped.elf'],
 )
-flash = find_program('st-flash')
-run_target(
-  'nuke',
-  command: [flash, 'erase', '&&', flash, 'reset'],
-)
-run_target(
-  'sendit',
-  command: [flash, 'write', 'stm32_app.bin', '0x08000000'],
-)
+# flash = find_program('st-flash')
+# run_target(
+#   'nuke',
+#   command: [flash, 'erase', '&&', flash, 'reset'],
+# )
+# run_target(
+#   'sendit',
+#   command: [flash, 'write', 'stm32_app.bin', '0x08000000'],
+# )
