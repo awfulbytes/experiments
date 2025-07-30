@@ -67,6 +67,10 @@ objcopy                 = find_program('arm-none-eabi-objcopy')
 strip                   = find_program('arm-none-eabi-strip')
 size                    = find_program('arm-none-eabi-size')
 
+#
+# do not move this
+# '-llibc', '-lmath', '
+
 # Executable target
 elf = executable('testershit', src_files + src_deps,
                  # link_with: hal,

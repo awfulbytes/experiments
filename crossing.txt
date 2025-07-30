@@ -9,8 +9,8 @@ objdump = 'arm-none-eabi-objdump'
 strip = 'arm-none-eabi-strip'
 
 [built-in options]
-c_std = 'c11'
-c_args = ['-mcpu=cortex-m0plus', '-ffreestanding',
+c_std='c99'
+c_args = ['-mcpu=cortex-m0plus', '-ffreestanding', '-Og',
             '-ffunction-sections',
             '-Wno-sign-conversion',
             '-Wno-unused-parameter',

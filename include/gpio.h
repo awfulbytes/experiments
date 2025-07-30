@@ -3,6 +3,7 @@
 #include "stm32g0xx_ll_exti.h"
 #include "stm32g0xx_ll_utils.h"
 #include "stm32g0xx_ll_bus.h"
+#include <string.h>
 
 // #define DEBUGDAC
 #if defined(DEBUG) || defined(DEBUGDAC) || defined(DEBUGDAC1) || defined (encoder)
