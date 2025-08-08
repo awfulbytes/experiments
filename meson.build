@@ -39,17 +39,10 @@ src_deps = files(
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_gpio.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_cortex.c',
 )
-arm_sources = []
-arm_sources += files(
-  'ventor/cmsis-core/DSP/Source/FastMathFunctions/FastMathFunctions.c',
-  'ventor/cmsis-core/DSP/Source/CommonTables/arm_common_tables.c',
-)
 inc_dir = include_directories('include')
 core_inc_dir = include_directories('include/Core/Include',
                                   '/usr/include')
-cmsis_dev_inc = include_directories('ventor/cmsis_device_g0/Include',
-                                   'ventor/cmsis-core/DSP/Include',
-                                   )
+cmsis_dev_inc = include_directories('ventor/cmsis_device_g0/Include')
 hal_dev_inc = include_directories('ventor/stm32g0xx_hal_driver/Inc',
                                   'ventor/stm32g0xx_hal_driver/Inc/Legacy')
 
