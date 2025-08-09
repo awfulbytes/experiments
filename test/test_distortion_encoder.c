@@ -28,7 +28,7 @@ struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN
                          .B.value = 0,
                          .B.it_settings = { },
                          .B.flag = 'D',
-                         .increment=0, .direction=false};
+                         .increment=0, .direction=cw};
 
 void emulate_encoder_cw(struct encoder *distortion_encoder){
     distortion_encoder->A.flag = 0x69;
@@ -55,12 +55,12 @@ void test_cw_encoder(void){
     emulate_encoder_cw(&osc_0_pd_enc);
     scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
 
-    if (!osc_0_pd_enc.direction) {
+    if (!(osc_0_pd_enc.direction == cw)) {
         fprintf(stderr,  "FAIL: Clockwise direction should be true!!\n");
         assert(0);
     }
     assert(osc_0_pd_enc.A.flag == 'D');
-    assert(osc_0_pd_enc.direction == true);
+    assert(osc_0_pd_enc.direction == cw);
     assert(osc_0_pd_enc.increment == 1);
     assert(l_osc.distortion.past_dante == first);
 }
@@ -69,7 +69,7 @@ void test_ccw_encoder(void){
     emulate_encoder_ccw(&osc_0_pd_enc);
     scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
 
-    assert(osc_0_pd_enc.direction == false);
+    assert(osc_0_pd_enc.direction == ccw);
     assert(osc_0_pd_enc.increment == 0);
     assert(l_osc.distortion.past_dante == entrance);
 }

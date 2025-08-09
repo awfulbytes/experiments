@@ -189,7 +189,7 @@ struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                .B.value = 0,
                                .B.it_settings = { },
                                .B.flag = 'D',
-                               .increment=0, .direction=false};
+                               .increment=0, .direction=cw};
 
 // nxt:: for some reason the PA_2 is busy!!
 struct gpio pitch_1_cv = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_1,
@@ -215,4 +215,4 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                .B.value = 0,
                                .B.it_settings = { },
                                .B.flag = 'D',
-                               .increment=0, .direction=false};
+                               .increment=0, .direction=cw};

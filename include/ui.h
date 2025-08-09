@@ -1,5 +1,7 @@
 #include "gpio.h"
 
+enum direction {cw, ccw};
+
 struct encoder_channel {
     struct gpio pin;
     struct exti it_settings;
@@ -9,8 +11,8 @@ struct encoder_channel {
 
 struct encoder {
     struct encoder_channel A, B;
+    enum   direction       direction;
     uint16_t               increment;
-    bool                   direction;
 };
 
 #pragma GCC diagnostic ignored "-Wunused-function"
@@ -26,8 +28,6 @@ static void exti_enc_setup(struct encoder_channel channel[static 1]){
 }
 
 void enc_init(struct encoder *enc);
-static void increment_directionally(struct encoder encoder[static 1]);
-static void constrain_encoder_to_distortion_level(struct encoder enc[static 1]);
 
 void wave_button_callback(struct button *abut);
 void WaitForUserButtonPress (struct button *button);
