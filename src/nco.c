@@ -37,19 +37,19 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         nco->phase_accum += nco->phase_inc;
     }
 }
-
+/*
 __attribute__((pure))
 uint16_t map_12b_to_distortion_amount(uint16_t      value,
                                       struct limits level_range[static 1]) {
     uint16_t range = level_range->max - level_range->min;
     return (uint16_t)(level_range->min + (value * range) / level_range->cv_raw_max);
 }
-
+*/
 __attribute__((pure))
-uint16_t map_12b_to_hz(uint16_t      value,
-                       struct limits freq_bounds[static 1]) {
-    uint16_t range = freq_bounds->max - freq_bounds->min;
-    return (uint16_t)(freq_bounds->min + (value * range) / freq_bounds->cv_raw_max);
+uint16_t map_12b_to_range(uint16_t      value,
+                          struct limits boundaries[static 1]) {
+    uint16_t range = boundaries->max - boundaries->min;
+    return (uint16_t)(boundaries->min + (value * range) / boundaries->cv_raw_max);
 }
 
 __attribute__((pure))
@@ -58,8 +58,8 @@ bool stage_pending_inc(volatile uint16_t      adc_raw_value,
                        const    uint_fast32_t sample_rate){
     uint16_t note =
         (nco->mode == free) ?
-        map_12b_to_hz(adc_raw_value, &nco->bandwidth.free) :
-        map_12b_to_hz(adc_raw_value, &nco->bandwidth.tracking);
+        map_12b_to_range(adc_raw_value, &nco->bandwidth.free) :
+        map_12b_to_range(adc_raw_value, &nco->bandwidth.tracking);
     nco->phase_pending_update_inc = compute_nco_increment(note, sample_rate);
     return true;
 }
@@ -76,7 +76,8 @@ void stage_modulated_signal_values(struct   nco      osc[static 1],
                                    volatile uint16_t pitch_cv,
                                    uint32_t          master_clock){
     if(osc->phase_pending_update){
-        osc->distortion.amount = map_12b_to_distortion_amount(distortion_cv, &osc->distortion.level_range);
+        osc->distortion.amount = map_12b_to_range(distortion_cv,
+                                                  &osc->distortion.level_range);
         bool staged = stage_pending_inc(pitch_cv, osc, master_clock);
         osc->phase_done_update = staged;
         osc->phase_pending_update = !osc->phase_done_update;

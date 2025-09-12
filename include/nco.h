@@ -57,8 +57,8 @@ __attribute__((pure))
 uint16_t map_12b_to_distortion_amount(uint16_t       value,
                                       struct limits  level_range[static 1]);
 __attribute__((pure))
-uint16_t map_12b_to_hz(uint16_t      adc_value,
-                       struct limits freq_bounds[static 1]);
+uint16_t map_12b_to_range(uint16_t      adc_value,
+                          struct limits boundaries[static 1]);
 
 bool stage_pending_inc(volatile uint16_t      adc_raw_value,
                        struct   nco           nco[static 1],
