@@ -28,7 +28,7 @@ void enc_init(struct encoder *enc){
 }
 
 __attribute((pure, always_inline))
-inline enum freq_modes change_pitch_mode(struct nco oscillator[static 1]){
+inline freq_modes_e change_pitch_mode(struct nco oscillator[static 1]){
     return (oscillator->mode == free) ? v_per_octave : free;
 }
 
@@ -51,7 +51,7 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
     /*
      * constrain the encoder increment value to a reasonable range i.e. cyrcles.
      */
-    register enum cyrcles absurd_dante_floor = hell + 0xf;
+    register cyrcles_e absurd_dante_floor = hell + 0xf;
     if (enc->increment > hell && enc->increment < absurd_dante_floor)
         enc->increment = hell;
     // todo dont be so stupid the next time!!

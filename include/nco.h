@@ -1,10 +1,10 @@
 #include <stdint.h>
 
 #pragma once
-enum freq_modes {free, v_per_octave};
-enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
+typedef enum freq_modes {free, v_per_octave} freq_modes_e;
+typedef enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
               // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
-              hell};
+              hell} cyrcles_e;
 
 struct ping_pong_buff{
     // uint8_t size;
@@ -20,8 +20,8 @@ struct limits {
 struct phase_distortion{
     volatile bool     on;
     volatile uint16_t amount;
-    enum     cyrcles  dante;
-    enum     cyrcles  past_dante;
+    cyrcles_e         dante;
+    cyrcles_e         past_dante;
     struct   limits   level_range;
     volatile uint32_t distortion_value;
 };
@@ -35,7 +35,7 @@ struct nco {
     volatile uint64_t         phase_pending_update_inc;
     volatile uint64_t         phase_inc;
     volatile uint32_t         phase_accum;
-    enum     freq_modes       mode;
+    freq_modes_e              mode;
     struct   ping_pong_buff   data_buff;
     struct   phase_distortion distortion;
     struct   bandwidth        bandwidth;
