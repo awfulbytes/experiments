@@ -2,8 +2,6 @@ project('tryC', 'c',
   version : '0.1.0',
   meson_version : '>=0.60.0')
 
-# Include directories
-# Source files
 src_files = files(
   'drivers/dac.c',
   'drivers/timx.c',
@@ -15,29 +13,33 @@ src_files = files(
   'src/nco.c',
   'src/stm32g0xx_it.c',
   )
+
 src_deps = files(
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_adc.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_comp.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_crc.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_crs.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_dac.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_dma.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_exti.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_gpio.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_i2c.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_lptim.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_lpuart.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_pwr.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_rcc.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_rtc.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_spi.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_tim.c',
-  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_ucpd.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_usart.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_usb.c',
   'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_utils.c',
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # those features do not exist or are not used `atm
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_i2c.c',
+  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_lpuart.c',
+  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_rtc.c',
+  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_spi.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_gpio.c',
+  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_ucpd.c',
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_hal_cortex.c',
+  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_comp.c',
+  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_crc.c',
+  # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_crs.c',
 )
 inc_dir = include_directories('include')
 core_inc_dir = include_directories('include/Core/Include',

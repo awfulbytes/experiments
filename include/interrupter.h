@@ -69,9 +69,15 @@ struct nco r_osc = {.phase_accum = 0,
 uint16_t dac_double_buff[256] = {0};
 uint16_t dac_double_buff2[256] = {0};
 
-struct timer tim6_settings = {.timx=TIM6, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6, .trigger_output=LL_TIM_TRGO_UPDATE};
-struct timer tim7_settings = {.timx=TIM7, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7, .trigger_output=LL_TIM_TRGO_UPDATE};
-struct timer tim2_settings = {.timx=TIM2, .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2, .trigger_output=LL_TIM_TRGO_UPDATE};
+struct timer tim6_settings = {.timx=TIM6,
+                              .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6,
+                              .trigger_output=LL_TIM_TRGO_UPDATE};
+struct timer tim7_settings = {.timx=TIM7,
+                              .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7,
+                              .trigger_output=LL_TIM_TRGO_UPDATE};
+struct timer tim2_settings = {.timx=TIM2,
+                              .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2,
+                              .trigger_output=LL_TIM_TRGO_UPDATE};
 
 struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1,
                                .trg_src=LL_DAC_TRIG_EXT_TIM6_TRGO,
