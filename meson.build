@@ -46,30 +46,32 @@ cmsis_dev_inc = include_directories('ventor/cmsis_device_g0/Include')
 hal_dev_inc = include_directories('ventor/stm32g0xx_hal_driver/Inc',
                                   'ventor/stm32g0xx_hal_driver/Inc/Legacy')
 
-lib_dirs = [core_inc_dir, hal_dev_inc, cmsis_dev_inc]  # Adjust paths based on your structure
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Adjust paths based on your structure 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+lib_dirs = [core_inc_dir, hal_dev_inc, cmsis_dev_inc]
 
 
-# Libraries (e.g., HAL or LL) as git submodules
-# lib_includes = [core_inc_dir, cmsis_dev_inc, hal_dev_inc]
-# foreach d : lib_dirs
-#   lib_includes += include_directories(d)
-# endforeach
+# Flags
+MCU        = '-DSTM32G071xx'
+LL         = '-DUSE_FULL_LL_DRIVER'
+
+objcopy                 = find_program('arm-none-eabi-objcopy')
+strip                   = find_program('arm-none-eabi-strip')
+size                    = find_program('arm-none-eabi-size')
 
 # Executable target
 elf = executable('testershit', src_files + src_deps,
                  # link_with: hal,
                  include_directories : lib_dirs + inc_dir,
                  override_options: [],
+                 c_args : [MCU , LL],
                  link_args : ['-nostdlib', '-nostartfiles', '-nodefaultlibs',
                               '--data-sections', '-std=c23',
                               '--specs=nano.specs', '-Wl,-Map=output.map'],
                  build_by_default: true
                 )
 
-# Custom target to generate the binary and hex files
-objcopy = find_program('arm-none-eabi-objcopy')
-strip = find_program('arm-none-eabi-strip')
-size = find_program('arm-none-eabi-size')
 custom_target('stm32_app.bin',
               input : elf,
               output : 'stm32_app.bin',
