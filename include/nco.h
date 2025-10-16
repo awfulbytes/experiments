@@ -77,10 +77,8 @@ inline static uint64_t compute_nco_increment(uint16_t            note,
     return (tmp<<16);
 }
 
-
 __attribute__((pure, always_inline))
 inline static uint32_t compute_lut_index(struct nco nco[static 1]){
 
     return (uint32_t) (((uint64_t) nco->phase_accum * (1<<7))>>32);
 }
-

@@ -24,6 +24,11 @@ void main() {
     enc_init(&osc_0_pd_enc);
 
 #if defined(DEBUG) || defined(DEBUGDAC)
+    /*
+     * todo:: ^ that shit
+     * this is not a debug any-more...
+     * used as the encoder leds which are removed as I use the magnetic encoder
+     */
     debug_tim2_pin31();
 #else
 #endif

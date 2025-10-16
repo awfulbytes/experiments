@@ -37,14 +37,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         nco->phase_accum += nco->phase_inc;
     }
 }
-/*
-__attribute__((pure))
-uint16_t map_12b_to_distortion_amount(uint16_t      value,
-                                      struct limits level_range[static 1]) {
-    uint16_t range = level_range->max - level_range->min;
-    return (uint16_t)(level_range->min + (value * range) / level_range->cv_raw_max);
-}
-*/
+
 __attribute__((pure))
 uint16_t map_12b_to_range(uint16_t      value,
                           struct limits boundaries[static 1]) {
