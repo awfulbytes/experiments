@@ -62,20 +62,12 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
 
 void scan_and_apply_current_modulations(struct encoder enc[static 1],
                                         struct nco osillator[static 1]){
-    if (enc->A.flag == 0x69 && osillator->phase_pending_update){
-
-        if (osillator->distortion.on)
-            bit_bang_encoder(enc);
-        else
+    if (enc->A.flag == 0x69 /* && osillator->phase_pending_update */){
+        if (!osillator->distortion.on)
             osillator->mode = change_pitch_mode(osillator);
-
-        switch (osillator->distortion.past_dante) {
-            case hell:
-                osillator->distortion.dante = enc->increment = ninth;
-                break;
-            default:
-                osillator->distortion.dante = enc->increment;
-                break;
+        else {
+            bit_bang_encoder(enc);
+            osillator->distortion.dante = enc->increment;
         }
         enc->A.flag = 'D';
         osillator->distortion.past_dante = osillator->distortion.dante;
