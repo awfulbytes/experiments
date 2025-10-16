@@ -10,6 +10,7 @@
 #include "timx.h"
 #include "dma.h"
 #include "nco.h"
+#include "src/dbg.h"
 #include <stdint.h>
 
 #include "src/ui.c"

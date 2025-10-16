@@ -1,6 +1,15 @@
 #include "interrupter.h"
+#include "dbg.h"
 #include "sysclk.c"
 
+/*
+#define hell_jump
+#define walk
+*/
+#ifdef walk
+volatile uint32_t hell_walk_counter = 0;
+volatile int go_front = 0;
+#endif // walk
 
 void main() {
     struct timer *timers[2] = {&tim6_settings, &tim7_settings};
@@ -32,16 +41,24 @@ void main() {
         dac_act(dacs_settings[i]);
     }
 
+#ifdef hell_jump
+    #define floor_on_hell             fifth
+    land_on_hell_floor()
+#endif
     do {
+#ifdef  walk
+      hell_walking()
+#endif
         scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
         stage_modulated_signal_values(&l_osc,
                                       current_value_cv_distortion_amount,
                                       current_value_cv_0_pitch,
                                       dac1_clock);
-
-        // todo::: hook up independent encoder
-        // scan_and_apply_current_modulations(&osc_0_pd_enc, &r_osc);
-        // stage_modulated_signal_values(&r_osc, 0, prev_value_cv_1_pitch, dac1_clock);
+        /*
+         * hook up independent encoder
+           scan_and_apply_current_modulations(&osc_0_pd_enc, &r_osc);
+           stage_modulated_signal_values(&r_osc, 0, prev_value_cv_1_pitch, dac1_clock);
+         */
 
         if (wave_choise_dac1.flag == 0x69) {
             wave_me_d = *(waves_bank + wave_choise_dac1.state);
