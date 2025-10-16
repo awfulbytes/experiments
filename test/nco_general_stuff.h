@@ -1,22 +1,23 @@
 #include <assert.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "nco.h"
 #include "forms.h"
 
 #define array_length(x)                 (sizeof x / sizeof x[0])
 
-struct nco l_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
+struct nco l_osc = {.phase_accum = 0, .phase_inc = 0x01000000,
                     .phase_pending_update=false, .phase_pending_update_inc=0,
                     .mode=v_per_octave,
                     .distortion.amount=64,
                     .distortion.on=true,
                     .distortion.distortion_value=0,
-                    .bandwidth={.free.min=100, .free.max=14'000, .free.cv_raw_max=0xfff,
-                                .tracking.min=220, .tracking.max=1'661, .tracking.cv_raw_max=0xfff},
+                    .bandwidth={.free.min=100, .free.max=14000, .free.cv_raw_max=0xfff,
+                                .tracking.min=220, .tracking.max=1661, .tracking.cv_raw_max=0xfff},
                     .distortion.dante=9,
                     .distortion.level_range={.min=23, .max=129, .cv_raw_max=0xfff},
 };
-struct nco r_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
+struct nco r_osc = {.phase_accum = 0, .phase_inc = 0x01000000,
                     .phase_pending_update=false, .phase_pending_update_inc=0,
                     .mode=v_per_octave,
                     .distortion.amount=64,
@@ -35,6 +36,6 @@ extern bool phase_pending_update;
 uint16_t adc_data = 0x000;
 uint16_t osc_max_current_mode;
 
-constexpr uint_fast32_t master_clock = 198000;
+uint_fast32_t master_clock = 198000;
 uint32_t required_freq = 440;
 uint16_t acc_bits = (sizeof l_osc.phase_accum) * 8;

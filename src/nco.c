@@ -24,11 +24,15 @@ void generate_half_signal(volatile const uint16_t data[static 128],
 
 #ifdef TEST
 #include <stdio.h>
+        printf("\n");
         printf("fract:\t%d\n", fract);
         printf("interp-factor:\t%d\n", (diff * fract)>>16);
+        printf("increment:\t%lx\n", nco->phase_inc);
+        printf("accumulat:\t%x\n", nco->phase_accum);
+        printf("\n");
 #endif // TEST
         if (y == nco->distortion.amount
-            && nco->distortion.on){
+            && nco->distortion.on) {
             apply_pd_alg(nco);
             // hack:: make additive or subtractive it makes nice sounds
             nco->phase_inc -= (nco->distortion.distortion_value);
