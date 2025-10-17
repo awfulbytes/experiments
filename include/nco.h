@@ -82,3 +82,17 @@ inline static uint32_t compute_lut_index(struct nco nco[static 1]){
 
     return (uint32_t) (((uint64_t) nco->phase_accum * (1<<7))>>32);
 }
+
+#ifdef TEST
+#include <stdio.h>
+inline static void dbg_info_nco(struct    nco *nco,
+                                uint32_t       fract,
+                                int16_t        diff) {
+    printf("\n");
+    printf("fract:\t%d\n", fract);
+    printf("interp-factor:\t%d\n", (diff * fract) >> 16);
+    printf("increment:\t%lx\n", nco->phase_inc);
+    printf("accumulat:\t%x\n", nco->phase_accum);
+    printf("\n");
+}
+#endif // TEST

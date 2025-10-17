@@ -1,6 +1,5 @@
 #include "nco.h"
 #include "string.h"
-// #define TEST
 
 void apply_pd_alg(struct nco nco[static 1]){
     nco->distortion.distortion_value = nco->phase_inc << nco->distortion.dante;
@@ -23,13 +22,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         fract   = ((uint64_t)((nco->phase_accum) * (1<<7)) >> 16) & 0xffff;
 
 #ifdef TEST
-#include <stdio.h>
-        printf("\n");
-        printf("fract:\t%d\n", fract);
-        printf("interp-factor:\t%d\n", (diff * fract)>>16);
-        printf("increment:\t%lx\n", nco->phase_inc);
-        printf("accumulat:\t%x\n", nco->phase_accum);
-        printf("\n");
+        dbg_info_nco(nco, fract, diff);
 #endif // TEST
         if (y == nco->distortion.amount
             && nco->distortion.on) {
