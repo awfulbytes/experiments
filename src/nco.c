@@ -46,11 +46,29 @@ __attribute__((pure))
 bool stage_pending_inc(volatile uint16_t      adc_raw_value,
                        struct   nco           nco[static 1],
                        const    uint_fast32_t sample_rate){
+
+    /* todo(nxt) Here we need some work.
+     * - π what if i disable interrupts while generating the signal above?
+     *   this is much easier to test and should test it first.
+     *
+     * - another thing is i could put the hole dac data in a double double buffer and store the hole data in one big array.
+     *   with this i can then make the generation of the buffer in one go for both oscillators and then serve the dac but i have
+     *   to make sure that all the signal goes back and i have to change testing also.. i may need this later
+     *
+     * - the idea is to sample 2 channels and then use the upper bits from the first one e.g. something like (first >> 2) << 2
+     *   and also have a (second << 10) >> 10 to discard the upper 10 bits and keep these 2 that we discarded from the first.
+     * - A better way could be to make a mask and xor them together. This is what other people do!!
+     * - Having two channels cooperating to give one more stable value is spearable i thing...
+     * - π ... what if i used the distortion amount knob and put a latch for the alternate usage for the fine knob.
+     *
+     */
+
     uint16_t note =
         (nco->mode == free) ?
         map_12b_to_range(adc_raw_value, &nco->bandwidth.free) :
         map_12b_to_range(adc_raw_value, &nco->bandwidth.tracking);
     nco->phase_pending_update_inc = compute_nco_increment(note, sample_rate);
+
     return true;
 }
 

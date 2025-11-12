@@ -88,6 +88,7 @@ struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1,
                                                .OutputBuffer=LL_DAC_OUTPUT_BUFFER_ENABLE,
                                                .OutputConnection=LL_DAC_OUTPUT_CONNECT_GPIO}};
 
+/* todo(nxt) check if i have to cast the array... should just decay to it...*/
 struct dma dac_1_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_3, .data=(uint16_t *) dac_double_buff,
                         .chan=(DMA_Channel_TypeDef *)((uint32_t)DMA1 + (8 + 40)),
                         .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_DAC1_CH1,
@@ -120,7 +121,7 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *
                                         .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
 
-#define sample_count  3
+#define sample_count  3 /* π(nxt) do not forget the ranks number */
 volatile uint16_t cv_raw_adc_inp[sample_count] = {0};
 struct adc adc_settings = {.adcx=ADC1,
                           .data = cv_raw_adc_inp,
