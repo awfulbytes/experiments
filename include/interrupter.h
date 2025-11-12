@@ -120,7 +120,8 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *
                                         .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
 
-volatile uint16_t cv_raw_adc_inp[3] = {0};
+#define sample_count  3
+volatile uint16_t cv_raw_adc_inp[sample_count] = {0};
 struct adc adc_settings = {.adcx=ADC1,
                           .data = cv_raw_adc_inp,
                           .roof='D',
@@ -140,7 +141,7 @@ struct adc adc_settings = {.adcx=ADC1,
                           .dmax=DMA1,
                           .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_ADC1,
                                           .Direction=LL_DMA_DIRECTION_PERIPH_TO_MEMORY,
-                                          .NbData=3,
+                                          .NbData=sample_count,
                                           .Mode=LL_DMA_MODE_CIRCULAR,
                                           .PeriphOrM2MSrcDataSize=LL_DMA_PDATAALIGN_HALFWORD,
                                           .MemoryOrM2MDstDataSize=LL_DMA_MDATAALIGN_HALFWORD,
