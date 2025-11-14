@@ -1,7 +1,10 @@
 #include "stm32g0xx_it.h"
 // #define DEBUG
 #define encoder_leds
-#define abs(x) ((x<0) ? -x : x)
+#define abs(x)                 ((x<0) ? -x : x)
+#define lock_the_door(x)       __disable_irq();\
+                               x;\
+                               __enable_irq();
 
 void HardFault_Handler(void){while(1);}
 void NMI_Handler(void){}
@@ -25,11 +28,12 @@ void DMA1_Channel2_3_IRQHandler(void){
 
     if (l_osc.phase_done_update) {
         l_osc.phase_inc = l_osc.phase_pending_update_inc;
-        generate_half_signal(wave_me_d, 128, &l_osc);
+        lock_the_door(generate_half_signal(wave_me_d, 128, &l_osc))
         l_osc.phase_done_update = false;
     }
     if (r_osc.phase_done_update) {
         r_osc.phase_inc = r_osc.phase_pending_update_inc;
+        /* todo(nxt) lock the door if helps */
         generate_half_signal(wave_me_d2, 128, &r_osc);
         r_osc.phase_done_update = false;
     }
@@ -40,15 +44,15 @@ void DMA1_Channel2_3_IRQHandler(void){
         ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3)) {
         (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
         (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
-        update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128);
-        update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2, 128);
+        lock_the_door(update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128))
+        lock_the_door(update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2, 128))
     }
     if (((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2) &&
         ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3)) {
         (DMA1->IFCR) = (DMA_IFCR_CTCIF2);
         (DMA1->IFCR) = (DMA_IFCR_CTCIF3);
-        update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff + 128, 128);
-        update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2 + 128, 128);
+        lock_the_door(update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff + 128, 128))
+        lock_the_door(update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2 + 128, 128))
     }
 }
 
