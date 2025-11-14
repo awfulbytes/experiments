@@ -110,5 +110,5 @@ run_target(
 )
 run_target(
   'sendit',
-  command: [flash, 'write', 'stm32_app.bin', '0x08000000'],
+  command: [flash, 'write', 'stm32_app.bin', '0x08000000', '&&', flash, 'reset'],
 )
