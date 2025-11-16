@@ -19,12 +19,14 @@
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
 
-const uint_fast32_t dac1_clock = 198'000;
-const uint_fast32_t adc1_clock = 44'000;
+const uint_fast32_t dac1_clock = 240'000;
+const uint_fast32_t adc1_clock = 176'000;
 
 volatile uint16_t pitch0_cv = 0xff;
 volatile uint16_t distortion_amount_cv = 0xff;
-volatile uint16_t current_value_cv_0_pitch = 1;
+volatile uint16_t current_value_cv_0_pitch[4] = {0xff, 0xff, 0xff, 0xff};
+volatile uint8_t cnt_adc_cycles = 0;
+/* volatile uint16_t current_value_cv_0_pitch = 0xff; */
 volatile uint16_t current_value_cv_distortion_amount = 1;
 volatile uint16_t pitch1_cv = 0xff;
 volatile uint16_t current_value_cv_1_pitch = 1;
@@ -41,7 +43,7 @@ struct nco l_osc = {.phase_accum = 0,
                     .mode = free,
                     .bandwidth.free = {.min=100, .max=14'000,
                                        .cv_raw_max=0xfff},
-                    .bandwidth.tracking = {.min=220, .max=1'661,
+                    .bandwidth.tracking = {.min=20, .max=969,
                                            .cv_raw_max=0xfff},
                     .distortion.amount=64,
                     .distortion.level_range={.min=23, .max=129,

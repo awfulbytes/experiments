@@ -54,16 +54,30 @@ void main() {
 #ifdef  walk
       hell_walking()
 #endif
-        scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
-        stage_modulated_signal_values(&l_osc,
-                                      current_value_cv_distortion_amount,
-                                      current_value_cv_0_pitch,
-                                      dac1_clock);
-        /*
-         * hook up independent encoder
-           scan_and_apply_current_modulations(&osc_0_pd_enc, &r_osc);
-           stage_modulated_signal_values(&r_osc, 0, prev_value_cv_1_pitch, dac1_clock);
-         */
+      scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
+
+      volatile uint16_t on_the_fly = 0;
+      if (cnt_adc_cycles == 4){
+          cnt_adc_cycles = 0;
+          on_the_fly = (current_value_cv_0_pitch[0] +
+                        current_value_cv_0_pitch[1] +
+                        current_value_cv_0_pitch[2] +
+                        current_value_cv_0_pitch[3])>>2;
+      }
+      else {
+          ++cnt_adc_cycles;
+          on_the_fly = cv_raw_adc_inp[0];
+      }
+        
+      stage_modulated_signal_values(&l_osc,
+                                    current_value_cv_distortion_amount,
+                                    on_the_fly,
+                                    dac1_clock);
+      /*
+       * hook up independent encoder
+         scan_and_apply_current_modulations(&osc_0_pd_enc, &r_osc);
+         stage_modulated_signal_values(&r_osc, 0, prev_value_cv_1_pitch, dac1_clock);
+       */
 
         if (wave_choise_dac1.flag == 0x69) {
             wave_me_d = *(waves_bank + wave_choise_dac1.state);

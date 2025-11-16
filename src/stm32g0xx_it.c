@@ -28,7 +28,8 @@ void DMA1_Channel2_3_IRQHandler(void){
 
     if (l_osc.phase_done_update) {
         l_osc.phase_inc = l_osc.phase_pending_update_inc;
-        lock_the_door(generate_half_signal(wave_me_d, 128, &l_osc))
+        /* lock_the_door(generate_half_signal(wave_me_d, 128, &l_osc)) */
+        generate_half_signal(wave_me_d, 128, &l_osc);
         l_osc.phase_done_update = false;
     }
     if (r_osc.phase_done_update) {
@@ -61,10 +62,52 @@ void TIM2_IRQHandler(void) {
         TIM2->SR &= ~(TIM_SR_UIF);
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
-            current_value_cv_0_pitch = cv_raw_adc_inp[0];
+
+            lock_the_door(
+            switch (cnt_adc_cycles) {
+            case 0:
+                current_value_cv_0_pitch[0] = cv_raw_adc_inp[0];
+                break;
+            case 1:
+                current_value_cv_0_pitch[1] = cv_raw_adc_inp[0];
+                break;
+            case 2:
+                current_value_cv_0_pitch[2] = cv_raw_adc_inp[0];
+                break;
+            case 3:
+                current_value_cv_0_pitch[3] = cv_raw_adc_inp[0];
+                /* l_osc.phase_pending_update = r_osc.phase_pending_update = true
+                 * todo(nxt) should test this;
+                 *           try to see if there is a problem to not update until i have all 4 values to average. we could serve the basic
+                 *           data from a precompiled reading of the adc. I beliveTM data aqc. is faster than all initialization and adc is
+                 *           initialized before all...
+                 *
+                 * later     should be able to use these values without the need for further 
+                 *
+                 * bug       due to fucking brain the adc sampling and averaging has the same error as the OG.
+                 *           we cant make decimation if we upsample at the same time you stupid arogant bitch!!
+                 */
+                break;
+            }
+            /*
+            if (cnt_adc_cycles == 0) {
+                current_value_cv_0_pitch[0] = cv_raw_adc_inp[0];
+            }
+            if (cnt_adc_cycles == 1) {
+                current_value_cv_0_pitch[1] = cv_raw_adc_inp[0];
+            }
+            if (cnt_adc_cycles == 2) {
+                current_value_cv_0_pitch[2] = cv_raw_adc_inp[0];
+            }
+            else {
+                current_value_cv_0_pitch[3] = cv_raw_adc_inp[0];
+            }
+            */
+            /* current_value_cv_0_pitch = cv_raw_adc_inp[0]; */
+
             current_value_cv_distortion_amount = cv_raw_adc_inp[1];
             current_value_cv_1_pitch = cv_raw_adc_inp[2];
-            l_osc.phase_pending_update = r_osc.phase_pending_update = true;
+            l_osc.phase_pending_update = r_osc.phase_pending_update = true)
         }
     }
 }

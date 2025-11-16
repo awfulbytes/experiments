@@ -4,7 +4,7 @@
 #include "nco.h"
 
 extern volatile uint16_t        pitch0_cv;
-extern volatile uint16_t        current_value_cv_0_pitch;
+extern volatile uint16_t        current_value_cv_0_pitch[4];
 extern volatile uint16_t        distortion_amount_cv;
 extern volatile uint16_t        current_value_cv_distortion_amount;
 
@@ -14,6 +14,8 @@ extern volatile uint16_t        current_value_cv_1_pitch;
 extern volatile uint16_t        cv_raw_adc_inp[3];
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
 extern uint16_t                 dac_double_buff[256], dac_double_buff2[256];
+
+extern volatile uint8_t cnt_adc_cycles;
 
 extern struct nco               l_osc, r_osc;
 extern struct button            wave_choise_dac1;
