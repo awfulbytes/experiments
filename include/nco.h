@@ -12,7 +12,7 @@ struct ping_pong_buff{
 };
 
 struct limits {
-    uint8_t  min;
+    uint16_t min;
     uint16_t max;
     uint16_t cv_raw_max;
 };
