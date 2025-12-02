@@ -1,6 +1,4 @@
 #include <stdint.h>
-#include "overseer.h"
-
 #pragma once
 typedef enum freq_modes {free, v_per_octave} freq_modes_e;
 typedef enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
@@ -69,9 +67,6 @@ uint16_t map_uint(uint16_t      adc_value,
 bool stage_pending_inc(volatile uint16_t      adc_raw_value,
                        struct   nco           nco[static 1],
                        const    uint_fast32_t sample_rate);
-
-void stage_modulated_signal_values(struct   nco      osc[static 1],
-                                   struct overworld *data);
 
 __attribute__((pure, always_inline))
 inline static uint64_t compute_nco_increment(uint16_t            note,

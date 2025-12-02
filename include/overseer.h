@@ -1,5 +1,6 @@
-#pragma once
+#include "nco.h"
 #include <stdint.h>
+#pragma once
 
 struct overworld {
     volatile uint16_t pitch0_cv;
@@ -18,3 +19,7 @@ struct overseer {
     struct nco       *oscillators[2];
     struct overworld *universe_data;
 };
+
+
+void stage_modulated_signal_values(struct   nco      osc[static 1],
+                                   struct overworld *data);

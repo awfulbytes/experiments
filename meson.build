@@ -12,6 +12,7 @@ src_files = files(
   'src/system_stm32g0xx.c',
   'src/nco.c',
   'src/stm32g0xx_it.c',
+  'src/overseer.c',
   )
 
 src_deps = files(
