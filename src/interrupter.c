@@ -34,10 +34,10 @@ void main() {
 #endif
     for (int i=0; i < 2; i++) {
         dma_config(dma_chans[i]);
-        tim_init(dac1_clock, timers[i]);
+        tim_init(cosmos.universe_data->dac1_clock, timers[i]);
     }
 
-    tim_init(adc1_clock, &tim2_settings);
+    tim_init(cosmos.universe_data->adc1_clock, &tim2_settings);
     adc_init_settings(&adc_settings);
 
 
@@ -50,34 +50,20 @@ void main() {
     #define floor_on_hell             fifth
     land_on_hell_floor()
 #endif
-    do {
+
+    while (1) {
+
 #ifdef  walk
       hell_walking()
 #endif
-      scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
 
-      volatile uint16_t on_the_fly = 0;
-      if (cnt_adc_cycles == 4){
-          cnt_adc_cycles = 0;
-          on_the_fly = (current_value_cv_0_pitch[0] +
-                        current_value_cv_0_pitch[1] +
-                        current_value_cv_0_pitch[2] +
-                        current_value_cv_0_pitch[3])>>2;
-      }
-      else {
-          ++cnt_adc_cycles;
-          on_the_fly = cv_raw_adc_inp[0];
-      }
-        
-      stage_modulated_signal_values(&l_osc,
-                                    current_value_cv_distortion_amount,
-                                    on_the_fly,
-                                    dac1_clock);
-      /*
-       * hook up independent encoder
-         scan_and_apply_current_modulations(&osc_0_pd_enc, &r_osc);
-         stage_modulated_signal_values(&r_osc, 0, prev_value_cv_1_pitch, dac1_clock);
-       */
+        for (uint8_t i=0; i < 1; ++i) {
+            scan_and_apply_current_modulations(&osc_0_pd_enc, cosmos.oscillators[i]);
+            stage_modulated_signal_values(cosmos.oscillators[i], cosmos.universe_data);
+        }
+        /*
+         * hook up independent encoder for cosmos.osclillator[2]
+         */
 
         if (wave_choise_dac1.flag == 0x69) {
             wave_me_d = *(waves_bank + wave_choise_dac1.state);
@@ -88,5 +74,5 @@ void main() {
             // wave_me_d2 = waves_bank[wave_choise_dac2.state];
             wave_choise_dac2.flag = 'D';
         }
-    } while (1);
+    }
 }

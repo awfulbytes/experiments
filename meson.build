@@ -90,25 +90,29 @@ custom_target('stm32_app.hex',
               input : elf,
               output : 'stm32_app.hex',
               command : [objcopy, '-O', 'ihex', '@INPUT@', '@OUTPUT@'],
-              build_by_default: true
-             )
+              build_by_default: true)
 custom_target('stm32.bin',
               input: striper,
               output: 'striper.bin',
               command : [objcopy, '-O', 'binary', '@INPUT@', '@OUTPUT@'],
-              build_by_default: true
-             )
+              build_by_default: true)
+
+run_target(
+  'colapse',
+  command: ['ninja', 'clean', '&&',
+            'ninja', '&&',
+            'ninja', 'clean', '-C', '../test/build/', '&&',
+            'ninja', 'test', '-v', '-C', '../test/build/'],)
 
 run_target(
   'bin_size',
-  command: [size, '--format=sysv', '--common', 'testershit', 'stripped.elf'],
-)
+  command: [size, '--format=sysv', '--common', 'testershit', 'stripped.elf'],)
+
 flash = find_program('st-flash')
 run_target(
   'nuke',
-  command: [flash, 'erase', '&&', flash, 'reset'],
-)
+  command: [flash, 'erase', '&&', flash, 'reset'],)
+
 run_target(
   'sendit',
-  command: [flash, 'write', 'stm32_app.bin', '0x08000000', '&&', flash, 'reset'],
-)
+  command: [flash, 'write', 'stm32_app.bin', '0x08000000', '&&', flash, 'reset'],)

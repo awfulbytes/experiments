@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "overseer.h"
 
 #pragma once
 typedef enum freq_modes {free, v_per_octave} freq_modes_e;
@@ -31,16 +32,20 @@ struct bandwidth {
     struct limits tracking;
 };
 
+struct phasor {
+    volatile uint64_t         pending_update_inc;
+    volatile uint64_t         inc;
+    volatile uint32_t         accum;
+    volatile bool             pending_update;
+    volatile bool             done_update;
+};
+
 struct nco {
-    volatile uint64_t         phase_pending_update_inc;
-    volatile uint64_t         phase_inc;
-    volatile uint32_t         phase_accum;
+    struct   phasor           phase;
     freq_modes_e              mode;
     struct   ping_pong_buff   data_buff;
     struct   phase_distortion distortion;
     struct   bandwidth        bandwidth;
-    volatile bool             phase_pending_update;
-    volatile bool             phase_done_update;
 };
 
 #pragma GCC diagnostic ignored "-Wconversion"
@@ -58,17 +63,15 @@ void update_data_buff (const uint16_t data[static 128],
                                         struct limits  level_range[static 1]);
  */
 __attribute__((pure))
-uint16_t map_12b_to_range(uint16_t      adc_value,
-                          struct limits boundaries[static 1]);
+uint16_t map_uint(uint16_t      adc_value,
+                  struct limits boundaries[static 1]);
 
 bool stage_pending_inc(volatile uint16_t      adc_raw_value,
                        struct   nco           nco[static 1],
                        const    uint_fast32_t sample_rate);
 
 void stage_modulated_signal_values(struct   nco      osc[static 1],
-                                   uint16_t          distortion_cv,
-                                   volatile uint16_t pitch_cv,
-                                   uint32_t          master_clock);
+                                   struct overworld *data);
 
 __attribute__((pure, always_inline))
 inline static uint64_t compute_nco_increment(uint16_t            note,
@@ -80,7 +83,7 @@ inline static uint64_t compute_nco_increment(uint16_t            note,
 __attribute__((pure, always_inline))
 inline static uint32_t compute_lut_index(struct nco nco[static 1]){
 
-    return (uint32_t) (((uint64_t) nco->phase_accum * (1<<7))>>32);
+    return (uint32_t) (((uint64_t) nco->phase.accum * (1<<7))>>32);
 }
 
 #ifdef TEST
@@ -91,8 +94,8 @@ inline static void dbg_info_nco(struct    nco *nco,
     printf("\n");
     printf("fract:\t%d\n", fract);
     printf("interp-factor:\t%d\n", (diff * fract) >> 16);
-    printf("increment:\t%lx\n", nco->phase_inc);
-    printf("accumulat:\t%x\n", nco->phase_accum);
+    printf("increment:\t0x%lx\n", nco->phase.inc);
+    printf("accumulat:\t0x%x\n", nco->phase.accum);
     printf("\n");
 }
 #endif // TEST

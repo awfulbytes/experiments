@@ -15,35 +15,42 @@
 
 #include "src/ui.c"
 
+#include "overseer.h"
 #if defined(USE_FULL_ASSERT)
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
+/* todo make an overseer to have the data easy dbg info and be able to speedtest
+ * levels and other stuff
+ */
+#define cv_init               0xff
+#define dac_clk       192000
+#define adc_clk        44000
 
-const uint_fast32_t dac1_clock = 240'000;
-const uint_fast32_t adc1_clock = 176'000;
-
-volatile uint16_t pitch0_cv = 0xff;
-volatile uint16_t distortion_amount_cv = 0xff;
-volatile uint16_t current_value_cv_0_pitch[4] = {0xff, 0xff, 0xff, 0xff};
+struct overworld world = {
+    /* todo(nxt) incorporate other oscillator also */
+    .pitch0_cv                          = cv_init,
+    .current_value_cv_0_pitch           = cv_init,
+    .current_value_cv_distortion_amount = cv_init,
+    .distortion_amount_cv               = cv_init,
+    /* .pitch1_cv                          = cv_init, */
+    .dac1_clock = dac_clk,
+    .adc1_clock = adc_clk,
+};
 volatile uint8_t cnt_adc_cycles = 0;
-/* volatile uint16_t current_value_cv_0_pitch = 0xff; */
-volatile uint16_t current_value_cv_distortion_amount = 1;
-volatile uint16_t pitch1_cv = 0xff;
-volatile uint16_t current_value_cv_1_pitch = 1;
 
 const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn, pulse};
 volatile const uint16_t *wave_me_d = sine_wave;
 volatile const uint16_t *wave_me_d2 = sine_wave;
 
-struct nco l_osc = {.phase_accum = 0,
-                    .phase_inc = 0x01'00'00'00,
-                    .phase_pending_update_inc=0,
-                    .phase_pending_update=false,
-                    .phase_done_update=false,
+struct nco l_osc = {.phase = {.accum = 0,
+                              .inc = 0x01'00'00'00,
+                              .pending_update_inc=0,
+                              .pending_update=false,
+                              .done_update=false,},
                     .mode = free,
-                    .bandwidth.free = {.min=100, .max=14'000,
+                    .bandwidth.free = {.min=2000, .max=12'000,
                                        .cv_raw_max=0xfff},
-                    .bandwidth.tracking = {.min=20, .max=969,
+                    .bandwidth.tracking = {.min=10, .max=300,
                                            .cv_raw_max=0xfff},
                     .distortion.amount=64,
                     .distortion.level_range={.min=23, .max=129,
@@ -52,11 +59,11 @@ struct nco l_osc = {.phase_accum = 0,
                     .distortion.past_dante = entrance,
                     .distortion.dante=entrance};
 
-struct nco r_osc = {.phase_accum = 0,
-                    .phase_inc = 0x01'00'00'00,
-                    .phase_pending_update_inc=0,
-                    .phase_pending_update=false,
-                    .phase_done_update=false,
+struct nco r_osc = {.phase = {.accum = 0,
+                              .inc = 0x01'00'00'00,
+                              .pending_update_inc=0,
+                              .pending_update=false,
+                              .done_update=false,},
                     .mode=v_per_octave,
                     .bandwidth.free = {.min=100, .max=14'000,
                                        .cv_raw_max=0xfff},
@@ -227,3 +234,8 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                .B.it_settings = { },
                                .B.flag = 'D',
                                .increment=0, .direction=cw};
+
+struct overseer cosmos = {
+    .oscillators = {&l_osc, &r_osc},
+    .universe_data = &world,
+};

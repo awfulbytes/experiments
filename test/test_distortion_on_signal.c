@@ -1,9 +1,12 @@
 #include "nco_general_stuff.h"
+#include "overseer.h"
 #include <stdio.h>
 #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
 #include "ui.h"
 #include <assert.h>
 
+#define dac_clk       192000
+#define adc_clk        44000
 uint16_t double_buffer[256] = {0};
 
 extern void scan_and_apply_current_modulations(struct encoder enc[static 1],
@@ -11,7 +14,7 @@ extern void scan_and_apply_current_modulations(struct encoder enc[static 1],
 
 void emulate_distortion_on(struct nco *nco){
     nco->distortion.on = true;
-    nco->phase_pending_update = true;
+    nco->phase.pending_update = true;
 }
 
 void emulate_distortion_change(struct encoder *enc){
@@ -30,9 +33,12 @@ void emulate_dac_interrupt(){
 
 int main(){
     struct   encoder dummy_enc;
-    uint64_t         initialized_incremet_value = l_osc.phase_inc;
-    uint16_t         adc_raw_cv_pitch           = 0x000;
-    uint16_t         adc_raw_cv_dist            = 0xfff;
+    uint64_t         initialized_incremet_value = l_osc.phase.inc;
+    struct overworld data = {
+        .current_value_cv_0_pitch                      = 0x000,
+        .current_value_cv_distortion_amount            = 0xfff,
+        .dac1_clock                                    = dac_clk,
+    };
 
     for ( ;dummy_enc.increment < hell; ) {
         printf("iteration-number:\t%d\n", dummy_enc.increment);
@@ -43,22 +49,20 @@ int main(){
         // emulate_dac_interrupt();
 
         assert(l_osc.mode != free);
-        assert(initialized_incremet_value != l_osc.phase_pending_update_inc);
+        assert(initialized_incremet_value != l_osc.phase.pending_update_inc);
         /* assert(l_osc.phase_done_update == 1); */
 
         stage_modulated_signal_values(&l_osc,
-                                      adc_raw_cv_dist,
-                                      adc_raw_cv_pitch,
-                                      master_clock);
-        assert(l_osc.phase_done_update != l_osc.phase_pending_update);
+                                      &data);
+        assert(l_osc.phase.done_update != l_osc.phase.pending_update);
         emulate_dac_interrupt();
 
         assert(l_osc.mode != free);
         /* assert(initialized_incremet_value > l_osc.phase_pending_update_inc); */
-        assert(l_osc.phase_done_update != l_osc.phase_pending_update);
-        assert(l_osc.phase_done_update == true);
+        assert(l_osc.phase.done_update != l_osc.phase.pending_update);
+        assert(l_osc.phase.done_update == true);
         /* ++dummy_enc.increment; */
-        adc_raw_cv_dist += dummy_enc.increment;
-        adc_raw_cv_pitch -= 200;
+        data.current_value_cv_distortion_amount += dummy_enc.increment;
+        data.current_value_cv_0_pitch -= 200;
     }
 }

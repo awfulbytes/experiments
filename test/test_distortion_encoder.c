@@ -5,8 +5,7 @@
 #include "nco.h"
 
 extern void scan_and_apply_current_modulations(struct encoder enc[static 1], struct nco osillator[static 1]);
-struct nco l_osc = {.phase_accum = 0, .phase_inc = 0x01'00'00'00,
-                    .phase_pending_update=true, .phase_pending_update_inc=0,
+struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01'00'00'00, .pending_update_inc=0, .pending_update=true,},
                     .mode=free,
                     .distortion.amount=64,
                     .distortion.on=false,

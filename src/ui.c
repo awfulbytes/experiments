@@ -62,7 +62,7 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
 
 void scan_and_apply_current_modulations(struct encoder enc[static 1],
                                         struct nco osillator[static 1]){
-    if (enc->A.flag == 0x69 /* && osillator->phase_pending_update */){
+    if (enc->A.flag == 0x69){
         if (!osillator->distortion.on)
             osillator->mode = change_pitch_mode(osillator);
         else {
