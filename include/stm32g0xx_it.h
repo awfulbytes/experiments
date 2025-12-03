@@ -5,7 +5,7 @@
 #include "overseer.h"
 
 extern struct overworld world;
-extern volatile uint16_t        cv_raw_adc_inp[3];
+extern volatile uint16_t        cv_raw_adc_inp[4];
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
 extern uint16_t                 dac_double_buff[256], dac_double_buff2[256];
 

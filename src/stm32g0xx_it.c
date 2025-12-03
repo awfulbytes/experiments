@@ -66,22 +66,11 @@ void TIM2_IRQHandler(void) {
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
 
-            lock_the_door(
-                /* l_osc.phase_pending_update = r_osc.phase_pending_update = true
-                 * todo(nxt) should test this;
-                 *           try to see if there is a problem to not update until i have all 4 values to average. we could serve the basic
-                 *           data from a precompiled reading of the adc. I beliveTM data aqc. is faster than all initialization and adc is
-                 *           initialized before all...
-                 *
-                 * later     should be able to use these values without the need for further
-                 *
-                 * bug       due to fucking brain the adc sampling and averaging has the same error as the OG.
-                 *           we cant make decimation if we upsample at the same time you stupid arogant bitch!!
-                 */
             world.current_value_cv_0_pitch = cv_raw_adc_inp[0];
             world.current_value_cv_distortion_amount = cv_raw_adc_inp[1];
-            world.current_value_cv_1_pitch = cv_raw_adc_inp[2];
-            l_osc.phase.pending_update = r_osc.phase.pending_update = true)
+            world.distortion_amount_cv = cv_raw_adc_inp[2];
+            world.current_value_cv_1_pitch = cv_raw_adc_inp[3];
+            l_osc.phase.pending_update = r_osc.phase.pending_update = true;
         }
         /* GPIOB->ODR |= (1 << 3); */
     }

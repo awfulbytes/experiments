@@ -28,10 +28,11 @@
 
 struct overworld world = {
     /* todo(nxt) incorporate other oscillator also */
-    .pitch0_cv                          = cv_init,
+    /* .pitch0_cv                          = cv_init, */
     .current_value_cv_0_pitch           = cv_init,
     .current_value_cv_distortion_amount = cv_init,
     .distortion_amount_cv               = cv_init,
+    .current_value_cv_1_pitch           = cv_init,
     /* .pitch1_cv                          = cv_init, */
     .dac1_clock = dac_clk,
     .adc1_clock = adc_clk,
@@ -130,7 +131,7 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *
                                         .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
 
-#define sample_count  3 /* π(nxt) do not forget the ranks number */
+#define sample_count  4 /* π(nxt) do not forget the ranks number */
 volatile uint16_t cv_raw_adc_inp[sample_count] = {0};
 struct adc adc_settings = {.adcx=ADC1,
                           .data = cv_raw_adc_inp,
@@ -142,7 +143,7 @@ struct adc adc_settings = {.adcx=ADC1,
 
                           .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_EXT_TIM2_TRGO,
                                          .ContinuousMode=LL_ADC_REG_CONV_SINGLE,
-                                         .SequencerLength=LL_ADC_REG_SEQ_SCAN_ENABLE_3RANKS,
+                                         .SequencerLength=LL_ADC_REG_SEQ_SCAN_ENABLE_4RANKS,
                                          .SequencerDiscont=LL_ADC_REG_SEQ_DISCONT_DISABLE,
                                          .DMATransfer=LL_ADC_REG_DMA_TRANSFER_UNLIMITED,
                                          .Overrun=LL_ADC_REG_OVR_DATA_OVERWRITTEN},
@@ -190,6 +191,8 @@ struct gpio dac1 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_4, .mode=LL_GPIO_MODE_AN
 struct gpio dac2 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_5, .mode=LL_GPIO_MODE_ANALOG};
 struct gpio pitch_0_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_0, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 struct gpio dist_amount_0_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_1, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
+struct gpio pitch_1_cv = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_0, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
+struct gpio dist_amount_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_7, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 
 struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                              .pin_id=LL_GPIO_PIN_4,
@@ -208,14 +211,6 @@ struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                .B.it_settings = { },
                                .B.flag = 'D',
                                .increment=0, .direction=cw};
-
-// nxt:: for some reason the PA_2 is busy!!
-struct gpio pitch_1_cv = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_1,
-                          .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
-
-#warning "need to implement second oscillator distortion CV input."
-struct gpio dist_amount_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_1,
-                                .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 
 struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                              .pin_id=LL_GPIO_PIN_6,

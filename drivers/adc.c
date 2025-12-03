@@ -3,7 +3,6 @@
 #include "stm32g0xx_ll_utils.h"
 #include "stm32g0xx_ll_bus.h"
 
-extern struct adc adc_settings;
 extern volatile uint16_t cv_raw_adc_inp;
 
 static ErrorStatus adc_dma_setup(struct adc *adc);
@@ -26,7 +25,8 @@ void adc_init_settings(struct adc *adc){
     LL_ADC_REG_SetSequencerChannels(adc->adcx,
                                     LL_ADC_CHANNEL_0 |
                                     LL_ADC_CHANNEL_1 |
-                                    LL_ADC_CHANNEL_9);
+                                    LL_ADC_CHANNEL_9 |
+                                    LL_ADC_CHANNEL_8);
     while (!LL_ADC_IsActiveFlag_CCRDY(adc->adcx)) {}
     LL_ADC_ClearFlag_CCRDY(adc->adcx);
 
@@ -38,12 +38,14 @@ void adc_init_settings(struct adc *adc){
     LL_ADC_SetChannelSamplingTime(adc->adcx,
                                   LL_ADC_CHANNEL_0 |
                                   LL_ADC_CHANNEL_1 |
-                                  LL_ADC_CHANNEL_9,
+                                  LL_ADC_CHANNEL_9 |
+                                  LL_ADC_CHANNEL_8,
                                   LL_ADC_SAMPLINGTIME_COMMON_1);
 
     LL_ADC_REG_SetSequencerRanks(adc->adcx, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_0);
     LL_ADC_REG_SetSequencerRanks(adc->adcx, LL_ADC_REG_RANK_2, LL_ADC_CHANNEL_1);
     LL_ADC_REG_SetSequencerRanks(adc->adcx, LL_ADC_REG_RANK_3, LL_ADC_CHANNEL_9);
+    LL_ADC_REG_SetSequencerRanks(adc->adcx, LL_ADC_REG_RANK_4, LL_ADC_CHANNEL_8);
     while (!LL_ADC_IsActiveFlag_CCRDY(adc->adcx)) {}
     LL_ADC_ClearFlag_CCRDY(adc->adcx);
 

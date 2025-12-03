@@ -15,7 +15,7 @@ void gpio_init(struct button **choice_buttons,
                             LL_IOP_GRP1_PERIPH_GPIOB |
                             LL_IOP_GRP1_PERIPH_GPIOC);
 
-    for (int i=0; i<3; i++) {
+    for (int i=0; i<4; i++) {
         LL_GPIO_SetPinMode(choice_buttons[i]->pin.port_id,
                            choice_buttons[i]->pin.pin_id,
                            choice_buttons[i]->pin.mode);
@@ -28,7 +28,7 @@ void gpio_init(struct button **choice_buttons,
         LL_GPIO_SetPinMode(dacs[i]->port_id, dacs[i]->pin_id, dacs[i]->mode);
     }
 
-    for (int i=0; i < 3; ++i){
+    for (int i=0; i < 4; ++i){
         LL_GPIO_SetPinMode(adc_pin[i]->port_id,
                            adc_pin[i]->pin_id,
                            adc_pin[i]->mode);

@@ -16,7 +16,7 @@ void main() {
     struct timer *timers[2] = {&tim6_settings, &tim7_settings};
     struct button *wave_buttons[3] = {&wave_choise_dac1, &wave_choise_dac2, &distortion_choice};
     struct gpio *dacs[2] = {&dac1, &dac2};
-    struct gpio *osc_cvs[3] = {&pitch_0_cv, &dist_amount_0_cv, &pitch_1_cv};
+    struct gpio *osc_cvs[4] = {&pitch_0_cv, &dist_amount_0_cv, &pitch_1_cv, &dist_amount_1_cv};
     struct dac *dacs_settings[2] = {&dac_ch1_settings, &dac_ch2_settings};
     struct dma *dma_chans[2] = {&dac_1_dma, &dac_2_dma};
     sys_clock_config();
