@@ -111,7 +111,7 @@ struct dma dac_1_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_3, .data=(uint16_t *
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
 
 struct dac dac_ch2_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_2,
-                               .trg_src=LL_DAC_TRIG_EXT_TIM7_TRGO,
+                               .trg_src=LL_DAC_TRIG_EXT_TIM6_TRGO,
                                .bus_clk_abp=LL_APB1_GRP1_PERIPH_DAC1,
                                .timx_dac_irq=TIM7_LPTIM2_IRQn,
                                .dacx_settings={.OutputMode=LL_DAC_OUTPUT_MODE_NORMAL,
