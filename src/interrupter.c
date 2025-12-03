@@ -61,7 +61,7 @@ void main() {
          * hook up independent encoder for cosmos.osclillator[2]
          */
 
-        for (uint8_t i=0; i < 1; ++i) {
+        for (uint8_t i=0; i < 2; ++i) {
             scan_and_apply_current_modulations(&osc_0_pd_enc, cosmos.oscillators[i]);
 
             register uint16_t note = tune_to_bandwidth(&cosmos, i);
