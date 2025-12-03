@@ -13,6 +13,7 @@ c_std = 'c23'
 c_args = ['-mcpu=cortex-m0plus', '-ffreestanding', '-Og',
             '-ffunction-sections',
             '-Wno-sign-conversion',
+            '-Wno-unused-parameter',
             '-Wextra',
             '-fdata-sections', '-Wall', '-fstack-usage', '-MMD', '-MP',
             '-fno-exceptions', '-g3'
