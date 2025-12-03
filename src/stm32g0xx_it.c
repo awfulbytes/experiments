@@ -98,6 +98,7 @@ void EXTI4_15_IRQHandler(void) {
         (EXTI->FPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
         osc_0_pd_enc.B.value = ((osc_0_pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
         osc_0_pd_enc.A.flag = 'i';
+        scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
     }
     if ((EXTI->FPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
         (EXTI->FPR1) = (osc_1_pd_enc.A.it_settings.exti_line);

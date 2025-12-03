@@ -1,5 +1,4 @@
 #include "ui.h"
-#include "nco.h"
 #include <stdint.h>
 
 static void exti_enc_setup(struct encoder_channel channel[static 1]);

@@ -2,13 +2,15 @@
 #include "nco.h"
 
 uint16_t tune_to_bandwidth(struct overseer *overseer, uint8_t osc_idx) {
-    register uint16_t raw_val = overseer->universe_data->current_value_cv_0_pitch;
+    register uint16_t raw_val =
+        (osc_idx == 0)
+        ? overseer->universe_data->current_value_cv_0_pitch
+        : overseer->universe_data->current_value_cv_1_pitch;
     struct nco selected_oscillator = *overseer->oscillators[osc_idx];
     uint16_t note =
         (selected_oscillator.mode == free) ?
         map_uint(raw_val, &selected_oscillator.bandwidth.free) :
         map_uint(raw_val, &selected_oscillator.bandwidth.tracking);
-    /* overseer->oscillators[0]->phase.pending_update_inc = compute_nco_increment(note, overseer->universe_data->adc1_clock); */
     return note;
 }
 

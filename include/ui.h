@@ -1,4 +1,5 @@
 #include "gpio.h"
+#include "nco.h"
 
 enum direction {cw, ccw};
 
@@ -31,3 +32,6 @@ void enc_init(struct encoder *enc);
 
 void wave_button_callback(struct button *abut);
 void WaitForUserButtonPress (struct button *button);
+
+void scan_and_apply_current_modulations(struct encoder enc[static 1],
+                                        struct nco osillator[static 1]);

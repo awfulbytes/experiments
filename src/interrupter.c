@@ -58,16 +58,11 @@ void main() {
 #ifdef  walk
       hell_walking()
 #endif
-        /*
-         * hook up independent encoder for cosmos.osclillator[2]
-         */
 
-        for (uint8_t i=0; i < 2; ++i) {
-            scan_and_apply_current_modulations(&osc_0_pd_enc, cosmos.oscillators[i]);
-
-            register uint16_t note = tune_to_bandwidth(&cosmos, i);
-            stage_modulated_signal_values(cosmos.oscillators[i], note, cosmos.universe_data);
-        }
+        register uint16_t note = tune_to_bandwidth(&cosmos, 0);
+        stage_modulated_signal_values(cosmos.oscillators[0], note, cosmos.universe_data);
+        register uint16_t note_1 = tune_to_bandwidth(&cosmos, 1);
+        stage_modulated_signal_values(cosmos.oscillators[1], note_1, cosmos.universe_data);
 
         if (wave_choise_dac1.flag == 0x69) {
             wave_me_d = *(waves_bank + wave_choise_dac1.state);
