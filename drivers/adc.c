@@ -17,6 +17,13 @@ void adc_init_settings(struct adc *adc){
 
     LL_ADC_Init(adc->adcx, &adc->settings);
 
+    /*
+     * todo later oversampling
+     * - https://www.st.com/resource/en/reference_manual/rm0454-stm32g0x0-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
+     * - https://www.st.com/resource/en/datasheet/stm32g071c8.pdf
+     * registers to start reading
+    (adc->adcx->CFGR2 |= ADC_CFGR2_OVSR; adc->adcx->CFGR2 |= ADC_CFGR2_OVSS_0;)
+    */
 
     LL_ADC_REG_SetSequencerConfigurable(adc->adcx, LL_ADC_REG_SEQ_CONFIGURABLE);
     while (!LL_ADC_IsActiveFlag_CCRDY(adc->adcx)) {}
@@ -50,7 +57,6 @@ void adc_init_settings(struct adc *adc){
     LL_ADC_ClearFlag_CCRDY(adc->adcx);
 
     while (LL_ADC_REG_Init(adc->adcx, &adc->reg_settings) != SUCCESS){};
-    // LL_ADC_ClearFlag_CCRDY(adc->adcx);
     LL_ADC_Enable(adc->adcx);
     while (adc_dma_setup(adc) &&
            !LL_ADC_IsActiveFlag_ADRDY(adc->adcx));

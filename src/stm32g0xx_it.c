@@ -28,7 +28,6 @@ void DMA1_Channel2_3_IRQHandler(void){
 
     if (l_osc.phase.done_update) {
         l_osc.phase.inc = l_osc.phase.pending_update_inc;
-        /* lock_the_door(generate_half_signal(wave_me_d, 128, &l_osc)) */
         generate_half_signal(wave_me_d, 128, &l_osc);
         l_osc.phase.done_update = false;
     }
