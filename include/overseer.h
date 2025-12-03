@@ -22,4 +22,7 @@ struct overseer {
 
 
 void stage_modulated_signal_values(struct   nco      osc[static 1],
+                                   register uint16_t note,
                                    struct overworld *data);
+
+uint16_t tune_to_bandwidth(struct overseer *overseer, uint8_t osc_idx);

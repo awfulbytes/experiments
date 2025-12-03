@@ -43,20 +43,11 @@ uint16_t map_uint(uint16_t      value,
 }
 
 __attribute__((pure))
-bool stage_pending_inc(volatile uint16_t      adc_raw_value,
+bool stage_pending_inc(volatile uint16_t      note,
                        struct   nco           nco[static 1],
                        const    uint_fast32_t sample_rate){
 
-    /*
-     * todo(nxt) use different bandwidths to support the hole audio spectrum.
-     */
-
-    uint16_t note =
-        (nco->mode == free) ?
-        map_uint(adc_raw_value, &nco->bandwidth.free) :
-        map_uint(adc_raw_value, &nco->bandwidth.tracking);
     nco->phase.pending_update_inc = compute_nco_increment(note, sample_rate);
-
     return true;
 }
 

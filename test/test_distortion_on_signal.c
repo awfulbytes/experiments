@@ -39,6 +39,7 @@ int main(){
         .current_value_cv_distortion_amount            = 0xfff,
         .dac1_clock                                    = dac_clk,
     };
+    struct overseer seer = { .oscillators[0]=&l_osc, .universe_data = &data };
 
     for ( ;dummy_enc.increment < hell; ) {
         printf("iteration-number:\t%d\n", dummy_enc.increment);
@@ -52,7 +53,9 @@ int main(){
         assert(initialized_incremet_value != l_osc.phase.pending_update_inc);
         /* assert(l_osc.phase_done_update == 1); */
 
+        register uint16_t note = tune_to_bandwidth(&seer, 0);
         stage_modulated_signal_values(&l_osc,
+                                      note,
                                       &data);
         assert(l_osc.phase.done_update != l_osc.phase.pending_update);
         emulate_dac_interrupt();
