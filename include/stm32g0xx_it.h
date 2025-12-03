@@ -16,6 +16,7 @@ extern struct button            wave_choise_dac1;
 extern struct button            wave_choise_dac2;
 extern struct button            distortion_choice;
 extern struct encoder           osc_0_pd_enc;
+extern struct encoder           osc_1_pd_enc;
 
 void NMI_Handler(void);
 void HardFault_Handler(void);

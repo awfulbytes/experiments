@@ -23,6 +23,7 @@ void main() {
     gpio_init(wave_buttons, dacs, osc_cvs);
 
     enc_init(&osc_0_pd_enc);
+    enc_init(&osc_1_pd_enc);
 
 #if defined(DEBUG) || defined(DEBUGDAC)
     /*
