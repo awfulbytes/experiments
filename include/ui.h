@@ -24,7 +24,7 @@ static void exti_enc_setup(struct encoder_channel channel[static 1]){
     LL_EXTI_EnableFallingTrig_0_31(channel->it_settings.exti_line);
     LL_EXTI_EnableIT_0_31(channel->it_settings.exti_line);
 
-    NVIC_SetPriority(channel->it_settings.exti_irqn, 0x00);
+    NVIC_SetPriority(channel->it_settings.exti_irqn, 0x40);
     NVIC_EnableIRQ(channel->it_settings.exti_irqn);
 }
 
