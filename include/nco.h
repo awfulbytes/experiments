@@ -38,12 +38,16 @@ struct phasor {
     volatile bool             done_update;
 };
 
+typedef struct sanity {
+    uint8_t report;
+} sanity_t;
 struct nco {
     struct   phasor           phase;
     freq_modes_e              mode;
     struct   ping_pong_buff   data_buff;
     struct   phase_distortion distortion;
     struct   bandwidth        bandwidth;
+    sanity_t                  in_the_house;
 };
 
 #pragma GCC diagnostic ignored "-Wconversion"
