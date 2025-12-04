@@ -68,7 +68,7 @@ void TIM2_IRQHandler(void) {
 
             world.current_value_cv_0_pitch = cv_raw_adc_inp[0];
             world.osc_0_cv_distortion_amount = cv_raw_adc_inp[1];
-            world.distortion_amount_cv = cv_raw_adc_inp[2];
+            world.osc_1_cv_distortion_ammount = cv_raw_adc_inp[2];
             world.current_value_cv_1_pitch = cv_raw_adc_inp[3];
             l_osc.phase.pending_update = r_osc.phase.pending_update = true;
         }

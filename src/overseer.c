@@ -1,5 +1,4 @@
 #include "overseer.h"
-#include "nco.h"
 
 struct nco* select_osc(struct overseer *overseer, uint8_t osc_idx){
     struct nco *select = overseer->oscillators[osc_idx];
@@ -30,7 +29,7 @@ void stage_modulated_signal_values(struct   nco      osc[static 1],
             uint16_t tmp =
                 (osc->in_the_house.report == 0) ?
                 data->osc_0_cv_distortion_amount :
-                data->distortion_amount_cv;
+                data->osc_1_cv_distortion_ammount;
 
             osc->distortion.amount = map_uint(tmp,
                                               &osc->distortion.level_range);
