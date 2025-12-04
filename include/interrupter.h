@@ -30,8 +30,8 @@ struct overworld world = {
     /* todo(nxt) incorporate other oscillator also */
     /* .pitch0_cv                          = cv_init, */
     .current_value_cv_0_pitch           = cv_init,
-    .osc_0_cv_distortion_amount = cv_init,
-    .osc_1_cv_distortion_ammount               = cv_init,
+    .osc_0_cv_distortion_amount         = cv_init,
+    .osc_1_cv_distortion_ammount        = cv_init,
     .current_value_cv_1_pitch           = cv_init,
     /* .pitch1_cv                          = cv_init, */
     .dac1_clock = dac_clk,
