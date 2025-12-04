@@ -58,6 +58,7 @@ lib_dirs = [core_inc_dir, hal_dev_inc, cmsis_dev_inc]
 # Flags
 MCU        = '-DSTM32G071xx'
 LL         = '-DUSE_FULL_LL_DRIVER'
+OS         = '-DBSD'
 
 objcopy                 = find_program('arm-none-eabi-objcopy')
 strip                   = find_program('arm-none-eabi-strip')
@@ -72,10 +73,10 @@ elf = executable('testershit', src_files + src_deps,
                  # link_with: hal,
                  include_directories : lib_dirs + inc_dir,
                  override_options: [],
-                 c_args : [MCU , LL],
+                 c_args : [MCU , LL, OS],
                  link_args : ['-nostdlib', '-nostartfiles', '-nodefaultlibs',
-                              '--data-sections', '-std=c23',
-                              '--specs=nano.specs', '-Wl,-Map=output.map'],
+                              '--data-sections', '-std=c99',
+                              '-Wl,-Map=output.map'],
                  build_by_default: true
                 )
 
@@ -113,11 +114,11 @@ run_target(
   'bin_size',
   command: [size, '--format=sysv', '--common', 'testershit', 'stripped.elf'],)
 
-flash = find_program('st-flash')
-run_target(
-  'nuke',
-  command: [flash, 'erase', '&&', flash, 'reset'],)
+# flash = find_program('st-flash')
+# run_target(
+#   'nuke',
+#   command: [flash, 'erase', '&&', flash, 'reset'],)
 
-run_target(
-  'sendit',
-  command: [flash, 'write', 'stm32_app.bin', '0x08000000', '&&', flash, 'reset'],)
+# run_target(
+#   'sendit',
+#   command: [flash, 'write', 'stm32_app.bin', '0x08000000', '&&', flash, 'reset'],)

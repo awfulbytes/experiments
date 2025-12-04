@@ -1,4 +1,7 @@
 #include <stdint.h>
+#ifdef BSD
+#include <stdbool.h>
+#endif
 #pragma once
 typedef enum freq_modes {high, low} freq_modes_e;
 typedef enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
