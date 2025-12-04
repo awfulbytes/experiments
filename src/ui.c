@@ -28,7 +28,7 @@ void enc_init(struct encoder *enc){
 
 __attribute((pure, always_inline))
 inline freq_modes_e change_pitch_mode(struct nco oscillator[static 1]){
-    return (oscillator->mode == free) ? v_per_octave : free;
+    return (oscillator->mode == high) ? low : high;
 }
 
 static void bit_bang_encoder(struct encoder enc[static 1]){

@@ -13,8 +13,8 @@ uint16_t tune_to_bandwidth(struct overseer *overseer, uint8_t osc_idx) {
         : overseer->universe_data->current_value_cv_1_pitch;
     struct nco *selected_oscillator = select_osc(overseer, osc_idx);
     uint16_t note =
-        (selected_oscillator->mode == free) ?
-        map_uint(raw_val, &selected_oscillator->bandwidth.free) :
+        (selected_oscillator->mode == high) ?
+        map_uint(raw_val, &selected_oscillator->bandwidth.high) :
         map_uint(raw_val, &selected_oscillator->bandwidth.tracking);
     return note;
 }

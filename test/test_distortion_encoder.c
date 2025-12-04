@@ -6,7 +6,7 @@
 
 extern void scan_and_apply_current_modulations(struct encoder enc[static 1], struct nco osillator[static 1]);
 struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01'00'00'00, .pending_update_inc=0, .pending_update=true,},
-                    .mode=free,
+                    .mode=high,
                     .distortion.amount=64,
                     .distortion.on=false,
                     .distortion.distortion_value=0,

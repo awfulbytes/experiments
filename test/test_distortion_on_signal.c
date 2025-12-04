@@ -49,7 +49,7 @@ int main(){
         scan_and_apply_current_modulations(&dummy_enc, &l_osc);
         // emulate_dac_interrupt();
 
-        assert(l_osc.mode != free);
+        assert(l_osc.mode != high);
         assert(initialized_incremet_value != l_osc.phase.pending_update_inc);
         /* assert(l_osc.phase_done_update == 1); */
 
@@ -60,7 +60,7 @@ int main(){
         assert(l_osc.phase.done_update != l_osc.phase.pending_update);
         emulate_dac_interrupt();
 
-        assert(l_osc.mode != free);
+        assert(l_osc.mode != high);
         /* assert(initialized_incremet_value > l_osc.phase_pending_update_inc); */
         assert(l_osc.phase.done_update != l_osc.phase.pending_update);
         assert(l_osc.phase.done_update == true);

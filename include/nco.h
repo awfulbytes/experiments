@@ -1,6 +1,6 @@
 #include <stdint.h>
 #pragma once
-typedef enum freq_modes {free, v_per_octave} freq_modes_e;
+typedef enum freq_modes {high, low} freq_modes_e;
 typedef enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
               // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
               hell} cyrcles_e;
@@ -26,7 +26,7 @@ struct phase_distortion{
 };
 
 struct bandwidth {
-    struct limits free;
+    struct limits high;
     struct limits tracking;
 };
 

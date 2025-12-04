@@ -7,17 +7,17 @@
 #define array_length(x)                 (sizeof x / sizeof x[0])
 
 struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc=0, .pending_update=false,},
-                    .mode=v_per_octave,
+                    .mode=low,
                     .distortion.amount=64,
                     .distortion.on=true,
                     .distortion.distortion_value=0,
-                    .bandwidth={.free.min=100, .free.max=14000, .free.cv_raw_max=0xfff,
+                    .bandwidth={.high.min=100, .high.max=14000, .high.cv_raw_max=0xfff,
                                 .tracking.min=220, .tracking.max=1661, .tracking.cv_raw_max=0xfff},
                     .distortion.dante=9,
                     .distortion.level_range={.min=23, .max=129, .cv_raw_max=0xfff},
 };
 struct nco r_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc=0, .pending_update=false,},
-                    .mode=v_per_octave,
+                    .mode=low,
                     .distortion.amount=64,
                     .distortion.on=true,
                     .distortion.distortion_value=0,
