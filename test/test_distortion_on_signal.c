@@ -36,7 +36,7 @@ int main(){
     uint64_t         initialized_incremet_value = l_osc.phase.inc;
     struct overworld data = {
         .current_value_cv_0_pitch                      = 0x000,
-        .current_value_cv_distortion_amount            = 0xfff,
+        .osc_0_cv_distortion_amount            = 0xfff,
         .dac1_clock                                    = dac_clk,
     };
     struct overseer seer = { .oscillators[0]=&l_osc, .universe_data = &data };
@@ -65,7 +65,7 @@ int main(){
         assert(l_osc.phase.done_update != l_osc.phase.pending_update);
         assert(l_osc.phase.done_update == true);
         /* ++dummy_enc.increment; */
-        data.current_value_cv_distortion_amount += dummy_enc.increment;
+        data.osc_0_cv_distortion_amount += dummy_enc.increment;
         data.current_value_cv_0_pitch -= 200;
     }
 }

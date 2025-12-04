@@ -29,7 +29,7 @@ void stage_modulated_signal_values(struct   nco      osc[static 1],
             /* check linked tasks */
             uint16_t tmp =
                 (osc->in_the_house.report == 0) ?
-                data->current_value_cv_distortion_amount :
+                data->osc_0_cv_distortion_amount :
                 data->distortion_amount_cv;
 
             osc->distortion.amount = map_uint(tmp,
