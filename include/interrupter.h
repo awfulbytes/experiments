@@ -24,7 +24,7 @@
  */
 #define cv_init       0xff
 #define dac_clk       192000
-#define adc_clk        44000
+#define adc_clk       394100
 
 struct overworld world = {
     /* todo(nxt) incorporate other oscillator also */
