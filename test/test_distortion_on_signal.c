@@ -53,10 +53,7 @@ int main(){
         assert(initialized_incremet_value != l_osc.phase.pending_update_inc);
         /* assert(l_osc.phase_done_update == 1); */
 
-        register uint16_t note = tune_to_bandwidth(&seer, 0);
-        stage_modulated_signal_values(&l_osc,
-                                      note,
-                                      &data);
+        tune(&seer, 0);
         assert(l_osc.phase.done_update != l_osc.phase.pending_update);
         emulate_dac_interrupt();
 

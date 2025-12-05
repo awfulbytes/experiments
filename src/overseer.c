@@ -6,7 +6,7 @@ struct nco* select_osc(struct overseer *overseer, uint8_t osc_idx){
     return select;
 }
 
-uint16_t tune_to_bandwidth(struct overseer *overseer, uint8_t osc_idx) {
+void tune(struct overseer *overseer, uint8_t osc_idx) {
     register uint16_t raw_val =
         (osc_idx == 0)
         ? overseer->universe_data->current_value_cv_0_pitch
@@ -16,7 +16,9 @@ uint16_t tune_to_bandwidth(struct overseer *overseer, uint8_t osc_idx) {
         (selected_oscillator->mode == high) ?
         map_uint(raw_val, &selected_oscillator->bandwidth.high) :
         map_uint(raw_val, &selected_oscillator->bandwidth.low);
-    return note;
+
+    stage_modulated_signal_values(selected_oscillator, note, overseer->universe_data);
+    /* return note; */
 }
 
 #pragma GCC diagnostic ignored "-Wunused-variable"
