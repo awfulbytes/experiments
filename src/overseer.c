@@ -39,6 +39,5 @@ void stage_modulated_signal_values(struct   nco      osc[static 1],
         bool staged = stage_pending_inc(note, osc, data->dac1_clock);
         osc->phase.done_update = staged;
         osc->phase.pending_update = !osc->phase.done_update;
-        osc->in_the_house.report = false;
     }
 }
