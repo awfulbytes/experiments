@@ -42,7 +42,7 @@ volatile uint8_t cnt_adc_cycles = 0;
 const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn, pulse};
 volatile const uint16_t *wave_me_d = sine_wave;
 volatile const uint16_t *wave_me_d2 = sine_wave;
-#define starting_mode low
+#define starting_mode high
 struct nco l_osc = {.phase = {.accum = 0,
                               .inc = 0x01000000,
                               .pending_update_inc=0,
