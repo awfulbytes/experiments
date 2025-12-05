@@ -22,7 +22,7 @@
 /* todo make an overseer to have the data easy dbg info and be able to speedtest
  * levels and other stuff
  */
-#define cv_init               0xff
+#define cv_init       0xff
 #define dac_clk       192000
 #define adc_clk        44000
 
@@ -82,15 +82,18 @@ struct nco r_osc = {.phase = {.accum = 0,
 uint16_t dac_double_buff[256] = {0};
 uint16_t dac_double_buff2[256] = {0};
 
-struct timer tim6_settings = {.timx=TIM6,
+struct timer tim6_settings = {.id=TIM6,
                               .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6,
-                              .trigger_output=LL_TIM_TRGO_UPDATE};
-struct timer tim7_settings = {.timx=TIM7,
+                              .trigger_output=LL_TIM_TRGO_UPDATE,
+                              .irq_settings={.nvic_id=TIM6_DAC_LPTIM1_IRQn, .priority=0x00}};
+struct timer tim7_settings = {.id=TIM7,
                               .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7,
-                              .trigger_output=LL_TIM_TRGO_UPDATE};
-struct timer tim2_settings = {.timx=TIM2,
+                              .trigger_output=LL_TIM_TRGO_UPDATE,
+                              .irq_settings={.nvic_id=TIM7_LPTIM2_IRQn, .priority=0x00}};
+struct timer tim2_settings = {.id=TIM2,
                               .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2,
-                              .trigger_output=LL_TIM_TRGO_UPDATE};
+                              .trigger_output=LL_TIM_TRGO_UPDATE,
+                              .irq_settings={.nvic_id=TIM2_IRQn, .priority=0x40}};
 
 struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1,
                                .trg_src=LL_DAC_TRIG_EXT_TIM6_TRGO,
@@ -116,7 +119,8 @@ struct dma dac_1_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_3, .data=(uint16_t *
 struct dac dac_ch2_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_2,
                                .trg_src=LL_DAC_TRIG_EXT_TIM6_TRGO,
                                .bus_clk_abp=LL_APB1_GRP1_PERIPH_DAC1,
-                               .timx_dac_irq=TIM7_LPTIM2_IRQn,
+                               .timx_dac_irq=TIM6_DAC_LPTIM1_IRQn,
+                               /* .timx_dac_irq=TIM7_LPTIM2_IRQn, */
                                .dacx_settings={.OutputMode=LL_DAC_OUTPUT_MODE_NORMAL,
                                                .OutputBuffer=LL_DAC_OUTPUT_BUFFER_ENABLE,
                                                .OutputConnection=LL_DAC_OUTPUT_CONNECT_GPIO}};

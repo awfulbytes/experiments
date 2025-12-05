@@ -2,49 +2,57 @@
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_bus.h"
 
-static struct timer* timx_set(struct timer *timer) {
-    timer->timx_clk_freq             = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock,
+static struct timer* timx_set(struct timer *t) {
+    t->timx_clk_freq             = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock,
                                                                 LL_RCC_GetAPB1Prescaler());
-    timer->timx_settings.Prescaler   = 1;
-    timer->timx_settings.Autoreload  = 0;
-    timer->timx_settings.CounterMode = LL_TIM_COUNTERMODE_UP;
-    return timer;
+    t->settings.Prescaler   = 0;
+    t->settings.Autoreload  = 0;
+    t->settings.CounterMode = LL_TIM_COUNTERMODE_UP;
+    return t;
 }
 
+static void compute_arr(struct timer *t, uint32_t desired_frequency){
+    if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_2){
+        t->timx_clk_freq *= 2;
+    }
+    t->settings.Autoreload = (SystemCoreClock / desired_frequency) - 1;
+}
+
+static void tim_nvic_config(struct irq_info *t_info){
+    NVIC_SetPriority(t_info->nvic_id, t_info->priority);
+    NVIC_EnableIRQ(t_info->nvic_id);
+}
+
+static void tim_reg_config(struct timer *t){
+    LL_APB1_GRP1_EnableClock(t->apb_clock_reg);
+    LL_TIM_SetPrescaler(t->id, t->settings.Prescaler);
+    LL_TIM_SetAutoReload(t->id,  t->settings.Autoreload);
+    LL_TIM_SetCounterMode(t->id, t->settings.CounterMode);
+    LL_TIM_SetTriggerOutput(t->id, t->trigger_output);
+    LL_TIM_EnableARRPreload(t->id);
+}
+
+static void counter_and_update_events(TIM_TypeDef *t){
+    LL_TIM_EnableCounter(t);
+    LL_TIM_EnableUpdateEvent(t);
+}
+
+/* bug:: we initialize only the timer 2...?? how is this possible??
+ *       but we have all clocks... we could have internally lock them...
+ *       we may not have the update interrupts...
+ *       this could be the reason i have only tim 2 working interrupt.*/
 void tim_init(uint32_t      output_freq,
               struct timer *tim){
-
     struct timer *setted = timx_set(tim);
-    if (LL_RCC_GetAPB1Prescaler() == LL_RCC_APB1_DIV_2){
-        setted->timx_clk_freq *= 2;
-    } else {}
 
-    uint32_t period = (SystemCoreClock / output_freq) - 1;
-    setted->timx_settings.Autoreload = period;
-    if (tim->timx == TIM2) {
-        LL_APB1_GRP1_EnableClock(setted->apb_clock_reg);
+    compute_arr(setted, output_freq);
 
-        NVIC_SetPriority(TIM2_IRQn, 0x40);
-        NVIC_EnableIRQ(TIM2_IRQn);
-        NVIC_SetPriority(TIM6_DAC_LPTIM1_IRQn, 0x00);
-        NVIC_EnableIRQ(TIM6_DAC_LPTIM1_IRQn);
-        NVIC_SetPriority(TIM7_LPTIM2_IRQn, 0x00);
-        NVIC_EnableIRQ(TIM7_LPTIM2_IRQn);
-        LL_TIM_Init(tim->timx, &tim->timx_settings);
-        LL_TIM_EnableARRPreload(tim->timx);
-        LL_TIM_EnableIT_UPDATE(tim->timx);
-        LL_TIM_EnableUpdateEvent(tim->timx);
-        LL_TIM_SetPrescaler(tim->timx, 0);
-        LL_TIM_SetAutoReload(tim->timx, period);
-        LL_TIM_SetTriggerOutput(tim->timx, tim->trigger_output);
-        LL_TIM_EnableCounter(tim->timx);
-        return;
+    tim_reg_config(setted);
+    tim_nvic_config(&setted->irq_settings);
+
+    if (tim->id == TIM2) {
+        /* LL_TIM_Init(setted->timx, &setted->settings); */
+        LL_TIM_EnableIT_UPDATE(setted->id);
     }
-    LL_APB1_GRP1_EnableClock(setted->apb_clock_reg);
-    LL_TIM_SetPrescaler(setted->timx, 0);
-    LL_TIM_SetAutoReload(setted->timx,  setted->timx_settings.Autoreload);
-    LL_TIM_SetCounterMode(setted->timx, setted->timx_settings.CounterMode);
-    LL_TIM_SetTriggerOutput(setted->timx, setted->trigger_output);
-    LL_TIM_EnableCounter(setted->timx);
-    LL_TIM_EnableUpdateEvent(setted->timx);
+    counter_and_update_events(setted->id);
 }
