@@ -4,7 +4,7 @@
 
 struct nco dummy = {.mode=high,
                     .bandwidth={.high.min=100, .high.max=14000, .high.cv_raw_max=0xfff,
-                                .tracking.min=220, .tracking.max=1661, .tracking.cv_raw_max=0xfff},
+                                .low.min=220, .low.max=1661, .low.cv_raw_max=0xfff},
                     .distortion.level_range={.min=25, .max=129, .cv_raw_max=0xfff}};
 
 void test_distortion_amount_mapper(void){
@@ -24,11 +24,11 @@ void test_pitch_high_mode_mapper(void){
 }
 
 void test_pitch_v_per_oct_mode_mapper(void){
-    uint16_t note = map_uint(0xfff, &dummy.bandwidth.tracking);
-    assert(note == dummy.bandwidth.tracking.max);
+    uint16_t note = map_uint(0xfff, &dummy.bandwidth.low);
+    assert(note == dummy.bandwidth.low.max);
 
-    note = map_uint(0x000, &dummy.bandwidth.tracking);
-    assert(note == dummy.bandwidth.tracking.min);
+    note = map_uint(0x000, &dummy.bandwidth.low);
+    assert(note == dummy.bandwidth.low.min);
 }
 
 int main(void){

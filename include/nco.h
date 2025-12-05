@@ -27,7 +27,7 @@ struct phase_distortion{
 
 struct bandwidth {
     struct limits high;
-    struct limits tracking;
+    struct limits low;
 };
 
 struct phasor {

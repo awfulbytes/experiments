@@ -15,7 +15,7 @@ uint16_t tune_to_bandwidth(struct overseer *overseer, uint8_t osc_idx) {
     uint16_t note =
         (selected_oscillator->mode == high) ?
         map_uint(raw_val, &selected_oscillator->bandwidth.high) :
-        map_uint(raw_val, &selected_oscillator->bandwidth.tracking);
+        map_uint(raw_val, &selected_oscillator->bandwidth.low);
     return note;
 }
 

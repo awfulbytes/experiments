@@ -36,8 +36,6 @@ void DMA1_Channel2_3_IRQHandler(void){
         /* todo(nxt) lock the door if helps */
         generate_half_signal(wave_me_d2, 128, &r_osc);
         r_osc.phase.done_update = false;
-        /* GPIOB->ODR |= (1 << 5); */
-        /* GPIOB->ODR |= (1 << 3); */
     }
     /* i get phase difference because of the sequential reads/writes...
      * π i could use another dac interrupt...*/
