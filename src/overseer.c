@@ -1,6 +1,6 @@
 #include "overseer.h"
 
-struct nco* select_osc(struct overseer *overseer, uint8_t osc_idx){
+static inline struct nco* select_osc(struct overseer *overseer, uint8_t osc_idx){
     overseer->oscillators[osc_idx]->in_the_house.report = osc_idx;
     return overseer->oscillators[osc_idx];
 }
@@ -24,8 +24,8 @@ void tune(struct overseer *overseer, uint8_t osc_idx) {
 }
 
 #pragma GCC diagnostic ignored "-Wunused-variable"
-void stage_modulated_signal_values(struct   nco      osc[static 1],
-                                   struct overworld *data){
+static inline void stage_modulated_signal_values(struct   nco        osc[static 1],
+                                                 struct   overworld *data){
     if(osc->phase.pending_update){
         if (osc->distortion.on) {
             /* check linked tasks */
