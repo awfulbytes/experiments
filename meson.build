@@ -58,6 +58,10 @@ lib_dirs = [core_inc_dir, hal_dev_inc, cmsis_dev_inc]
 # Flags
 MCU        = '-DSTM32G071xx'
 LL         = '-DUSE_FULL_LL_DRIVER'
+fast       = '-Ofast'
+small      = '-Os'
+full       = '-O3'
+optimize   = small
 
 objcopy                 = find_program('arm-none-eabi-objcopy')
 strip                   = find_program('arm-none-eabi-strip')
@@ -68,35 +72,39 @@ elf = executable('testershit', src_files + src_deps,
                  # link_with: hal,
                  include_directories : lib_dirs + inc_dir,
                  override_options: [],
-                 c_args : [MCU , LL],
+                 c_args : [MCU , LL, optimize],
                  link_args : ['-nostdlib', '-nostartfiles', '-nodefaultlibs',
-                              '--data-sections', '-std=c23',
+                              '--data-sections', '-std=c23', optimize,
                               '--specs=nano.specs', '-Wl,-Map=output.map'],
-                 build_by_default: true
-                )
-
-custom_target('stm32_app.bin',
-              input : elf,
-              output : 'stm32_app.bin',
-              command : [objcopy, '-O', 'binary', '@INPUT@', '@OUTPUT@'],
-              build_by_default: true
-             )
+                 build_by_default: true)
+small = custom_target('Small sized binary',
+                      input : elf,
+                      output : 'small.bin',
+                      command : [objcopy, '-O', 'binary', '@INPUT@', '@OUTPUT@'],
+                      build_by_default: true)
 striper = custom_target('stripped-binary',
-              input: elf,
-              output: 'stripped.elf',
-              command: [strip, '--strip-all', '@INPUT@', '-o', '@OUTPUT@'],
-              # build_by_default: true
-             )
-custom_target('stm32_app.hex',
-              input : elf,
-              output : 'stm32_app.hex',
-              command : [objcopy, '-O', 'ihex', '@INPUT@', '@OUTPUT@'],
-              build_by_default: true)
-custom_target('stm32.bin',
-              input: striper,
-              output: 'striper.bin',
-              command : [objcopy, '-O', 'binary', '@INPUT@', '@OUTPUT@'],
-              build_by_default: true)
+                        input: elf,
+                        output: 'stripped.elf',
+                        command: [strip, '--strip-all', '@INPUT@', '-o', '@OUTPUT@'])
+
+release = executable('release', src_files + src_deps,
+                     include_directories : lib_dirs + inc_dir,
+                     override_options: [],
+                     c_args : [MCU , LL, fast],
+                     link_args : ['-nostdlib', '-nostartfiles', '-nodefaultlibs',
+                                  '--data-sections', '-std=c23', fast,
+                                  '--specs=nano.specs', '-Wl,-Map=output.map'],
+                     build_by_default: false)
+strip_rel = custom_target('stripped-rel',
+                          input: release,
+                          output: 'stripped-rel.elf',
+                          command: [strip, '--strip-all', '@INPUT@', '-o', '@OUTPUT@'],
+                          build_by_default: false)
+rel_bin = custom_target('release',
+                        input : release,
+                        output : 'rel.bin',
+                        command : [objcopy, '-O', 'binary', '@INPUT@', '@OUTPUT@'],
+                        build_by_default: false)
 
 run_target(
   'colapse',
@@ -107,7 +115,8 @@ run_target(
 
 run_target(
   'bin_size',
-  command: [size, '--format=sysv', '--common', 'testershit', 'stripped.elf'],)
+  command: [size, '--format=sysv', '--common', 'stripped.elf', 'stripped-rel.elf'],
+  depends: [striper, strip_rel])
 
 flash = find_program('st-flash')
 run_target(
@@ -116,4 +125,9 @@ run_target(
 
 run_target(
   'sendit',
-  command: [flash, 'write', 'stm32_app.bin', '0x08000000', '&&', flash, 'reset'],)
+  command: [flash, 'write', 'small.bin', '0x08000000', '&&', flash, 'reset'],
+  depends: [small])
+run_target(
+  'fast',
+  command: [flash, 'write', 'rel.bin', '0x08000000', '&&', flash, 'reset'],
+  depends: [rel_bin])
