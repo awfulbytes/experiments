@@ -237,5 +237,6 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC,
 
 struct overseer cosmos = {
     .oscillators = {&l_osc, &r_osc},
+    .selected = &l_osc,
     .universe_data = &world,
 };

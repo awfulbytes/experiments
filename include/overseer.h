@@ -16,11 +16,12 @@ struct overworld {
 
 struct overseer {
     struct nco       *oscillators[2];
+    struct nco       *selected;
     struct overworld *universe_data;
 };
 
 
-static inline void stage_modulated_signal_values(struct   nco        osc[static 1],
+static inline void stage_modulated_values(struct   nco        osc[static 1],
                                                  struct   overworld *data);
 
 void tune(struct overseer *overseer, uint8_t osc_idx);
