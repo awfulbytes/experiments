@@ -15,6 +15,7 @@
 #define adc_clk       48000
 /* #define adc_clk       399900 */
 #define starting_mode low
+#define max_cv        0x7fff
 
 struct overworld world = {
     .pitch_cv                           = cv_init,
@@ -40,12 +41,12 @@ struct nco l_osc = {.phase = {.accum = 0,
                     .in_the_house.report = 0,
                     .mode = starting_mode,
                     .bandwidth.high = {.min=4000, .max=12000,
-                                       .cv_raw_max=0xfff},
-                    .bandwidth.low = {.min=10, .max=400,
-                                           .cv_raw_max=0xfff},
+                                       .cv_raw_max=max_cv},
+                    .bandwidth.low = {.min=10, .max=6000,
+                                           .cv_raw_max=max_cv},
                     .distortion.amount=64,
                     .distortion.level_range={.min=23, .max=129,
-                                             .cv_raw_max=0xfff},
+                                             .cv_raw_max=max_cv},
                     .distortion.on=false,
                     .distortion.past_dante = entrance,
                     .distortion.dante=entrance};
@@ -58,12 +59,12 @@ struct nco r_osc = {.phase = {.accum = 0,
                     .in_the_house.report = 1,
                     .mode=starting_mode,
                     .bandwidth.high = {.min=4000, .max=12000,
-                                       .cv_raw_max=0xfff},
-                    .bandwidth.low = {.min=10, .max=400,
-                                           .cv_raw_max=0xfff},
+                                       .cv_raw_max=max_cv},
+                    .bandwidth.low = {.min=10, .max=6000,
+                                           .cv_raw_max=max_cv},
                     .distortion.amount=64,
                     .distortion.level_range={.min=23, .max=129,
-                                             .cv_raw_max=0xfff},
+                                             .cv_raw_max=max_cv},
                     .distortion.on=false,
                     .distortion.past_dante = entrance,
                     .distortion.dante=entrance};

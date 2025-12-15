@@ -17,14 +17,6 @@ void adc_init_settings(struct adc *adc){
 
     LL_ADC_Init(adc->adcx, &adc->settings);
 
-    /*
-     * todo later oversampling
-     * - https://www.st.com/resource/en/reference_manual/rm0454-stm32g0x0-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
-     * - https://www.st.com/resource/en/datasheet/stm32g071c8.pdf
-     * registers to start reading
-    (adc->adcx->CFGR2 |= ADC_CFGR2_OVSR; adc->adcx->CFGR2 |= ADC_CFGR2_OVSS_0;)
-    */
-
     LL_ADC_REG_SetSequencerConfigurable(adc->adcx, LL_ADC_REG_SEQ_CONFIGURABLE);
     while (!LL_ADC_IsActiveFlag_CCRDY(adc->adcx)) {}
     LL_ADC_ClearFlag_CCRDY(adc->adcx);
@@ -37,10 +29,11 @@ void adc_init_settings(struct adc *adc){
     while (!LL_ADC_IsActiveFlag_CCRDY(adc->adcx)) {}
     LL_ADC_ClearFlag_CCRDY(adc->adcx);
 
-
-    LL_ADC_SetSamplingTimeCommonChannels(adc->adcx,
-                                         LL_ADC_SAMPLINGTIME_COMMON_1,
-                                         LL_ADC_SAMPLINGTIME_12CYCLES_5);
+    enable_oversampling(adc);
+    LL_ADC_SetSamplingTimeCommonChannels(adc->adcx, LL_ADC_SAMPLINGTIME_COMMON_1, LL_ADC_SAMPLINGTIME_39CYCLES_5);
+    /* LL_ADC_SetSamplingTimeCommonChannels(adc->adcx, LL_ADC_SAMPLINGTIME_COMMON_2, LL_ADC_SAMPLINGTIME_39CYCLES_5); */
+    LL_ADC_DisableIT_EOC(adc->adcx);
+    LL_ADC_DisableIT_EOS(adc->adcx);
 
     LL_ADC_SetChannelSamplingTime(adc->adcx,
                                   LL_ADC_CHANNEL_0 |
@@ -79,4 +72,11 @@ static ErrorStatus adc_dma_setup(struct adc *adc) {
     while (!LL_DMA_IsEnabledChannel(adc->dmax, adc->dma_channel)) {}
 
     return SUCCESS;
+}
+
+void enable_oversampling(struct adc *a){
+    LL_ADC_SetOverSamplingScope(a->adcx, LL_ADC_OVS_GRP_REGULAR_CONTINUED);
+    LL_ADC_ConfigOverSamplingRatioShift(a->adcx, LL_ADC_OVS_RATIO_16, LL_ADC_OVS_SHIFT_RIGHT_1);
+    LL_ADC_SetOverSamplingDiscont(a->adcx, LL_ADC_OVS_REG_CONT);
+    LL_ADC_SetTriggerFrequencyMode(a->adcx, LL_ADC_CLOCK_FREQ_MODE_HIGH);
 }
