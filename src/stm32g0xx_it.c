@@ -95,24 +95,20 @@ void EXTI4_15_IRQHandler(void) {
     if ((EXTI->FPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
         (EXTI->FPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
         osc_0_pd_enc.B.value = ((osc_0_pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
-        osc_0_pd_enc.A.flag = 'i';
         scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
     }
     if ((EXTI->FPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
         (EXTI->FPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
         osc_1_pd_enc.B.value = ((osc_1_pd_enc.B.pin.port_id->IDR) & (1U<<8)) ? 1U : 0;
-        osc_1_pd_enc.A.flag = 'i';
         scan_and_apply_current_modulations(&osc_1_pd_enc, &r_osc);
     }
     if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line){
         (EXTI->RPR1) = (wave_choise_dac1.exti.exti_line);
         wave_button_callback(&wave_choise_dac1);
-        wave_choise_dac1.flag = 'i';
     }
     if ((EXTI->RPR1 & wave_choise_dac2.exti.exti_line) == wave_choise_dac2.exti.exti_line) {
         (EXTI->RPR1) = (wave_choise_dac2.exti.exti_line);
         wave_button_callback(&wave_choise_dac2);
-        wave_choise_dac2.flag = 'i';
     }
     if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line) {
         (EXTI->RPR1) = (distortion_choice.exti.exti_line);
@@ -121,4 +117,5 @@ void EXTI4_15_IRQHandler(void) {
         handle_osc_distortion(&l_osc);
         handle_osc_distortion(&r_osc);
     }
+    return;
 }

@@ -9,8 +9,8 @@
 #define adc_clk        44000
 uint16_t double_buffer[256] = {0};
 
-extern void scan_and_apply_current_modulations(struct encoder enc[static 1],
-                                               struct nco osillator[static 1]);
+extern volatile void* scan_and_apply_current_modulations(struct encoder enc[static 1],
+                                                         struct nco osillator[static 1]);
 
 void emulate_distortion_on(struct nco *nco){
     nco->distortion.on = true;

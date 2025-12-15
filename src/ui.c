@@ -6,14 +6,15 @@ static void exti_enc_setup(struct encoder_channel channel[static 1]);
 inline void wave_button_callback(struct button *abut){
     // nxt:: need some more work but elswhere..
     switch (abut->state) {
-        case 3:
-            abut->state >>= abut->state;
-            break;
-        default:
-            ++abut->state;
-            break;
+    case 3:
+        abut->state >>= abut->state;
+        break;
+    default:
+        ++abut->state;
+        break;
     }
-    abut->flag = 'D';
+    abut->flag = 'i';
+    return;
 }
 
 void enc_init(struct encoder *enc){
@@ -59,16 +60,14 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
 }
 
 
-void scan_and_apply_current_modulations(struct encoder enc[static 1],
+volatile void* scan_and_apply_current_modulations(struct encoder enc[static 1],
                                         struct nco osillator[static 1]){
-    if (enc->A.flag == 0x69){
-        if (!osillator->distortion.on)
-            osillator->mode = change_pitch_mode(osillator);
-        else {
-            bit_bang_encoder(enc);
-            osillator->distortion.dante = enc->increment;
-        }
-        enc->A.flag = 'D';
-        osillator->distortion.past_dante = osillator->distortion.dante;
+    if (osillator->distortion.on == false){
+        osillator->mode = change_pitch_mode(osillator);
+    } else {
+        bit_bang_encoder(enc);
+        osillator->distortion.dante = enc->increment;
     }
+    osillator->distortion.past_dante = osillator->distortion.dante;
+    return (void*)0;
 }
