@@ -51,7 +51,7 @@ void tim_init(uint32_t      output_freq,
     tim_nvic_config(&setted->irq_settings);
 
     if (tim->id == TIM2) {
-        /* LL_TIM_Init(setted->timx, &setted->settings); */
+        /* LL_TIM_Init(setted->id, &setted->settings); */
         LL_TIM_EnableIT_UPDATE(setted->id);
     }
     counter_and_update_events(setted->id);

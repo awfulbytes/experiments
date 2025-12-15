@@ -1,6 +1,6 @@
 #include "gpio.h"
 
-static void exti_setup(struct button *p){
+static void exti_setup(volatile struct button *p){
     LL_EXTI_SetEXTISource(p->exti.exti_port_conf, p->exti.exti_line_conf);
     LL_EXTI_EnableRisingTrig_0_31(p->exti.exti_line);
     LL_EXTI_EnableIT_0_31(p->exti.exti_line);
@@ -8,7 +8,7 @@ static void exti_setup(struct button *p){
     NVIC_EnableIRQ(p->exti.exti_irqn);
 }
 
-void gpio_init(struct button **choice_buttons,
+void gpio_init(volatile struct button **choice_buttons,
                struct gpio   **dacs,
                struct gpio   **adc_pin){
     LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA |

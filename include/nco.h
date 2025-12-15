@@ -1,19 +1,20 @@
 #include <stdint.h>
+#include <stdbool.h>
 #pragma once
 typedef enum freq_modes {high, low} freq_modes_e;
-typedef enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
-              // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
-              hell} cyrcles_e;
+typedef volatile enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
+                               // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
+                               hell} cyrcles_e;
 
 struct ping_pong_buff{
     // uint8_t size;
-    uint16_t ping_buff[128];
+    volatile uint16_t ping_buff[128];
 };
 
 struct limits {
-    uint16_t min;
-    uint16_t max;
-    uint16_t cv_raw_max;
+    volatile uint16_t min;
+    volatile uint16_t max;
+    volatile uint16_t cv_raw_max;
 };
 
 struct phase_distortion{
@@ -43,7 +44,7 @@ typedef struct sanity {
 } sanity_t;
 struct nco {
     struct   phasor           phase;
-    freq_modes_e              mode;
+    volatile freq_modes_e     mode;
     struct   ping_pong_buff   data_buff;
     struct   phase_distortion distortion;
     struct   bandwidth        bandwidth;
@@ -55,7 +56,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
                           uint16_t                sector_length,
                           struct   nco            nco[static 1]);
 
-void update_data_buff (const uint16_t data[static 128],
+void update_data_buff (const volatile uint16_t data[static 128],
                        uint16_t       buffer_sector[static 128],
                        uint16_t       sector_length);
 #pragma GCC diagnostic ignored "-Wignored-qualifiers"
@@ -66,10 +67,10 @@ void update_data_buff (const uint16_t data[static 128],
  */
 __attribute__((pure))
 uint16_t map_uint(uint16_t      adc_value,
-                  struct limits boundaries[static 1]);
+                  volatile struct limits boundaries[static 1]);
 
 bool stage_pending_inc(volatile uint16_t      note,
-                       struct   nco           nco[static 1],
+                       volatile struct   nco  nco[static 1],
                        const    uint_fast32_t sample_rate);
 
 __attribute__((pure, always_inline))

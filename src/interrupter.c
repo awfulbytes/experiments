@@ -14,7 +14,7 @@ volatile int go_front = 0;
 
 void main() {
     struct timer *timers[2] = {&tim6_settings, &tim7_settings};
-    struct button *wave_buttons[3] = {&wave_choise_dac1, &wave_choise_dac2, &distortion_choice};
+    volatile struct button *wave_buttons[3] = {&wave_choise_dac1, &wave_choise_dac2, &distortion_choice};
     struct gpio *dacs[2] = {&dac1, &dac2};
     struct gpio *osc_cvs[4] = {&pitch_0_cv, &dist_amount_0_cv, &pitch_1_cv, &dist_amount_1_cv};
     struct dac *dacs_settings[2] = {&dac_ch1_settings, &dac_ch2_settings};
@@ -63,12 +63,11 @@ void main() {
         tune(&cosmos, 1);
 
         if (wave_choise_dac1.flag == 0x69) {
-            wave_me_d = *(waves_bank + wave_choise_dac1.state);
+            wave_me_d = waves_bank[wave_choise_dac1.state];
             wave_choise_dac1.flag = 'D';
         }
         if (wave_choise_dac2.flag == 0x69) {
-            wave_me_d2 = *(waves_bank + wave_choise_dac2.state);
-            // wave_me_d2 = waves_bank[wave_choise_dac2.state];
+            wave_me_d2 = waves_bank[wave_choise_dac2.state];
             wave_choise_dac2.flag = 'D';
         }
     }

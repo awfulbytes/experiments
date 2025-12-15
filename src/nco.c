@@ -37,23 +37,25 @@ void generate_half_signal(volatile const uint16_t data[static 128],
 
 __attribute__((pure))
 uint16_t map_uint(uint16_t      value,
-                  struct limits boundaries[static 1]) {
+                  volatile struct limits boundaries[static 1]) {
     uint16_t range = boundaries->max - boundaries->min;
     return (uint16_t)(boundaries->min + (value * range) / boundaries->cv_raw_max);
 }
 
 __attribute__((pure))
 bool stage_pending_inc(volatile uint16_t      note,
-                       struct   nco           nco[static 1],
+                       volatile struct nco    nco[static 1],
                        const    uint_fast32_t sample_rate){
+    if(note > 15100)
+        return false;
 
     nco->phase.pending_update_inc = compute_nco_increment(note, sample_rate);
     return true;
 }
 
 __attribute__((always_inline))
-inline void update_data_buff(const uint16_t data[static 128],
+inline void update_data_buff(const volatile  uint16_t data[static 128],
                              uint16_t       buffer_sector[static 128],
                              uint16_t       sector_length) {
-    memcpy(buffer_sector, data, sizeof(uint16_t) * sector_length);
+    memcpy(buffer_sector, (const void* restrict) data, sizeof(uint16_t) * sector_length);
 }

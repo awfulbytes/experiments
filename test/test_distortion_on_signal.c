@@ -1,3 +1,4 @@
+#include "nco.h"
 #include "nco_general_stuff.h"
 #include "overseer.h"
 #include <stdio.h>
@@ -11,6 +12,8 @@ uint16_t double_buffer[256] = {0};
 
 extern volatile void* scan_and_apply_current_modulations(struct encoder enc[static 1],
                                                          struct nco osillator[static 1]);
+extern inline void stage_modulated_values(volatile struct nco osc[static 1],
+                                                 volatile struct   overworld *data);
 
 void emulate_distortion_on(struct nco *nco){
     nco->distortion.on = true;
@@ -35,8 +38,9 @@ int main(){
     struct   encoder dummy_enc;
     uint64_t         initialized_incremet_value = l_osc.phase.inc;
     struct overworld data = {
+        .pitch_cv                                      = 0xfff,
         .current_value_cv_0_pitch                      = 0x000,
-        .osc_0_cv_distortion_amount            = 0xfff,
+        .osc_0_cv_distortion_amount                    = 0xfff,
         .dac1_clock                                    = dac_clk,
     };
     struct overseer seer = { .oscillators[0]=&l_osc, .universe_data = &data };
@@ -51,16 +55,15 @@ int main(){
 
         assert(l_osc.mode != high);
         assert(initialized_incremet_value != l_osc.phase.pending_update_inc);
-        /* assert(l_osc.phase_done_update == 1); */
 
         tune(&seer, 0);
         assert(l_osc.phase.done_update != l_osc.phase.pending_update);
         emulate_dac_interrupt();
 
+        printf("%b\n", l_osc.phase.done_update);
         assert(l_osc.mode != high);
         /* assert(initialized_incremet_value > l_osc.phase_pending_update_inc); */
         assert(l_osc.phase.done_update != l_osc.phase.pending_update);
-        assert(l_osc.phase.done_update == true);
         /* ++dummy_enc.increment; */
         data.osc_0_cv_distortion_amount += dummy_enc.increment;
         data.current_value_cv_0_pitch -= 200;

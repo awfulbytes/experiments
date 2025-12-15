@@ -28,7 +28,7 @@ void enc_init(struct encoder *enc){
 }
 
 __attribute((pure, always_inline))
-inline freq_modes_e change_pitch_mode(struct nco oscillator[static 1]){
+inline volatile freq_modes_e change_pitch_mode(struct nco oscillator[static 1]){
     return (oscillator->mode == high) ? low : high;
 }
 
@@ -40,12 +40,12 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
      */
     enc->direction = (enc->B.value == 1) ? cw : ccw;
     switch (enc->direction) {
-        case cw:
-            ++enc->increment;
-            break;
-        case ccw:
-            --enc->increment;
-            break;
+    case cw:
+        ++enc->increment;
+        break;
+    case ccw:
+        --enc->increment;
+        break;
     }
 
     /*

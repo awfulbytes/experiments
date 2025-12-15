@@ -41,28 +41,25 @@ void DMA1_Channel2_3_IRQHandler(void){
      * π i could use another dac interrupt...*/
     if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) &&
         ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3)) {
+        /* lock_the_door( */
+        update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128);
+        update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2, 128);
         (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
         (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
-        lock_the_door(
-        update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128);
-        update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2, 128))
     }
     if (((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2) &&
         ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3)) {
+        /* lock_the_door( */
+        update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff + 128, 128);
+        update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2 + 128, 128);
         (DMA1->IFCR) = (DMA_IFCR_CTCIF2);
         (DMA1->IFCR) = (DMA_IFCR_CTCIF3);
-        lock_the_door(
-        update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff + 128, 128);
-        update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2 + 128, 128))
     }
 }
 
 void TIM2_IRQHandler(void) {
     if (TIM2->SR & TIM_SR_UIF) {
-        TIM2->SR &= ~(TIM_SR_UIF);
-
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
-            (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
 
             world.current_value_cv_0_pitch = cv_raw_adc_inp[0];
             world.osc_0_cv_distortion_amount = cv_raw_adc_inp[1];
@@ -70,7 +67,9 @@ void TIM2_IRQHandler(void) {
             world.current_value_cv_1_pitch = cv_raw_adc_inp[3];
             l_osc.phase.pending_update = r_osc.phase.pending_update = true;
         }
-        /* GPIOB->ODR |= (1 << 3); */
+
+        (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
+        TIM2->SR &= ~(TIM_SR_UIF);
     }
 }
 

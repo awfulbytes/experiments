@@ -20,8 +20,8 @@ void tune(struct overseer *overseer,
 }
 
 #pragma GCC diagnostic ignored "-Wunused-variable"
-static inline void stage_modulated_values(struct   nco        osc[static 1],
-                                          struct   overworld *data){
+static inline void stage_modulated_values(volatile struct nco osc[static 1],
+                                          volatile struct   overworld *data){
     if(osc->phase.pending_update){
         if (osc->distortion.on) {
             /* check linked tasks */
@@ -34,8 +34,7 @@ static inline void stage_modulated_values(struct   nco        osc[static 1],
         } else {
             /* who tf knows */
         }
-        bool staged = stage_pending_inc(data->pitch_cv, osc, data->dac1_clock);
-        osc->phase.done_update = staged;
+        osc->phase.done_update = stage_pending_inc(data->pitch_cv, osc, data->dac1_clock);
         osc->phase.pending_update = !osc->phase.done_update;
     }
 }

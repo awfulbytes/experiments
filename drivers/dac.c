@@ -1,15 +1,20 @@
 #include "dac.h"
 #include "gpio.c"
+#include <stdbool.h>
 
-static void dac_chx_priority(struct dac *dac){
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+static inline void dac_chx_priority(struct dac *dac){
     if (dac->channel == LL_DAC_CHANNEL_1){
-        NVIC_SetPriority(dac->timx_dac_irq, 0x40);
+        NVIC_SetPriority(dac->timx_dac_irq, 0x00);
         NVIC_EnableIRQ(dac->timx_dac_irq);
     } else {
         NVIC_SetPriority(dac->timx_dac_irq, 0x00);
         NVIC_EnableIRQ(dac->timx_dac_irq);
     }
+    return;
 }
+#pragma GCC pop_options
 
 void dac_config (struct dac *gdac){
     dac_chx_priority(gdac);

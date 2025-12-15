@@ -4,16 +4,16 @@
 enum direction {cw, ccw};
 
 struct encoder_channel {
-    struct gpio pin;
-    struct exti it_settings;
-    char        flag;
-    uint32_t    value;
+    struct   gpio     pin;
+    struct   exti     it_settings;
+    volatile char     flag;
+    volatile uint32_t value;
 };
 
 struct encoder {
     struct encoder_channel A, B;
     enum   direction       direction;
-    uint16_t               increment;
+    volatile uint16_t      increment;
 };
 
 #pragma GCC diagnostic ignored "-Wunused-function"
@@ -33,5 +33,5 @@ void enc_init(struct encoder *enc);
 void wave_button_callback(struct button *abut);
 void WaitForUserButtonPress (struct button *button);
 
-void scan_and_apply_current_modulations(struct encoder enc[static 1],
-                                        struct nco osillator[static 1]);
+volatile void* scan_and_apply_current_modulations(struct encoder enc[static 1],
+                                                  struct nco osillator[static 1]);

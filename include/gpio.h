@@ -40,6 +40,6 @@ struct button {
     volatile uint8_t  flag;
 };
 
-void gpio_init(struct button **p,
+void gpio_init(volatile struct button **p,
                struct gpio   **led,
                struct gpio   **adc_pin);
