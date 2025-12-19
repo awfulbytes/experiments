@@ -42,16 +42,16 @@ void DMA1_Channel2_3_IRQHandler(void){
     if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) &&
         ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3)) {
         /* lock_the_door( */
-        update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff, 128);
-        update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2, 128);
+        update_data_buff(l_osc.data_buff.ping_buff, dac_double_double_buff, 128);
+        update_data_buff(r_osc.data_buff.ping_buff, dac_double_double_buff + 256, 128);
         (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
         (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
     }
     if (((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2) &&
         ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3)) {
         /* lock_the_door( */
-        update_data_buff(l_osc.data_buff.ping_buff, dac_double_buff + 128, 128);
-        update_data_buff(r_osc.data_buff.ping_buff, dac_double_buff2 + 128, 128);
+        update_data_buff(l_osc.data_buff.ping_buff, dac_double_double_buff + 128, 128);
+        update_data_buff(r_osc.data_buff.ping_buff, dac_double_double_buff + (256 + 128), 128);
         (DMA1->IFCR) = (DMA_IFCR_CTCIF2);
         (DMA1->IFCR) = (DMA_IFCR_CTCIF3);
     }

@@ -99,3 +99,6 @@ inline static void dbg_info_nco(struct    nco *nco,
     printf("\n");
 }
 #endif // TEST
+
+
+static inline void mmcpy ( void* dst, const void* src, uint16_t length);

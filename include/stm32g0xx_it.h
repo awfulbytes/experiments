@@ -7,7 +7,7 @@
 extern struct overworld world;
 extern volatile uint16_t        cv_raw_adc_inp[4];
 extern volatile const uint16_t *wave_me_d, *wave_me_d2;
-extern uint16_t                 dac_double_buff[256], dac_double_buff2[256];
+extern uint16_t                 dac_double_double_buff[512];
 
 extern volatile uint8_t cnt_adc_cycles;
 

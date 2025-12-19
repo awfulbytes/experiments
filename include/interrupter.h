@@ -69,8 +69,7 @@ struct nco r_osc = {.phase = {.accum = 0,
                     .distortion.past_dante = entrance,
                     .distortion.dante=entrance};
 
-volatile uint16_t dac_double_buff[256] = {0};
-volatile uint16_t dac_double_buff2[256] = {0};
+volatile uint16_t dac_double_double_buff[512] = {0};
 
 struct timer tim6_settings = {.id=TIM6,
                               .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6,
@@ -94,7 +93,7 @@ struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1,
                                                .OutputConnection=LL_DAC_OUTPUT_CONNECT_GPIO}};
 
 /* todo(nxt) check if i have to cast the array... should just decay to it...*/
-struct dma dac_1_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_3, .data=(uint16_t *) dac_double_buff,
+struct dma dac_1_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_3, .data=(uint16_t *) dac_double_double_buff,
                         .chan=(DMA_Channel_TypeDef *)((uint32_t)DMA1 + (8 + 40)),
                         .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_DAC1_CH1,
                                         .Direction=LL_DMA_DIRECTION_MEMORY_TO_PERIPH,
@@ -115,7 +114,7 @@ struct dac dac_ch2_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_2,
                                                .OutputBuffer=LL_DAC_OUTPUT_BUFFER_ENABLE,
                                                .OutputConnection=LL_DAC_OUTPUT_CONNECT_GPIO}};
 
-struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *) dac_double_buff2,
+struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *) (dac_double_double_buff + 256),
                         .chan=(DMA_Channel_TypeDef *)((uint32_t)DMA1 + (8 + 20)),
                         .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_DAC1_CH2,
                                         .Direction=LL_DMA_DIRECTION_MEMORY_TO_PERIPH,
