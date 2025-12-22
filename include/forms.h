@@ -1,5 +1,4 @@
 #include <stdint.h>
-enum waves {SINE, SAWU, SAWD, PULSE, WAVE_CTR};
 
 volatile const uint16_t pulse[128] = {
     0,    0,    0,    0,    0,    0,    0,    0,

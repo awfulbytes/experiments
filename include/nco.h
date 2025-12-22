@@ -59,12 +59,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
 void update_data_buff (const volatile uint16_t data[static 128],
                        uint16_t       buffer_sector[static 128],
                        uint16_t       sector_length);
-#pragma GCC diagnostic ignored "-Wignored-qualifiers"
 
-/*
-  uint16_t map_12b_to_distortion_amount(uint16_t       value,
-                                        struct limits  level_range[static 1]);
- */
 __attribute__((pure))
 uint16_t map_uint(uint16_t      adc_value,
                   volatile struct limits boundaries[static 1]);
@@ -100,5 +95,5 @@ inline static void dbg_info_nco(struct    nco *nco,
 }
 #endif // TEST
 
-
+#pragma GCC diagnostic ignored "-Wunused-function"
 static inline void mmcpy ( void* dst, const void* src, uint16_t length);

@@ -1,4 +1,5 @@
 #include "stm32g0xx_it.h"
+#include "overseer.h"
 // #define DEBUG
 /* #define encoder_leds */
 #define abs(x)                 ((x<0) ? -x : x)
@@ -12,13 +13,8 @@ void SVC_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 
-void TIM6_DAC_LPTIM1_IRQHandler(void){
-    if (TIM6->SR & TIM_SR_UIF) {
-        TIM6->SR &= ~(TIM_SR_UIF);
-    }
-}
-
 void TIM7_LPTIM2_IRQHandler(void){
+    /* todo(nxt) make this a profiling timer */
     if (TIM7->SR & TIM_SR_UIF){
         TIM7->SR &= ~(TIM_SR_UIF);
     }
@@ -31,25 +27,23 @@ void DMA1_Channel2_3_IRQHandler(void){
         generate_half_signal(wave_me_d, 128, &l_osc);
         l_osc.phase.done_update = false;
     }
+
     if (r_osc.phase.done_update) {
         r_osc.phase.inc = r_osc.phase.pending_update_inc;
-        /* todo(nxt) lock the door if helps */
         generate_half_signal(wave_me_d2, 128, &r_osc);
         r_osc.phase.done_update = false;
     }
-    /* i get phase difference because of the sequential reads/writes...
-     * π i could use another dac interrupt...*/
+
     if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) &&
         ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3)) {
-        /* lock_the_door( */
         update_data_buff(l_osc.data_buff.ping_buff, dac_double_double_buff, 128);
         update_data_buff(r_osc.data_buff.ping_buff, dac_double_double_buff + 256, 128);
         (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
         (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
     }
+
     if (((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2) &&
         ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3)) {
-        /* lock_the_door( */
         update_data_buff(l_osc.data_buff.ping_buff, dac_double_double_buff + 128, 128);
         update_data_buff(r_osc.data_buff.ping_buff, dac_double_double_buff + (256 + 128), 128);
         (DMA1->IFCR) = (DMA_IFCR_CTCIF2);
@@ -92,22 +86,22 @@ static inline void handle_osc_distortion(struct nco nco[static 1]){
 
 void EXTI4_15_IRQHandler(void) {
     if ((EXTI->FPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
-        (EXTI->FPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
-        osc_0_pd_enc.B.value = ((osc_0_pd_enc.B.pin.port_id->IDR) & (1U<<5)) ? 1U : 0;
+        osc_0_pd_enc.B.value = read_gpio(&osc_0_pd_enc.B.pin);
         scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
+        (EXTI->FPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
     }
     if ((EXTI->FPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
-        (EXTI->FPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
-        osc_1_pd_enc.B.value = ((osc_1_pd_enc.B.pin.port_id->IDR) & (1U<<8)) ? 1U : 0;
+        osc_1_pd_enc.B.value = read_gpio(&osc_1_pd_enc.B.pin);
         scan_and_apply_current_modulations(&osc_1_pd_enc, &r_osc);
+        (EXTI->FPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
     }
-    if ((EXTI->RPR1 & wave_choise_dac1.exti.exti_line) == wave_choise_dac1.exti.exti_line){
-        (EXTI->RPR1) = (wave_choise_dac1.exti.exti_line);
-        wave_button_callback(&wave_choise_dac1);
+    if ((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
+        (EXTI->RPR1) = (freq_mode_but_dac1.exti.exti_line);
+        l_osc.mode = change_pitch_mode(&l_osc);
     }
-    if ((EXTI->RPR1 & wave_choise_dac2.exti.exti_line) == wave_choise_dac2.exti.exti_line) {
-        (EXTI->RPR1) = (wave_choise_dac2.exti.exti_line);
-        wave_button_callback(&wave_choise_dac2);
+    if ((EXTI->RPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line) {
+        (EXTI->RPR1) = (freq_mode_but_dac2.exti.exti_line);
+        r_osc.mode = change_pitch_mode(&r_osc);
     }
     if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line) {
         (EXTI->RPR1) = (distortion_choice.exti.exti_line);

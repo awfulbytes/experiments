@@ -1,6 +1,7 @@
 #include "gpio.h"
 #include "nco.h"
 
+enum waves {SINE, SAWU, SAWD, PULSE, WAVE_CTR};
 enum direction {cw, ccw};
 
 struct encoder_channel {
@@ -14,6 +15,7 @@ struct encoder {
     struct encoder_channel A, B;
     enum   direction       direction;
     volatile uint16_t      increment;
+    volatile struct button virtual_wave_button;
 };
 
 #pragma GCC diagnostic ignored "-Wunused-function"

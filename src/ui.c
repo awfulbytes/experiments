@@ -1,5 +1,4 @@
 #include "ui.h"
-#include <stdint.h>
 
 static void exti_enc_setup(struct encoder_channel channel[static 1]);
 
@@ -7,7 +6,7 @@ inline void wave_button_callback(struct button *abut){
     // nxt:: need some more work but elswhere..
     switch (abut->state) {
     case 3:
-        abut->state >>= abut->state;
+        abut->state = 0;
         break;
     default:
         ++abut->state;
@@ -25,11 +24,6 @@ void enc_init(struct encoder *enc){
     LL_GPIO_SetPinPull(enc->B.pin.port_id, enc->B.pin.pin_id, enc->B.pin.pull);
 
     exti_enc_setup(&enc->A);
-}
-
-__attribute((pure, always_inline))
-inline volatile freq_modes_e change_pitch_mode(struct nco oscillator[static 1]){
-    return (oscillator->mode == high) ? low : high;
 }
 
 static void bit_bang_encoder(struct encoder enc[static 1]){
@@ -61,13 +55,16 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
 
 
 volatile void* scan_and_apply_current_modulations(struct encoder enc[static 1],
-                                        struct nco osillator[static 1]){
+                                                  struct nco osillator[static 1]){
+    bit_bang_encoder(enc);
     if (osillator->distortion.on == false){
-        osillator->mode = change_pitch_mode(osillator);
+        enc->virtual_wave_button.state = enc->increment & (WAVE_CTR - 1);
+        enc->virtual_wave_button.flag = 'i';
     } else {
-        bit_bang_encoder(enc);
+        /* bit_bang_encoder(enc); */
         osillator->distortion.dante = enc->increment;
     }
     osillator->distortion.past_dante = osillator->distortion.dante;
+    osillator->phase.pending_update = true;
     return (void*)0;
 }

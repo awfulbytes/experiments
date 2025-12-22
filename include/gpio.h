@@ -22,6 +22,7 @@ void debug_tim2_pin31(void){
 
 struct gpio {
     uint32_t      pin_id;
+    uint32_t      id;
     uint32_t      mode;
     uint32_t      pull;
     GPIO_TypeDef *port_id;
@@ -42,4 +43,7 @@ struct button {
 
 void gpio_init(volatile struct button **p,
                struct gpio   **led,
-               struct gpio   **adc_pin);
+               struct gpio   **adc_pin,
+               uint16_t c, uint16_t d, uint16_t a, uint16_t why);
+
+char read_gpio(struct gpio *pin);

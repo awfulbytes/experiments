@@ -11,9 +11,10 @@ extern uint16_t                 dac_double_double_buff[512];
 
 extern volatile uint8_t cnt_adc_cycles;
 
+/* extern struct overseer cosmos; */
 extern struct nco               l_osc, r_osc;
-extern struct button            wave_choise_dac1;
-extern struct button            wave_choise_dac2;
+extern struct button            freq_mode_but_dac1;
+extern struct button            freq_mode_but_dac2;
 extern struct button            distortion_choice;
 extern struct encoder           osc_0_pd_enc;
 extern struct encoder           osc_1_pd_enc;
@@ -27,3 +28,8 @@ void DMA1_Channel2_3_IRQHandler(void);
 void EXTI4_15_IRQHandler(void);
 
 void DMA1_Channel1_IRQHandler(void);
+
+__attribute((pure, always_inline))
+inline freq_modes_e change_pitch_mode(struct nco oscillator[static 1]){
+    return (oscillator->mode == high) ? low : high;
+}
