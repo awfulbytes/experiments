@@ -17,5 +17,6 @@ struct adc {
 
 void adc_init_settings(struct adc *adc);
 void adc_init(void);
+void enable_oversampling(struct adc *a);
 
 #endif

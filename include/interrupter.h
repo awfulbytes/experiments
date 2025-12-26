@@ -14,7 +14,7 @@
 #define dac_clk       192000
 #define adc_clk       48000
 /* #define adc_clk       399900 */
-#define starting_mode high
+#define starting_mode low
 #define max_cv        0x7fff
 
 struct overworld world = {
