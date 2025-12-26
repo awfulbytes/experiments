@@ -22,7 +22,8 @@ void emulate_distortion_on(struct nco *nco){
 
 void emulate_distortion_change(struct encoder *enc){
     enc->A.flag = 'i';
-    enc->B.value = 1U;
+    enc->B.value[0] = 0;
+    enc->B.value[1] = 1;
     /* enc->increment = ninth; */
 }
 

@@ -19,24 +19,26 @@ struct button distortion_choice = {.state=0, .flag='D',
                                 .pin={.pin_id=LL_GPIO_PIN_12, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_DOWN}};
 
 struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_4, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
-                               .value=0, .flag='D',
+                               .value={0}, .flag='D',
                                .it_settings = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_4,
                                             .exti_port_conf=LL_EXTI_CONFIG_PORTC,
                                             .exti_line_conf=LL_EXTI_CONFIG_LINE4}},
                          .B.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_5, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
-                         .B.value = 0,
+                         .B.value = {0},
                          .B.it_settings = { },
                          .B.flag = 'D',
                          .increment=0, .direction=cw};
 
 void emulate_encoder_cw(struct encoder *distortion_encoder){
     distortion_encoder->A.flag = 0x69;
-    distortion_encoder->B.value = 1U;
+    distortion_encoder->B.value[0] = 0;
+    distortion_encoder->B.value[1] = 1;
 }
 
 void emulate_encoder_ccw(struct encoder *distortion_encoder){
     distortion_encoder->A.flag = 0x69;
-    distortion_encoder->B.value = 0U;
+    distortion_encoder->B.value[0] = 1;
+    distortion_encoder->B.value[1] = 0;
 }
 
 void emulate_distortion_enable_button(struct button *abut){
