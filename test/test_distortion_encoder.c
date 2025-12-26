@@ -27,7 +27,8 @@ struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN
                          .B.value = {0},
                          .B.it_settings = { },
                          .B.flag = 'D',
-                         .increment=0, .direction=cw};
+                         .virtual_wave_button.state = SINE,
+                         /* .increment=0, */ .direction=cw};
 
 void emulate_encoder_cw(struct encoder *distortion_encoder){
     distortion_encoder->A.flag = 0x69;
@@ -41,18 +42,8 @@ void emulate_encoder_ccw(struct encoder *distortion_encoder){
     distortion_encoder->B.value[1] = 0;
 }
 
-void emulate_distortion_enable_button(struct button *abut){
-    if (!l_osc.distortion.on) {
-        l_osc.distortion.on = true;
-        abut->flag = 'i';
-    }
-    else {
-        l_osc.distortion.on = false;
-        abut->flag = 'D';
-    }
-}
-
 void test_cw_encoder(void){
+    
     emulate_encoder_cw(&osc_0_pd_enc);
     apply_modulations_callback(&osc_0_pd_enc, &l_osc);
 
@@ -60,24 +51,24 @@ void test_cw_encoder(void){
         fprintf(stderr,  "FAIL: Clockwise direction should be true!!\n");
         assert(0);
     }
-    assert(osc_0_pd_enc.A.flag == 'i');
-    assert(osc_0_pd_enc.direction == cw);
-    assert(osc_0_pd_enc.increment == 1);
-    assert(l_osc.distortion.past_dante == first);
 }
 
 void test_ccw_encoder(void){
     emulate_encoder_ccw(&osc_0_pd_enc);
     apply_modulations_callback(&osc_0_pd_enc, &l_osc);
-
-    assert(osc_0_pd_enc.direction == ccw);
-    assert(osc_0_pd_enc.increment == 0);
-    assert(l_osc.distortion.past_dante == entrance);
 }
 
 
 int main(void){
-    emulate_distortion_enable_button(&distortion_choice);
     test_cw_encoder();
+    assert(osc_0_pd_enc.A.flag == 'i');
+    assert(osc_0_pd_enc.direction == cw);
+    assert(osc_0_pd_enc.virtual_wave_button.state == SAWU);
+
     test_ccw_encoder();
+    assert(osc_0_pd_enc.A.flag == 'i');
+    /* note: i modify a local copy and do my work with that.
+     *       no need to modify the original memory cell also! */
+    assert(osc_0_pd_enc.direction == cw);
+    assert(osc_0_pd_enc.virtual_wave_button.state == SINE);
 }

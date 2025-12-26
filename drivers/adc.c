@@ -5,7 +5,7 @@
 extern volatile uint16_t cv_raw_adc_inp;
 
 static ErrorStatus adc_dma_setup(struct adc *adc);
-static void enable_oversampling(struct adc *a);
+void enable_oversampling(struct adc *a);
 static void seq_configuration(struct adc *a);
 static void seq_set_channels(struct adc *a, uint32_t channels);
 static void seq_enable_ranks(struct adc *a, uint32_t channels);
@@ -49,7 +49,7 @@ static ErrorStatus adc_dma_setup(struct adc *adc) {
     return SUCCESS;
 }
 
-static void enable_oversampling(struct adc *a){
+void enable_oversampling(struct adc *a){
     LL_ADC_SetOverSamplingScope(a->adcx, LL_ADC_OVS_GRP_REGULAR_CONTINUED);
     LL_ADC_ConfigOverSamplingRatioShift(a->adcx, LL_ADC_OVS_RATIO_16, LL_ADC_OVS_SHIFT_RIGHT_1);
     LL_ADC_SetOverSamplingDiscont(a->adcx, LL_ADC_OVS_REG_CONT);

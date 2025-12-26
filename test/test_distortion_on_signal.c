@@ -44,10 +44,10 @@ int main(){
         .dac1_clock                                    = dac_clk,
     };
     struct overseer seer = { .oscillators[0]=&l_osc, .universe_data = &data };
-    dummy_enc.increment = entrance;
-
-    for ( ;dummy_enc.increment < hell; ) {
-        printf("iteration-number:\t%d\n", dummy_enc.increment);
+    /* dummy_enc.increment = entrance; */
+    l_osc.distortion.distortion_value = entrance;
+    for ( ;l_osc.distortion.distortion_value < hell; ) {
+        printf("iteration-number:\t%d\n", l_osc.distortion.distortion_value);
         emulate_distortion_on(&l_osc);
         emulate_distortion_change(&dummy_enc);
 
@@ -65,5 +65,6 @@ int main(){
         assert(l_osc.mode != high);
         assert(initialized_incremet_value > l_osc.phase.pending_update_inc);
         assert(l_osc.phase.done_update != l_osc.phase.pending_update);
+        ++l_osc.distortion.distortion_value;
     }
 }
