@@ -20,6 +20,7 @@ struct limits {
 struct phase_distortion{
     volatile bool     on;
     volatile uint16_t amount;
+    volatile uint16_t amount_2;
     cyrcles_e         dante;
     cyrcles_e         past_dante;
     struct   limits   level_range;

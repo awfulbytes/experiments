@@ -14,18 +14,18 @@ volatile int go_front = 0;
 
 void main() {
     struct timer *timers[2] = {&tim6_settings, &tim7_settings};
-    volatile struct button *wave_buttons[3] = {&freq_mode_but_dac1, &freq_mode_but_dac2, &distortion_choice};
+    volatile struct button *nco_buttons[3] = {&freq_mode_but_dac1, &freq_mode_but_dac2, &distortion_choice};
     struct gpio *dacs[2] = {&dac1, &dac2};
-    struct gpio *osc_cvs[4] = {&pitch_0_cv, &dist_amount_0_cv, &pitch_1_cv, &dist_amount_1_cv};
+    struct gpio *osc_cvs[5] = {&pitch_0_cv, &dist_amount_0_cv, &dist_amount_0_2_cv, &pitch_1_cv, &dist_amount_1_cv};
     struct dac *dacs_settings[2] = {&dac_ch1_settings, &dac_ch2_settings};
     struct dma *dma_chans[2] = {&dac_1_dma, &dac_2_dma};
     sys_clock_config();
     uint16_t c, d, a, why;
-    c = sizeof wave_buttons / sizeof &wave_buttons[0];
+    c = sizeof nco_buttons / sizeof &nco_buttons[0];
     d = sizeof dacs / sizeof &dacs[0];
     a = sizeof osc_cvs / sizeof &osc_cvs[0];
     why = 0;
-    gpio_init(wave_buttons, dacs, osc_cvs, c, d, a, why);
+    gpio_init(nco_buttons, dacs, osc_cvs, c, d, a, why);
 
     enc_init(&osc_0_pd_enc);
     enc_init(&osc_1_pd_enc);

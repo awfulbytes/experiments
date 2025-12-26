@@ -29,6 +29,15 @@ void generate_half_signal(volatile const uint16_t data[static 128],
             // hack:: make additive or subtractive it makes nice sounds
             nco->phase.inc -= (nco->distortion.distortion_value);
         }
+        /*
+         * needs too much work...
+         */
+        /* if (y >= nco->distortion.amount_2 */
+        /*     && nco->distortion.on) { */
+        /*     apply_pd_alg(nco); */
+        /*     // hack:: make additive or subtractive it makes nice sounds */
+        /*     nco->phase.inc += (nco->distortion.distortion_value); */
+        /* } */
         nco->data_buff.ping_buff[y] = (a + ((uint16_t)(((diff * fract) >> 16))));
         nco->phase.accum += nco->phase.inc;
     }

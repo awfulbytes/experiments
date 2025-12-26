@@ -53,16 +53,18 @@ void DMA1_Channel2_3_IRQHandler(void){
 
 void TIM2_IRQHandler(void) {
     if (TIM2->SR & TIM_SR_UIF) {
-        if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
 
+        if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             world.current_value_cv_0_pitch = cv_raw_adc_inp[0];
             world.osc_0_cv_distortion_amount = cv_raw_adc_inp[1];
             world.osc_1_cv_distortion_ammount = cv_raw_adc_inp[2];
             world.current_value_cv_1_pitch = cv_raw_adc_inp[3];
+            world.osc_0_cv_2_distortion_amount = cv_raw_adc_inp[4];
             l_osc.phase.pending_update = r_osc.phase.pending_update = true;
+
+            (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
         }
 
-        (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
         TIM2->SR &= ~(TIM_SR_UIF);
     }
 }

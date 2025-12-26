@@ -15,7 +15,8 @@ static void config_reg_and_start_converting(struct adc *a);
 
 void adc_init_settings(struct adc *adc){
     uint32_t channels = LL_ADC_CHANNEL_0 | LL_ADC_CHANNEL_1 |
-                        LL_ADC_CHANNEL_9 | LL_ADC_CHANNEL_8;
+                        LL_ADC_CHANNEL_9 | LL_ADC_CHANNEL_8 |
+                        LL_ADC_CHANNEL_6;
     uint32_t adc_apb2_clk = LL_APB2_GRP1_PERIPH_ADC;
 
     enable_regulator_and_calibrate(adc, adc_apb2_clk);
@@ -79,6 +80,7 @@ static void seq_enable_ranks(struct adc *a, uint32_t channels){
     LL_ADC_REG_SetSequencerRanks(a->adcx, LL_ADC_REG_RANK_2, LL_ADC_CHANNEL_1);
     LL_ADC_REG_SetSequencerRanks(a->adcx, LL_ADC_REG_RANK_3, LL_ADC_CHANNEL_9);
     LL_ADC_REG_SetSequencerRanks(a->adcx, LL_ADC_REG_RANK_4, LL_ADC_CHANNEL_8);
+    LL_ADC_REG_SetSequencerRanks(a->adcx, LL_ADC_REG_RANK_5, LL_ADC_CHANNEL_6);
     while (!LL_ADC_IsActiveFlag_CCRDY(a->adcx)) {}
     LL_ADC_ClearFlag_CCRDY(a->adcx);
 }

@@ -14,13 +14,14 @@
 #define dac_clk       192000
 #define adc_clk       48000
 /* #define adc_clk       399900 */
-#define starting_mode low
+#define starting_mode high
 #define max_cv        0x7fff
 
 struct overworld world = {
     .pitch_cv                           = cv_init,
     .current_value_cv_0_pitch           = cv_init,
     .osc_0_cv_distortion_amount         = cv_init,
+    .osc_0_cv_2_distortion_amount       = cv_init,
     .osc_1_cv_distortion_ammount        = cv_init,
     .current_value_cv_1_pitch           = cv_init,
     /* .pitch1_cv                          = cv_init, */
@@ -126,7 +127,7 @@ struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *
                                         .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
 
-#define sample_count  4 /* π(nxt) do not forget the ranks number */
+#define sample_count  5 /* π(nxt) do not forget the ranks number */
 volatile uint16_t cv_raw_adc_inp[sample_count] = {0};
 struct adc adc_settings = {.adcx=ADC1,
                           .data = cv_raw_adc_inp,
@@ -138,7 +139,7 @@ struct adc adc_settings = {.adcx=ADC1,
 
                           .reg_settings={.TriggerSource=LL_ADC_REG_TRIG_EXT_TIM2_TRGO,
                                          .ContinuousMode=LL_ADC_REG_CONV_SINGLE,
-                                         .SequencerLength=LL_ADC_REG_SEQ_SCAN_ENABLE_4RANKS,
+                                         .SequencerLength=LL_ADC_REG_SEQ_SCAN_ENABLE_5RANKS,
                                          .SequencerDiscont=LL_ADC_REG_SEQ_DISCONT_DISABLE,
                                          .DMATransfer=LL_ADC_REG_DMA_TRANSFER_UNLIMITED,
                                          .Overrun=LL_ADC_REG_OVR_DATA_OVERWRITTEN},
@@ -189,6 +190,7 @@ struct gpio dac1 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_4, .mode=LL_GPIO_MODE_AN
 struct gpio dac2 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_5, .mode=LL_GPIO_MODE_ANALOG};
 struct gpio pitch_0_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_0, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 struct gpio dist_amount_0_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_1, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
+struct gpio dist_amount_0_2_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_6, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 struct gpio pitch_1_cv = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_0, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 struct gpio dist_amount_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_7, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 
@@ -217,7 +219,7 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                              .pin_id=LL_GPIO_PIN_6,
                                              .id=6,
                                              .mode = LL_GPIO_MODE_INPUT,
-                                             .pull = LL_GPIO_PULL_NO},
+                                             .pull = LL_GPIO_PULL_UP},
                                .value={0}, .flag='D',
                                .it_settings = {.exti_irqn=EXTI4_15_IRQn,
                                                .exti_line=LL_EXTI_LINE_6,
@@ -226,7 +228,7 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                .B = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_8,
                                          .id=8,
                                          .mode = LL_GPIO_MODE_INPUT,
-                                         .pull = LL_GPIO_PULL_NO},
+                                         .pull = LL_GPIO_PULL_UP},
                                      .value = {0},
                                      .it_settings = { },
                                      .flag = 'D'},

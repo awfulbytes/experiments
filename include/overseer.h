@@ -6,6 +6,7 @@ struct overworld {
     volatile uint16_t pitch_cv;
     volatile uint16_t current_value_cv_0_pitch;
     volatile uint16_t osc_0_cv_distortion_amount;
+    volatile uint16_t osc_0_cv_2_distortion_amount;
 
     volatile uint16_t current_value_cv_1_pitch;
     volatile uint16_t osc_1_cv_distortion_ammount;
