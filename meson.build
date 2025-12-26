@@ -44,8 +44,7 @@ src_deps = files(
   # 'ventor/stm32g0xx_hal_driver/Src/stm32g0xx_ll_crs.c',
 )
 inc_dir = include_directories('include')
-core_inc_dir = include_directories('include/Core/Include',
-                                  '/usr/include')
+core_inc_dir = include_directories('include/Core/Include',)
 cmsis_dev_inc = include_directories('ventor/cmsis_device_g0/Include')
 hal_dev_inc = include_directories('ventor/stm32g0xx_hal_driver/Inc',
                                   'ventor/stm32g0xx_hal_driver/Inc/Legacy')
