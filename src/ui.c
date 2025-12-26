@@ -32,7 +32,12 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
      * you already know that channel a is falling so only the second channel is
      * needed for the direction change (clockwise and counter-c-w).
      */
-    enc->direction = (enc->B.value == 1) ? cw : ccw;
+    if (enc->B.value[0] == 0 && enc->B.value[1] == 1){
+        enc->B.val = 1;
+    } else if (enc->B.value[0] == 1 && enc->B.value[1] == 0) {
+        enc->B.val = 0;
+    }
+    enc->direction = (enc->B.val == 1) ? cw : ccw;
     switch (enc->direction) {
     case cw:
         ++enc->increment;

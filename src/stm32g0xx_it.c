@@ -85,16 +85,29 @@ static inline void handle_osc_distortion(struct nco nco[static 1]){
 }
 
 void EXTI4_15_IRQHandler(void) {
+
     if ((EXTI->FPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
-        osc_0_pd_enc.B.value = read_gpio(&osc_0_pd_enc.B.pin);
-        scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
+        osc_0_pd_enc.B.value[0] = read_gpio(&osc_0_pd_enc.B.pin);
+        /* scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc); */
         (EXTI->FPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
     }
+    if ((EXTI->RPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
+        osc_0_pd_enc.B.value[1] = read_gpio(&osc_0_pd_enc.B.pin);
+        scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
+        (EXTI->RPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
+    }
+
     if ((EXTI->FPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
-        osc_1_pd_enc.B.value = read_gpio(&osc_1_pd_enc.B.pin);
-        scan_and_apply_current_modulations(&osc_1_pd_enc, &r_osc);
+        osc_1_pd_enc.B.value[0] = read_gpio(&osc_1_pd_enc.B.pin);
+        /* scan_and_apply_current_modulations(&osc_1_pd_enc, &r_osc); */
         (EXTI->FPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
     }
+    if ((EXTI->RPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
+        osc_1_pd_enc.B.value[1] = read_gpio(&osc_1_pd_enc.B.pin);
+        scan_and_apply_current_modulations(&osc_1_pd_enc, &r_osc);
+        (EXTI->RPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
+    }
+
     if ((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
         (EXTI->RPR1) = (freq_mode_but_dac1.exti.exti_line);
         l_osc.mode = change_pitch_mode(&l_osc);
