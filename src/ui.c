@@ -26,14 +26,14 @@ void enc_init(struct encoder *enc){
     exti_enc_setup(&enc->A);
 }
 
-static inline void decode_quad_enc(struct encoder *enc){
-    enc->B.val = (enc->B.value[0] << 1) | enc->B.value[1];
+static inline uint8_t decode_quad_enc(struct encoder *enc){
+    return (enc->B.value[0] << 1) | enc->B.value[1];
 }
 
 static void bit_bang_encoder(struct encoder enc[static 1]){
 
-    decode_quad_enc(enc);
-    enc->direction = (enc->B.val == 1) ? cw : ccw;
+    enc->direction = (decode_quad_enc(enc) == 1) ? cw : ccw;
+
     switch (enc->direction) {
     case cw:
         ++enc->increment;
