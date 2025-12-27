@@ -32,9 +32,6 @@ d = executable('distorted-signal', src_f_d,
                c_args : [MCU , LL, testing],
                include_directories : inc_f_all)
 
-# d = executable('generate_stuff', src_f_d,
-#                include_directories : inc_f_all)
-
 test('nco-increment', g, suite: ['nco'])
 test('signal-generation', s, suite: ['nco'])
 test('distorded-signal', d, suite: ['nco'])

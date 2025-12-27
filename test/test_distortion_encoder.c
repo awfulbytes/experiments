@@ -4,7 +4,7 @@
 #include "ui.h"
 #include "nco.h"
 
-extern volatile void* scan_and_apply_current_modulations(struct encoder enc[static 1], struct nco osillator[static 1]);
+extern volatile void* apply_modulations_callback(struct encoder enc[static 1], struct nco osillator[static 1]);
 struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc=0, .pending_update=true,},
                     .mode=high,
                     .distortion.amount=64,
@@ -54,7 +54,7 @@ void emulate_distortion_enable_button(struct button *abut){
 
 void test_cw_encoder(void){
     emulate_encoder_cw(&osc_0_pd_enc);
-    scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
+    apply_modulations_callback(&osc_0_pd_enc, &l_osc);
 
     if (!(osc_0_pd_enc.direction == cw)) {
         fprintf(stderr,  "FAIL: Clockwise direction should be true!!\n");
@@ -68,7 +68,7 @@ void test_cw_encoder(void){
 
 void test_ccw_encoder(void){
     emulate_encoder_ccw(&osc_0_pd_enc);
-    scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
+    apply_modulations_callback(&osc_0_pd_enc, &l_osc);
 
     assert(osc_0_pd_enc.direction == ccw);
     assert(osc_0_pd_enc.increment == 0);

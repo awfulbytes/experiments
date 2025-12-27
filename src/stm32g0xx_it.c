@@ -90,23 +90,21 @@ void EXTI4_15_IRQHandler(void) {
 
     if ((EXTI->FPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
         osc_0_pd_enc.B.value[0] = read_gpio(&osc_0_pd_enc.B.pin);
-        /* scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc); */
         (EXTI->FPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
     }
     if ((EXTI->RPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
         osc_0_pd_enc.B.value[1] = read_gpio(&osc_0_pd_enc.B.pin);
-        scan_and_apply_current_modulations(&osc_0_pd_enc, &l_osc);
+        apply_modulations_callback(&osc_0_pd_enc, &l_osc);
         (EXTI->RPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
     }
 
     if ((EXTI->FPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
         osc_1_pd_enc.B.value[0] = read_gpio(&osc_1_pd_enc.B.pin);
-        /* scan_and_apply_current_modulations(&osc_1_pd_enc, &r_osc); */
         (EXTI->FPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
     }
     if ((EXTI->RPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
         osc_1_pd_enc.B.value[1] = read_gpio(&osc_1_pd_enc.B.pin);
-        scan_and_apply_current_modulations(&osc_1_pd_enc, &r_osc);
+        apply_modulations_callback(&osc_1_pd_enc, &r_osc);
         (EXTI->RPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
     }
 
@@ -121,7 +119,6 @@ void EXTI4_15_IRQHandler(void) {
     if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line) {
         (EXTI->RPR1) = (distortion_choice.exti.exti_line);
 
-        // todo need to make this more reliable... check timers....
         handle_osc_distortion(&l_osc);
         handle_osc_distortion(&r_osc);
     }

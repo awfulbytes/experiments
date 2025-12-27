@@ -42,27 +42,22 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
         --enc->increment;
         break;
     }
-
-    /*
-     * todo(nxt) move this to its own thing and free the encoder->increment to be able to host many values. Now this is used for:
-     *           a. the distortion.dante (hell floor value) i.e. the number of places to lshift the phase increment value.
-     *           b. the virtual button made to select the waveform from the wave bank.
-     * constrain the encoder increment value to a reasonable range i.e. cyrcles.
-     */
-    register cyrcles_e absurd_dante_floor = hell + 0xe;
-    if (enc->increment > hell && enc->increment < absurd_dante_floor)
-        enc->increment = hell;
-    // todo dont be so stupid the next time!!
-    else if (enc->increment > absurd_dante_floor)
-        enc->increment = entrance;
 }
 
 
-volatile void* scan_and_apply_current_modulations(struct encoder enc[static 1],
-                                                  struct nco osillator[static 1]){
+volatile void* apply_modulations_callback(struct encoder enc[static 1],
+                                          struct nco osillator[static 1]){
+    register cyrcles_e absurd_dante_floor = hell + 0xe;
+
     bit_bang_encoder(enc);
     if (osillator->distortion.on) {
         osillator->distortion.dante = enc->increment;
+        if (osillator->distortion.dante > hell && osillator->distortion.dante < absurd_dante_floor){
+            osillator->distortion.dante = hell;
+        }
+        else if (osillator->distortion.dante > absurd_dante_floor){
+            osillator->distortion.dante = entrance;
+        }
         osillator->distortion.past_dante = osillator->distortion.dante;
     } else {
         enc->virtual_wave_button.state = enc->increment & (WAVE_CTR - 1);

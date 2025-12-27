@@ -37,5 +37,5 @@ void enc_init(struct encoder *enc);
 void button_callback(struct button *abut);
 void WaitForUserButtonPress (struct button *button);
 
-volatile void* scan_and_apply_current_modulations(struct encoder enc[static 1],
-                                                  struct nco osillator[static 1]);
+volatile void* apply_modulations_callback(struct encoder enc[static 1],
+                                          struct nco osillator[static 1]);

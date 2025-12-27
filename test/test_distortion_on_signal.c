@@ -10,7 +10,7 @@
 #define adc_clk        44000
 uint16_t double_buffer[256] = {0};
 
-extern volatile void* scan_and_apply_current_modulations(struct encoder enc[static 1],
+extern volatile void* apply_modulations_callback(struct encoder enc[static 1],
                                                          struct nco osillator[static 1]);
 extern inline void stage_modulated_values(volatile struct nco osc[static 1],
                                                  volatile struct   overworld *data);
@@ -24,7 +24,6 @@ void emulate_distortion_change(struct encoder *enc){
     enc->A.flag = 'i';
     enc->B.value[0] = 0;
     enc->B.value[1] = 1;
-    /* enc->increment = ninth; */
 }
 
 void emulate_dac_interrupt(){
@@ -45,14 +44,15 @@ int main(){
         .dac1_clock                                    = dac_clk,
     };
     struct overseer seer = { .oscillators[0]=&l_osc, .universe_data = &data };
+    dummy_enc.increment = entrance;
 
     for ( ;dummy_enc.increment < hell; ) {
         printf("iteration-number:\t%d\n", dummy_enc.increment);
         emulate_distortion_on(&l_osc);
         emulate_distortion_change(&dummy_enc);
 
-        scan_and_apply_current_modulations(&dummy_enc, &l_osc);
-        // emulate_dac_interrupt();
+        apply_modulations_callback(&dummy_enc, &l_osc);
+        /* emulate_dac_interrupt(); */
 
         assert(l_osc.mode != high);
         assert(initialized_incremet_value != l_osc.phase.pending_update_inc);
@@ -63,10 +63,7 @@ int main(){
 
         printf("%b\n", l_osc.phase.done_update);
         assert(l_osc.mode != high);
-        /* assert(initialized_incremet_value > l_osc.phase_pending_update_inc); */
+        assert(initialized_incremet_value > l_osc.phase.pending_update_inc);
         assert(l_osc.phase.done_update != l_osc.phase.pending_update);
-        /* ++dummy_enc.increment; */
-        data.osc_0_cv_distortion_amount += dummy_enc.increment;
-        data.current_value_cv_0_pitch -= 200;
     }
 }
