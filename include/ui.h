@@ -15,7 +15,7 @@ struct encoder_channel {
 struct encoder {
     struct encoder_channel A, B;
     enum   direction       direction;
-    volatile uint16_t      increment;
+    /* volatile uint16_t      increment; */
     volatile struct button virtual_wave_button;
 };
 

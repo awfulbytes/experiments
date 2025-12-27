@@ -211,7 +211,7 @@ struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                      .value = {0},
                                      .it_settings = { },
                                      .flag = 'D'},
-                               .increment=0,
+                               /* .increment=0, */
                                .direction=cw,
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};
 
@@ -232,7 +232,7 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                      .value = {0},
                                      .it_settings = { },
                                      .flag = 'D'},
-                               .increment=0,
+                               /* .increment=0, */
                                .direction=cw,
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};
 

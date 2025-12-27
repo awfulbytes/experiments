@@ -30,38 +30,48 @@ static inline uint8_t decode_quad_enc(struct encoder *enc){
     return (enc->B.value[0] << 1) | enc->B.value[1];
 }
 
-static void bit_bang_encoder(struct encoder enc[static 1]){
-
-    enc->direction = (decode_quad_enc(enc) == 1) ? cw : ccw;
-
-    switch (enc->direction) {
-    case cw:
-        ++enc->increment;
-        break;
-    case ccw:
-        --enc->increment;
-        break;
-    }
+static inline enum direction extract_encoder_direction(struct encoder enc[static 1]){
+    return (decode_quad_enc(enc) == 1) ? cw : ccw;
 }
 
+static void handle_distortion(struct nco *o, volatile enum direction dir){
+    const cyrcles_e absurd_dante_floor = hell + 0xe;
+    switch (dir) {
+    case cw:
+        ++o->distortion.dante;
+        break;
+    case ccw:
+        --o->distortion.dante;
+        break;
+    }
+
+    if (o->distortion.dante > hell && o->distortion.dante < absurd_dante_floor) {
+        o->distortion.dante = hell;
+    } else if (o->distortion.dante > absurd_dante_floor) {
+        o->distortion.dante = entrance;
+    }
+    o->distortion.past_dante = o->distortion.dante;
+}
+
+static void handle_wave_selection(struct encoder *e, volatile enum direction dir){
+    switch (dir) {
+    case cw:
+        ++e->virtual_wave_button.state;
+        break;
+    case ccw:
+        --e->virtual_wave_button.state;
+        break;
+    }
+    e->virtual_wave_button.state &= (WAVE_CTR - 1);
+    e->virtual_wave_button.flag = 'i';
+}
 
 volatile void* apply_modulations_callback(struct encoder enc[static 1],
                                           struct nco osillator[static 1]){
-    register cyrcles_e absurd_dante_floor = hell + 0xe;
-
-    bit_bang_encoder(enc);
     if (osillator->distortion.on) {
-        osillator->distortion.dante = enc->increment;
-        if (osillator->distortion.dante > hell && osillator->distortion.dante < absurd_dante_floor){
-            osillator->distortion.dante = hell;
-        }
-        else if (osillator->distortion.dante > absurd_dante_floor){
-            osillator->distortion.dante = entrance;
-        }
-        osillator->distortion.past_dante = osillator->distortion.dante;
+        handle_distortion(osillator, extract_encoder_direction(enc));
     } else {
-        enc->virtual_wave_button.state = enc->increment & (WAVE_CTR - 1);
-        enc->virtual_wave_button.flag = 'i';
+        handle_wave_selection(enc, extract_encoder_direction(enc));
     }
     osillator->phase.pending_update = true;
     return (void*)0;
