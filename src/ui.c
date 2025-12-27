@@ -26,17 +26,13 @@ void enc_init(struct encoder *enc){
     exti_enc_setup(&enc->A);
 }
 
+static inline void decode_quad_enc(struct encoder *enc){
+    enc->B.val = (enc->B.value[0] << 1) | enc->B.value[1];
+}
+
 static void bit_bang_encoder(struct encoder enc[static 1]){
-    /*
-     * determine the irection that the encoder was turned.
-     * you already know that channel a is falling so only the second channel is
-     * needed for the direction change (clockwise and counter-c-w).
-     */
-    if (enc->B.value[0] == 0 && enc->B.value[1] == 1){
-        enc->B.val = 1;
-    } else if (enc->B.value[0] == 1 && enc->B.value[1] == 0) {
-        enc->B.val = 0;
-    }
+
+    decode_quad_enc(enc);
     enc->direction = (enc->B.val == 1) ? cw : ccw;
     switch (enc->direction) {
     case cw:
@@ -48,6 +44,9 @@ static void bit_bang_encoder(struct encoder enc[static 1]){
     }
 
     /*
+     * todo(nxt) move this to its own thing and free the encoder->increment to be able to host many values. Now this is used for:
+     *           a. the distortion.dante (hell floor value) i.e. the number of places to lshift the phase increment value.
+     *           b. the virtual button made to select the waveform from the wave bank.
      * constrain the encoder increment value to a reasonable range i.e. cyrcles.
      */
     register cyrcles_e absurd_dante_floor = hell + 0xe;
