@@ -30,10 +30,6 @@ void dac_config (struct dac *gdac){
     LL_DAC_EnableDMAReq(gdac->dacx,
                         gdac->channel);
 
-    if (gdac->channel == LL_DAC_CHANNEL_1)
-        LL_DAC_EnableIT_DMAUDR1(gdac->dacx);
-    else
-        LL_DAC_EnableIT_DMAUDR2(gdac->dacx);
 }
 
 void dac_act

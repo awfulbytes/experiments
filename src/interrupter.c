@@ -18,7 +18,7 @@ void main() {
     struct gpio *dacs[2] = {&dac1, &dac2};
     struct gpio *osc_cvs[5] = {&pitch_0_cv, &dist_amount_0_cv, &dist_amount_0_2_cv, &pitch_1_cv, &dist_amount_1_cv};
     struct dac *dacs_settings[2] = {&dac_ch1_settings, &dac_ch2_settings};
-    struct dma *dma_chans[2] = {&dac_1_dma, &dac_2_dma};
+    /* struct dma *dma_chans[1] = {&dac_dma}; */
     sys_clock_config();
     uint16_t c, d, a, why;
     c = sizeof nco_buttons / sizeof &nco_buttons[0];
@@ -39,8 +39,8 @@ void main() {
     debug_tim2_pin31();
 #else
 #endif
+    dma_config(&dac_dma);
     for (int i=0; i < 2; i++) {
-        dma_config(dma_chans[i]);
         tim_init(cosmos.universe_data->dac1_clock, timers[i]);
     }
 

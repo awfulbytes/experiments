@@ -11,13 +11,8 @@ static void dma_init(void){
 void dma_config(struct dma *dma){
     dma_init();
     switch (dma->channel) {
-        case LL_DMA_CHANNEL_3:
-            dma->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &DAC1->DHR12R1;
-            LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_3);
-            LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_3);
-            break;
         case LL_DMA_CHANNEL_2:
-            dma->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &DAC1->DHR12R2;
+            dma->dmax_settings.PeriphOrM2MSrcAddress = (uint32_t) &DAC1->DHR12RD;
             LL_DMA_EnableIT_HT(dma->dmax, LL_DMA_CHANNEL_2);
             LL_DMA_EnableIT_TC(dma->dmax, LL_DMA_CHANNEL_2);
             break;

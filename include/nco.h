@@ -57,8 +57,8 @@ void generate_half_signal(volatile const uint16_t data[static 128],
                           uint16_t                sector_length,
                           struct   nco            nco[static 1]);
 
-void update_data_buff (const volatile uint16_t data[static 128],
-                       uint16_t       buffer_sector[static 128],
+void update_data_buff (const volatile uint32_t data[static 128],
+                       uint32_t       buffer_sector[static 128],
                        uint16_t       sector_length);
 
 __attribute__((pure))

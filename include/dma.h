@@ -2,7 +2,7 @@
 #include "stm32g071xx.h"
 #include "stm32g0xx_ll_dma.h"
 struct dma {
-    const uint16_t      *data;
+    const uint32_t      *data;
     uint32_t             channel;
     DMA_TypeDef         *dmax;
     LL_DMA_InitTypeDef   dmax_settings;

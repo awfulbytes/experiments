@@ -13,7 +13,6 @@
 #define cv_init       0xff
 #define dac_clk       192000
 #define adc_clk       48000
-/* #define adc_clk       399900 */
 #define starting_mode low
 #define max_cv        0x7fff
 
@@ -70,12 +69,13 @@ struct nco r_osc = {.phase = {.accum = 0,
                     .distortion.past_dante = entrance,
                     .distortion.dante=entrance};
 
-volatile uint16_t dac_double_double_buff[512] = {0};
+volatile uint16_t dac_double_buff[256] = {0};
+volatile uint32_t dac_double_buff2[256] = {0};
 
 struct timer tim6_settings = {.id=TIM6,
                               .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6,
                               .trigger_output=LL_TIM_TRGO_UPDATE,
-                              .irq_settings={.nvic_id=TIM6_DAC_LPTIM1_IRQn, .priority=0x40}};
+                              .irq_settings={.nvic_id=TIM6_DAC_LPTIM1_IRQn, .priority=0x00}};
 struct timer tim7_settings = {.id=TIM7,
                               .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7,
                               .trigger_output=LL_TIM_TRGO_UPDATE,
@@ -93,37 +93,23 @@ struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1,
                                                .OutputBuffer=LL_DAC_OUTPUT_BUFFER_ENABLE,
                                                .OutputConnection=LL_DAC_OUTPUT_CONNECT_GPIO}};
 
-/* todo(nxt) check if i have to cast the array... should just decay to it...*/
-struct dma dac_1_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_3, .data=(uint16_t *) dac_double_double_buff,
-                        .chan=(DMA_Channel_TypeDef *)((uint32_t)DMA1 + (8 + 40)),
-                        .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_DAC1_CH1,
-                                        .Direction=LL_DMA_DIRECTION_MEMORY_TO_PERIPH,
-                                        .NbData=256,
-                                        .Mode=LL_DMA_MODE_CIRCULAR,
-                                        .Priority=0x00,
-                                        .PeriphOrM2MSrcDataSize=LL_DMA_PDATAALIGN_HALFWORD,
-                                        .MemoryOrM2MDstDataSize=LL_DMA_MDATAALIGN_HALFWORD,
-                                        .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
-                                        .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
-
 struct dac dac_ch2_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_2,
                                .trg_src=LL_DAC_TRIG_EXT_TIM6_TRGO,
                                .bus_clk_abp=LL_APB1_GRP1_PERIPH_DAC1,
                                .timx_dac_irq=TIM6_DAC_LPTIM1_IRQn,
-                               /* .timx_dac_irq=TIM7_LPTIM2_IRQn, */
                                .dacx_settings={.OutputMode=LL_DAC_OUTPUT_MODE_NORMAL,
                                                .OutputBuffer=LL_DAC_OUTPUT_BUFFER_ENABLE,
                                                .OutputConnection=LL_DAC_OUTPUT_CONNECT_GPIO}};
 
-struct dma dac_2_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint16_t *) (dac_double_double_buff + 256),
+struct dma dac_dma = {.dmax=DMA1, .channel=LL_DMA_CHANNEL_2, .data=(uint32_t *) dac_double_buff2,
                         .chan=(DMA_Channel_TypeDef *)((uint32_t)DMA1 + (8 + 20)),
                         .dmax_settings={.PeriphRequest=LL_DMAMUX_REQ_DAC1_CH2,
                                         .Direction=LL_DMA_DIRECTION_MEMORY_TO_PERIPH,
                                         .NbData=256,
                                         .Mode=LL_DMA_MODE_CIRCULAR,
                                         .Priority=0x00,
-                                        .PeriphOrM2MSrcDataSize=LL_DMA_PDATAALIGN_HALFWORD,
-                                        .MemoryOrM2MDstDataSize=LL_DMA_MDATAALIGN_HALFWORD,
+                                        .PeriphOrM2MSrcDataSize=LL_DMA_PDATAALIGN_WORD,
+                                        .MemoryOrM2MDstDataSize=LL_DMA_MDATAALIGN_WORD,
                                         .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT,
                                         .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT}};
 

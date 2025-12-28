@@ -19,35 +19,36 @@ void TIM7_LPTIM2_IRQHandler(void){
         TIM7->SR &= ~(TIM_SR_UIF);
     }
 }
+uint32_t merged_dual_buffer[128];
+
+void merge_signals(void) {
+    for (int j=0; j<128; ++j){
+        merged_dual_buffer[j] = ((uint32_t)r_osc.data_buff.ping_buff[j] << 16U) \
+                                | l_osc.data_buff.ping_buff[j];
+    }
+}
 
 void DMA1_Channel2_3_IRQHandler(void){
 
-    if (l_osc.phase.done_update) {
+    if (l_osc.phase.done_update && r_osc.phase.done_update) {
         l_osc.phase.inc = l_osc.phase.pending_update_inc;
-        generate_half_signal(wave_me_d, 128, &l_osc);
-        l_osc.phase.done_update = false;
-    }
+        /* this was just for testing now i have to equalize adc pins */
+        r_osc.phase.inc = l_osc.phase.pending_update_inc;
 
-    if (r_osc.phase.done_update) {
-        r_osc.phase.inc = r_osc.phase.pending_update_inc;
+        generate_half_signal(wave_me_d, 128, &l_osc);
         generate_half_signal(wave_me_d2, 128, &r_osc);
+        l_osc.phase.done_update = false;
         r_osc.phase.done_update = false;
     }
-
-    if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) &&
-        ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3)) {
-        update_data_buff(l_osc.data_buff.ping_buff, dac_double_double_buff, 128);
-        update_data_buff(r_osc.data_buff.ping_buff, dac_double_double_buff + 256, 128);
+    merge_signals();
+    if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2) /* && ((DMA1->ISR & DMA_ISR_HTIF3) == DMA_ISR_HTIF3) */) {
+        update_data_buff(merged_dual_buffer, dac_double_buff2, 128);
         (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
-        (DMA1->IFCR) = (DMA_IFCR_CHTIF3);
     }
 
-    if (((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2) &&
-        ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3)) {
-        update_data_buff(l_osc.data_buff.ping_buff, dac_double_double_buff + 128, 128);
-        update_data_buff(r_osc.data_buff.ping_buff, dac_double_double_buff + (256 + 128), 128);
+    if (((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2) /* && ((DMA1->ISR & DMA_ISR_TCIF3) == DMA_ISR_TCIF3) */) {
+        update_data_buff(merged_dual_buffer, dac_double_buff2 + 128, 128);
         (DMA1->IFCR) = (DMA_IFCR_CTCIF2);
-        (DMA1->IFCR) = (DMA_IFCR_CTCIF3);
     }
 }
 
