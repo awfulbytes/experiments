@@ -24,10 +24,10 @@ struct nco r_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc
                     .distortion.dante=9,
 };
 
-uint16_t some[256];
-uint16_t some2[256];
-uint16_t full[256];
-uint16_t sine_upd[256];
+uint32_t some[256];
+uint32_t some2[256];
+uint32_t full[256];
+uint32_t sine_upd[256];
 
 extern bool phase_pending_update;
 

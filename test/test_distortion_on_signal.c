@@ -8,7 +8,7 @@
 
 #define dac_clk       192000
 #define adc_clk        44000
-uint16_t double_buffer[256] = {0};
+uint32_t double_buffer[256] = {0};
 
 extern volatile void* apply_modulations_callback(struct encoder enc[static 1],
                                                          struct nco osillator[static 1]);
@@ -29,8 +29,8 @@ void emulate_distortion_change(struct encoder *enc){
 void emulate_dac_interrupt(){
 
     generate_half_signal(sine_wave, 128, &l_osc);
-    update_data_buff(l_osc.data_buff.ping_buff, double_buffer, 128);
-    update_data_buff(l_osc.data_buff.ping_buff, double_buffer + 128, 128);
+    update_data_buff((uint32_t*)l_osc.data_buff.ping_buff, double_buffer, 128);
+    update_data_buff((uint32_t*)l_osc.data_buff.ping_buff, double_buffer + 128, 128);
 }
 
 
