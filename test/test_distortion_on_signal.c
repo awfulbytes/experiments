@@ -11,7 +11,7 @@
 uint32_t double_buffer[256] = {0};
 
 extern volatile void* apply_modulations_callback(struct encoder enc[static 1],
-                                                         struct nco osillator[static 1]);
+                                                 struct nco o[static 1]);
 extern inline void stage_modulated_values(volatile struct nco osc[static 1],
                                                  volatile struct   overworld *data);
 

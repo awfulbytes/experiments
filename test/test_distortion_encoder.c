@@ -4,7 +4,7 @@
 #include "ui.h"
 #include "nco.h"
 
-extern volatile void* apply_modulations_callback(struct encoder enc[static 1], struct nco osillator[static 1]);
+extern volatile void* apply_modulations_callback(struct encoder enc[static 1], struct nco o[static 1]);
 struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc=0, .pending_update=true,},
                     .mode=high,
                     .distortion.amount=64,

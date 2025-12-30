@@ -38,4 +38,4 @@ void button_callback(struct button *abut);
 void WaitForUserButtonPress (struct button *button);
 
 volatile void* apply_modulations_callback(struct encoder enc[static 1],
-                                          struct nco osillator[static 1]);
+                                          struct nco o[static 1]);

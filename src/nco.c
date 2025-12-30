@@ -73,6 +73,5 @@ __attribute__((always_inline))
 inline void update_data_buff(const volatile  uint32_t data[static 128],
                              uint32_t       buffer_sector[static 128],
                              uint16_t       sector_length) {
-    /* memcpy(buffer_sector, (const void* restrict) data, sizeof(uint16_t) * sector_length); */
     mmcpy(buffer_sector, (const void*) data, sizeof(uint32_t) * sector_length);
 }
