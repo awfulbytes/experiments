@@ -28,6 +28,7 @@ uint32_t construct_dual_dac_reg(uint16_t data_ch_2, uint16_t data_ch_1) {
 extern const uint16_t sine_wave[128];
 uint32_t merged_dual_buffer[buffer_size(sine_wave)];
 uint8_t const data_size = buffer_size(merged_dual_buffer);
+
 void DMA1_Channel2_3_IRQHandler(void){
 
     if (l_osc.phase.done_update && r_osc.phase.done_update) {
@@ -41,11 +42,13 @@ void DMA1_Channel2_3_IRQHandler(void){
         l_osc.phase.done_update = false;
         r_osc.phase.done_update = false;
     }
+
     for(uint8_t u=0; u < data_size; ++u){
         merged_dual_buffer[u] =
             construct_dual_dac_reg(r_osc.data_buff.ping_buff[u],
                                    l_osc.data_buff.ping_buff[u]);
     }
+
     if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2)) {
         update_data_buff(merged_dual_buffer,
                          dac_double_buff2,
@@ -59,13 +62,6 @@ void DMA1_Channel2_3_IRQHandler(void){
                          data_size);
         (DMA1->IFCR) = (DMA_IFCR_CTCIF2);
     }
-    /* todo it was fun as it lasted...
-     * we have an issue where when the distortion is enabled makes signals out
-     * of sync. No idea why!!! most of the times you should be able to
-     * invalidate the data and start over but here this does not work. nxt:: the
-     * phase.inc makes the phase not the data in the table those are one cycle
-     * always!!
-     */
 }
 
 void TIM2_IRQHandler(void) {
@@ -86,6 +82,10 @@ void TIM2_IRQHandler(void) {
     }
 }
 
+void align_phase(volatile struct nco *o0, volatile struct nco *o1){
+    o1->phase.accum = o0->phase.accum;
+}
+
 static inline void handle_osc_distortion(struct nco nco[static 1]){
     if (!nco->distortion.on) {
 #ifdef encoder_leds
@@ -100,6 +100,10 @@ static inline void handle_osc_distortion(struct nco nco[static 1]){
         GPIOB->ODR |= (1 << 5);
 #endif // encoder_leds
         nco->distortion.on = false;
+        /* todo(nxt) what if i made a mode where you can make the accumulators equal independent of the way (PD or not PD)
+         *           and make sure that the accumulators are the same. that way i can phase align the distorted output also!!
+         */
+        align_phase(&l_osc, &r_osc);
     }
 }
 
