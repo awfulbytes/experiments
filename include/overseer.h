@@ -20,6 +20,8 @@ struct overseer {
     volatile struct nco       *oscillators[2];
     volatile struct nco       *selected;
     volatile struct overworld *universe_data;
+    volatile bool              sync;
+    volatile bool              phase_align;
 };
 
 
