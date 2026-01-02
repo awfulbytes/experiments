@@ -34,7 +34,7 @@ void DMA1_Channel2_3_IRQHandler(void){
     if (l_osc.phase.done_update && r_osc.phase.done_update) {
         l_osc.phase.inc = l_osc.phase.pending_update_inc;
         /* this was just for testing now i have to equalize adc pins */
-        r_osc.phase.inc = l_osc.phase.pending_update_inc;
+        sync_1_to_0(&l_osc, &r_osc);
         /* r_osc.phase.inc = r_osc.phase.pending_update_inc; */
 
         generate_half_signal(wave_me_d, data_size, &l_osc);
@@ -82,10 +82,6 @@ void TIM2_IRQHandler(void) {
     }
 }
 
-void align_phase(volatile struct nco *o0, volatile struct nco *o1){
-    o1->phase.accum = o0->phase.accum;
-}
-
 static inline void handle_osc_distortion(struct nco nco[static 1]){
     if (!nco->distortion.on) {
 #ifdef encoder_leds
@@ -115,7 +111,6 @@ void EXTI4_15_IRQHandler(void) {
     }
     if ((EXTI->RPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
         osc_0_pd_enc.B.value[1] = read_gpio(&osc_0_pd_enc.B.pin);
-        /* r_osc.distortion.distortion_value = l_osc.distortion.distortion_value; */
         apply_modulations_callback(&osc_0_pd_enc, &l_osc);
         (EXTI->RPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
     }
@@ -126,24 +121,22 @@ void EXTI4_15_IRQHandler(void) {
     }
     if ((EXTI->RPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
         osc_1_pd_enc.B.value[1] = read_gpio(&osc_1_pd_enc.B.pin);
-        /* r_osc.distortion.distortion_value = l_osc.distortion.distortion_value; */
         apply_modulations_callback(&osc_1_pd_enc, &r_osc);
         (EXTI->RPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
     }
 
     if ((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
+        change_pitch_mode(&l_osc);
         (EXTI->RPR1) = (freq_mode_but_dac1.exti.exti_line);
-        l_osc.mode = change_pitch_mode(&l_osc);
     }
     if ((EXTI->RPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line) {
+        change_pitch_mode(&r_osc);
         (EXTI->RPR1) = (freq_mode_but_dac2.exti.exti_line);
-        r_osc.mode = change_pitch_mode(&r_osc);
     }
     if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line) {
-        (EXTI->RPR1) = (distortion_choice.exti.exti_line);
-
         handle_osc_distortion(&l_osc);
         handle_osc_distortion(&r_osc);
+        (EXTI->RPR1) = (distortion_choice.exti.exti_line);
     }
     return;
 }

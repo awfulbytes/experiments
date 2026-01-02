@@ -11,7 +11,6 @@ extern uint32_t dac_double_buff2[256];
 
 extern volatile uint8_t cnt_adc_cycles;
 
-/* extern struct overseer cosmos; */
 extern struct nco               l_osc, r_osc;
 extern struct button            freq_mode_but_dac1;
 extern struct button            freq_mode_but_dac2;
@@ -29,7 +28,10 @@ void EXTI4_15_IRQHandler(void);
 
 void DMA1_Channel1_IRQHandler(void);
 
-__attribute((pure, always_inline))
-inline freq_modes_e change_pitch_mode(struct nco oscillator[static 1]){
-    return (oscillator->mode == high) ? low : high;
+__attribute((always_inline))
+inline void change_pitch_mode(struct nco oscillator[static 1]){
+    /* todo (test that) should not give issues but i do-not have the time!! */
+    oscillator->mode =
+        (oscillator->mode == high)
+        ? low : high;
 }
