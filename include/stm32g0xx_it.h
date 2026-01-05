@@ -6,11 +6,12 @@
 
 extern struct overworld world;
 extern volatile uint16_t        cv_raw_adc_inp[5];
-extern volatile const uint16_t *wave_me_d, *wave_me_d2;
+extern volatile const uint16_t *curr_wave_ptr, *curr_wave_ptr2;
 extern uint32_t dac_double_buff2[256];
 
 extern volatile uint8_t cnt_adc_cycles;
 
+extern struct overseer          cosmos;
 extern struct nco               l_osc, r_osc;
 extern struct button            freq_mode_but_dac1;
 extern struct button            freq_mode_but_dac2;

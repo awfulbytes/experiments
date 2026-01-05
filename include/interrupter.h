@@ -30,8 +30,8 @@ struct overworld world = {
 volatile uint8_t cnt_adc_cycles = 0;
 
 volatile const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn, pulse};
-volatile const uint16_t *wave_me_d = sine_wave;
-volatile const uint16_t *wave_me_d2 = sine_wave;
+volatile const uint16_t *curr_wave_ptr = sine_wave;
+volatile const uint16_t *curr_wave_ptr2 = sine_wave;
 
 struct nco l_osc = {.phase = {.accum = 0,
                               .inc = 0x01000000,

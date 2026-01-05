@@ -14,7 +14,7 @@ void test_signal_generation_and_dac_buffer(){
     generate_half_signal(sine_wave, 128, &r_osc);
     uint32_t big_data[128];
     for(int u=0; u < 128; ++u){
-        big_data[u] = (uint32_t)r_osc.data_buff.ping_buff[u] << 16U | l_osc.data_buff.ping_buff[u];
+        big_data[u] = (uint32_t)r_osc.data_buff[u] << 16U | l_osc.data_buff[u];
     }
     update_data_buff(big_data, some, 128);
     update_data_buff(big_data, some + 128, 128);

@@ -6,10 +6,10 @@ typedef volatile enum cyrcles {entrance, first, second, third, fourth, fifth, si
                                // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
                                hell} cyrcles_e;
 
-struct ping_pong_buff{
-    // uint8_t size;
-    volatile uint16_t ping_buff[128];
-};
+/* struct ping_pong_buff{ */
+/*     uint8_t size; */
+/*     volatile uint16_t ping_buff[128]; */
+/* }; */
 
 struct limits {
     volatile uint16_t min;
@@ -46,7 +46,7 @@ typedef struct sanity {
 struct nco {
     struct   phasor           phase;
     volatile freq_modes_e     mode;
-    struct   ping_pong_buff   data_buff;
+    volatile uint16_t         data_buff[128];
     struct   phase_distortion distortion;
     struct   bandwidth        bandwidth;
     sanity_t                  in_the_house;
@@ -55,7 +55,7 @@ struct nco {
 #pragma GCC diagnostic ignored "-Wconversion"
 void generate_half_signal(volatile const uint16_t data[static 128],
                           uint16_t                sector_length,
-                          struct   nco            nco[static 1]);
+                          volatile struct nco     nco[static 1]);
 
 void update_data_buff (const volatile uint32_t data[static 128],
                        uint32_t       buffer_sector[static 128],
@@ -77,16 +77,16 @@ inline static uint64_t compute_nco_increment(uint16_t            note,
 }
 
 __attribute__((pure, always_inline))
-inline static uint32_t compute_lut_index(struct nco nco[static 1]){
+inline static uint32_t compute_lut_index(volatile struct nco nco[static 1]){
 
     return (uint32_t) (((uint64_t) nco->phase.accum * (1<<7))>>32);
 }
 
 #ifdef TEST
 #include <stdio.h>
-inline static void dbg_info_nco(struct    nco *nco,
-                                uint32_t       fract,
-                                int16_t        diff) {
+inline static void dbg_info_nco(volatile struct nco *nco,
+                                uint32_t             fract,
+                                int16_t              diff) {
     printf("\n");
     printf("fract:\t%d\n", fract);
     printf("interp-factor:\t%d\n", (diff * fract) >> 16);

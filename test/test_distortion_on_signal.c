@@ -29,8 +29,8 @@ void emulate_distortion_change(struct encoder *enc){
 void emulate_dac_interrupt(){
 
     generate_half_signal(sine_wave, 128, &l_osc);
-    update_data_buff((uint32_t*)l_osc.data_buff.ping_buff, double_buffer, 128);
-    update_data_buff((uint32_t*)l_osc.data_buff.ping_buff, double_buffer + 128, 128);
+    update_data_buff((uint32_t*)l_osc.data_buff, double_buffer, 128);
+    update_data_buff((uint32_t*)l_osc.data_buff, double_buffer + 128, 128);
 }
 
 
@@ -64,7 +64,8 @@ int main(){
         printf("%b\n", l_osc.phase.done_update);
         assert(l_osc.mode != high);
         assert(initialized_incremet_value > l_osc.phase.pending_update_inc);
-        assert(l_osc.phase.done_update != l_osc.phase.pending_update);
+        assert(l_osc.phase.done_update    == false);
+        assert(l_osc.phase.pending_update == false);
         ++l_osc.distortion.distortion_value;
     }
 }

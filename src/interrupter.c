@@ -64,16 +64,16 @@ void main() {
       hell_walking()
 #endif
 
-        tune(&cosmos, 0);
-        tune(&cosmos, 1);
-
         if (osc_0_pd_enc.virtual_wave_button.flag == 0x69) {
-            wave_me_d = waves_bank[osc_0_pd_enc.virtual_wave_button.state];
+            curr_wave_ptr = waves_bank[osc_0_pd_enc.virtual_wave_button.state];
             osc_0_pd_enc.virtual_wave_button.flag = 'D';
         }
+        tune(&cosmos, 0);
+
         if (osc_1_pd_enc.virtual_wave_button.flag == 0x69) {
-            wave_me_d2 = waves_bank[osc_1_pd_enc.virtual_wave_button.state];
+            curr_wave_ptr2 = waves_bank[osc_1_pd_enc.virtual_wave_button.state];
             osc_1_pd_enc.virtual_wave_button.flag = 'D';
         }
+        tune(&cosmos, 1);
     }
 }
