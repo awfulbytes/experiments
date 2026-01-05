@@ -6,7 +6,6 @@
 #define lock_the_door(x)       __disable_irq();\
                                x;\
                                __enable_irq();
-#define buffer_size(buf)       ((sizeof buf) / (sizeof buf[0]))
 
 void HardFault_Handler(void){while(1);}
 void NMI_Handler(void){}
@@ -25,10 +24,6 @@ uint32_t construct_dual_dac_reg(uint16_t data_ch_2, uint16_t data_ch_1) {
     return ((uint32_t) data_ch_2 << 16U) | data_ch_1;
 }
 
-extern const uint16_t sine_wave[128];
-uint32_t merged_dual_buffer[buffer_size(sine_wave)];
-uint8_t const data_size = buffer_size(merged_dual_buffer);
-
 void DMA1_Channel2_3_IRQHandler(void){
 
     if (l_osc.phase.done_update && r_osc.phase.done_update) {
@@ -41,12 +36,12 @@ void DMA1_Channel2_3_IRQHandler(void){
         generate_half_signal(wave_me_d2, data_size, &r_osc);
         l_osc.phase.done_update = false;
         r_osc.phase.done_update = false;
-    }
 
-    for(uint8_t u=0; u < data_size; ++u){
-        merged_dual_buffer[u] =
-            construct_dual_dac_reg(r_osc.data_buff.ping_buff[u],
-                                   l_osc.data_buff.ping_buff[u]);
+        for(uint8_t u=0; u < data_size; ++u){
+            merged_dual_buffer[u] =
+                construct_dual_dac_reg(r_osc.data_buff.ping_buff[u],
+                                       l_osc.data_buff.ping_buff[u]);
+        }
     }
 
     if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2)) {

@@ -18,6 +18,11 @@ extern struct button            distortion_choice;
 extern struct encoder           osc_0_pd_enc;
 extern struct encoder           osc_1_pd_enc;
 
+#define prime_table_size                                       128
+#define buffer_size(buf)       ((sizeof buf) / (sizeof buf[0]))
+uint32_t merged_dual_buffer[prime_table_size];
+uint8_t const data_size = buffer_size(merged_dual_buffer);
+
 void NMI_Handler(void);
 void HardFault_Handler(void);
 void SVC_Handler(void);
