@@ -34,8 +34,6 @@ void DMA1_Channel2_3_IRQHandler(void){
 
         generate_half_signal(wave_me_d, data_size, &l_osc);
         generate_half_signal(wave_me_d2, data_size, &r_osc);
-        l_osc.phase.done_update = false;
-        r_osc.phase.done_update = false;
 
         for(uint8_t u=0; u < data_size; ++u){
             merged_dual_buffer[u] =

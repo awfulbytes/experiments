@@ -41,6 +41,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         nco->data_buff.ping_buff[y] = (a + ((uint16_t)(((diff * fract) >> 16))));
         nco->phase.accum += nco->phase.inc;
     }
+    nco->phase.done_update = false;
 }
 
 __attribute__((pure))
