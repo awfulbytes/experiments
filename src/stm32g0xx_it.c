@@ -26,7 +26,7 @@ uint32_t construct_dual_dac_reg(uint16_t data_ch_2, uint16_t data_ch_1) {
 
 void DMA1_Channel2_3_IRQHandler(void){
 
-    if (cosmos.oscillators[0]->phase.done_update && cosmos.oscillators[0]->phase.done_update) {
+    if (cosmos.oscillators[0]->phase.done_update && cosmos.oscillators[1]->phase.done_update) {
         l_osc.phase.inc = l_osc.phase.pending_update_inc;
         /* this was just for testing now i have to equalize adc pins */
         /* sync_1_to_0(&l_osc, &r_osc); */

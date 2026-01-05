@@ -18,7 +18,6 @@ void tune(struct overseer *overseer,
     /* return note; */
 }
 
-#pragma GCC diagnostic ignored "-Wunused-variable"
 static inline void stage_modulated_values(volatile struct nco osc[static 1],
                                           volatile struct   overworld *data){
     if(osc->phase.pending_update){
