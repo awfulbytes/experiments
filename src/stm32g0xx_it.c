@@ -32,8 +32,8 @@ void DMA1_Channel2_3_IRQHandler(void){
         /* sync_1_to_0(&l_osc, &r_osc); */
         r_osc.phase.inc = r_osc.phase.pending_update_inc;
 
-        generate_half_signal(curr_wave_ptr, data_size, cosmos.oscillators[0]);
-        generate_half_signal(curr_wave_ptr2, data_size, cosmos.oscillators[1]);
+        cosmos.oscillators[0] = generate_half_signal(curr_wave_ptr, data_size, cosmos.oscillators[0]);
+        cosmos.oscillators[1] = generate_half_signal(curr_wave_ptr2, data_size, cosmos.oscillators[1]);
 
         for(uint8_t u=0; u < data_size; ++u){
             merged_dual_buffer[u] =

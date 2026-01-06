@@ -13,8 +13,8 @@ void test_signal_generation_and_dac_buffer(){
     volatile struct nco *left, *right;
     left = &l_osc;
     right = &r_osc;
-    generate_half_signal(sine_wave, 128, &l_osc);
-    generate_half_signal(sine_wave, 128, &r_osc);
+    left = generate_half_signal(sine_wave, 128, &l_osc);
+    right = generate_half_signal(sine_wave, 128, &r_osc);
     uint32_t big_data[128];
     for(int u=0; u < 128; ++u){
         big_data[u] = (uint32_t)right->data_buff[u] << 16U | left->data_buff[u];

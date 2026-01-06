@@ -5,7 +5,7 @@ void apply_pd_alg(volatile struct nco nco[static 1]){
 }
 
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-void generate_half_signal(volatile const uint16_t data[static 128],
+volatile struct nco* generate_half_signal(volatile const uint16_t data[static 128],
                                           uint16_t                sector_length,
                                           volatile struct nco     nco[static 1]){
     register uint32_t index, n_index, fract;
@@ -42,6 +42,7 @@ void generate_half_signal(volatile const uint16_t data[static 128],
         nco->phase.accum += nco->phase.inc;
     }
     nco->phase.done_update = false;
+    return nco;
 }
 
 __attribute__((pure))
