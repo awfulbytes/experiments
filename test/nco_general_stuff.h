@@ -8,6 +8,7 @@
 
 struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc=0, .pending_update=false,},
                     .mode=low,
+                    .curr_wave_ptr=sine_wave,
                     .distortion.amount=64,
                     .distortion.on=true,
                     .distortion.distortion_value=0,
@@ -18,6 +19,7 @@ struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc
 };
 struct nco r_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc=0, .pending_update=false,},
                     .mode=low,
+                    .curr_wave_ptr=sine_wave,
                     .distortion.amount=64,
                     .distortion.on=true,
                     .distortion.distortion_value=0,

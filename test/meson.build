@@ -29,7 +29,7 @@ m = executable('math', src_f_math,
                c_args : [MCU , LL, testing],
                include_directories : inc_f_all)
 d = executable('distorted-signal', src_f_d,
-               c_args : [MCU , LL, testing],
+               c_args : [MCU , LL],
                include_directories : inc_f_all)
 
 test('nco-increment', g, suite: ['nco'])
