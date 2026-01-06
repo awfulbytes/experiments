@@ -11,7 +11,7 @@ void generate_half_signal(uint16_t                sector_length,
     register uint16_t a, b, y;
     register int16_t  diff;
     for (y = 0; y < sector_length; ++y) {
-        index   = compute_lut_index(nco);
+        index   = compute_lut_index(nco->phase.accum);
         n_index = index + 1;
         a       = nco->curr_wave_ptr[index];
         b       = nco->curr_wave_ptr[n_index & 0x7f];

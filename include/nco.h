@@ -77,9 +77,9 @@ inline static uint64_t compute_nco_increment(uint16_t            note,
 }
 
 __attribute__((pure, always_inline))
-inline static uint32_t compute_lut_index(volatile struct nco nco[static 1]){
+inline static uint32_t compute_lut_index(uint32_t accum){
 
-    return (uint32_t) (((uint64_t) nco->phase.accum * (1<<7))>>32);
+    return (uint32_t) (((uint64_t) accum * (1<<7))>>32);
 }
 
 #ifdef TEST
