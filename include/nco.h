@@ -50,11 +50,11 @@ struct nco {
     struct   phase_distortion distortion;
     struct   bandwidth        bandwidth;
     sanity_t                  in_the_house;
+    volatile const uint16_t *curr_wave_ptr;
 };
 
 #pragma GCC diagnostic ignored "-Wconversion"
-void generate_half_signal(volatile const uint16_t data[static 128],
-                          uint16_t                sector_length,
+void generate_half_signal(uint16_t                sector_length,
                           volatile struct nco     nco[static 1]);
 
 void update_data_buff (const volatile uint32_t data[static 128],

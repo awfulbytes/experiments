@@ -30,8 +30,6 @@ struct overworld world = {
 volatile uint8_t cnt_adc_cycles = 0;
 
 volatile const uint16_t *waves_bank[WAVE_CTR] = {sine_wave, sawup, sawdn, pulse};
-volatile const uint16_t *curr_wave_ptr = sine_wave;
-volatile const uint16_t *curr_wave_ptr2 = sine_wave;
 
 struct nco l_osc = {.phase = {.accum = 0,
                               .inc = 0x01000000,
@@ -39,6 +37,7 @@ struct nco l_osc = {.phase = {.accum = 0,
                               .pending_update=false,
                               .done_update=false,},
                     .in_the_house.report = 0,
+                    .curr_wave_ptr = sine_wave,
                     .mode = starting_mode,
                     .bandwidth.high = {.min=4000, .max=12000,
                                        .cv_raw_max=max_cv},
@@ -57,6 +56,7 @@ struct nco r_osc = {.phase = {.accum = 0,
                               .pending_update=false,
                               .done_update=false,},
                     .in_the_house.report = 1,
+                    .curr_wave_ptr = sine_wave,
                     .mode=starting_mode,
                     .bandwidth.high = {.min=4000, .max=12000,
                                        .cv_raw_max=max_cv},

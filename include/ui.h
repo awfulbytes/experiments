@@ -40,5 +40,5 @@ void WaitForUserButtonPress (struct button *button);
 volatile void* apply_modulations_callback(struct encoder enc[static 1],
                                           struct nco o[static 1]);
 
-void align_phase(volatile struct nco *o0, volatile struct nco *o1);
+void align_phase(volatile struct nco *o[2]);
 void sync_1_to_0(volatile struct nco *o0, volatile struct nco *o1);

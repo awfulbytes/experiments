@@ -65,13 +65,13 @@ void main() {
 #endif
 
         if (osc_0_pd_enc.virtual_wave_button.flag == 0x69) {
-            curr_wave_ptr = waves_bank[osc_0_pd_enc.virtual_wave_button.state];
+            l_osc.curr_wave_ptr = waves_bank[osc_0_pd_enc.virtual_wave_button.state];
             osc_0_pd_enc.virtual_wave_button.flag = 'D';
         }
         tune(&cosmos, 0);
 
         if (osc_1_pd_enc.virtual_wave_button.flag == 0x69) {
-            curr_wave_ptr2 = waves_bank[osc_1_pd_enc.virtual_wave_button.state];
+            r_osc.curr_wave_ptr = waves_bank[osc_1_pd_enc.virtual_wave_button.state];
             osc_1_pd_enc.virtual_wave_button.flag = 'D';
         }
         tune(&cosmos, 1);
