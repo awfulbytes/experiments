@@ -53,9 +53,9 @@ struct nco {
 };
 
 #pragma GCC diagnostic ignored "-Wconversion"
-volatile struct nco* generate_half_signal(volatile const uint16_t data[static 128],
-                                          uint16_t                sector_length,
-                                          volatile struct nco     nco[static 1]);
+void generate_half_signal(volatile const uint16_t data[static 128],
+                          uint16_t                sector_length,
+                          volatile struct nco     nco[static 1]);
 
 void update_data_buff (const volatile uint32_t data[static 128],
                        uint32_t       buffer_sector[static 128],
