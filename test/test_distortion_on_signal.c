@@ -47,7 +47,7 @@ int main(){
     /* dummy_enc.increment = entrance; */
     l_osc.distortion.distortion_value = entrance;
     for ( ;l_osc.distortion.distortion_value < hell; ) {
-        printf("iteration-number:\t%d\n", l_osc.distortion.distortion_value);
+        printf("hell-level:\t%d\n", l_osc.distortion.distortion_value);
         emulate_distortion_on(&l_osc);
         emulate_distortion_change(&dummy_enc);
 

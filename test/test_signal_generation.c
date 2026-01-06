@@ -10,11 +10,14 @@ void emulate_frequency_change(struct nco nco[static 1]){
 void test_signal_generation_and_dac_buffer(){
     assert(l_osc.phase.done_update);
     l_osc.phase.inc = l_osc.phase.pending_update_inc;
-    generate_half_signal(sine_wave, 128, &l_osc);
-    generate_half_signal(sine_wave, 128, &r_osc);
+    volatile struct nco *left, *right;
+    left = &l_osc;
+    right = &r_osc;
+    left = generate_half_signal(sine_wave, 128, &l_osc);
+    right = generate_half_signal(sine_wave, 128, &r_osc);
     uint32_t big_data[128];
     for(int u=0; u < 128; ++u){
-        big_data[u] = (uint32_t)r_osc.data_buff[u] << 16U | l_osc.data_buff[u];
+        big_data[u] = (uint32_t)right->data_buff[u] << 16U | left->data_buff[u];
     }
     update_data_buff(big_data, some, 128);
     update_data_buff(big_data, some + 128, 128);

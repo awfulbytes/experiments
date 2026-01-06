@@ -18,7 +18,7 @@ volatile struct nco* generate_half_signal(volatile const uint16_t data[static 12
         a       = data[index];
         b       = data[n_index & 0x7f];
         diff    = (int16_t) (b-a);
-        fract   = ((uint64_t)((nco->phase.accum) * (1<<7)) >> 16) & 0xffff;
+        fract   = ((uint64_t)((nco->phase.accum) * (1<<7)) >> 16) /* & 0xffff */;
 
 #ifdef TEST
         dbg_info_nco(nco, fract, diff);
