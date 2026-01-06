@@ -12,3 +12,4 @@ ventor/*
 *.~undo-tree~
 
 *.gv
+*testlog*
