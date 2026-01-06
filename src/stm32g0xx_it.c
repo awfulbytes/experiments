@@ -20,10 +20,6 @@ void TIM7_LPTIM2_IRQHandler(void){
     }
 }
 
-uint32_t construct_dual_dac_reg(uint16_t data_ch_2, uint16_t data_ch_1) {
-    return ((uint32_t) data_ch_2 << 16U) | data_ch_1;
-}
-
 void DMA1_Channel2_3_IRQHandler(void){
 
     if (cosmos.oscillators[0]->phase.done_update && cosmos.oscillators[1]->phase.done_update) {
@@ -40,8 +36,8 @@ void DMA1_Channel2_3_IRQHandler(void){
 
         for(uint8_t u=0; u < data_size; ++u){
             merged_dual_buffer[u] =
-                construct_dual_dac_reg(cosmos.oscillators[1]->data_buff[u],
-                                       cosmos.oscillators[0]->data_buff[u]);
+                cosmos.oscillators[1]->data_buff[u] << 16U |\
+                cosmos.oscillators[0]->data_buff[u];
         }
     }
 
