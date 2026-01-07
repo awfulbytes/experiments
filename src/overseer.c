@@ -44,3 +44,7 @@ void merge_signals_dual_dac_mode(volatile struct nco *o[2], uint32_t dual_buffer
                          o[0]->data_buff[z];
     }
 }
+
+void sync_fcw(volatile struct nco *o[2]){
+    o[1]->phase.inc = o[0]->phase.inc;
+}

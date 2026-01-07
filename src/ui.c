@@ -80,7 +80,3 @@ volatile void* apply_modulations_callback(struct encoder enc[static 1],
 void align_phase(volatile struct nco *o[2]){
     o[1]->phase.accum = o[0]->phase.accum;
 }
-
-void sync_1_to_0(volatile struct nco *o0, volatile struct nco *o1){
-    o1->phase.inc = o0->phase.inc;
-}

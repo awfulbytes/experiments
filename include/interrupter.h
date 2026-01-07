@@ -227,4 +227,5 @@ struct overseer cosmos = {
     .oscillators = {&l_osc, &r_osc},
     .selected = &l_osc,
     .universe_data = &world,
+    .sync = false,
 };
