@@ -37,3 +37,10 @@ static inline void stage_modulated_values(volatile struct nco osc[static 1],
     osc->phase.done_update = stage_pending_inc(data->pitch_cv, osc, data->dac1_clock);
     osc->phase.pending_update = !osc->phase.done_update;
 }
+
+void merge_signals_dual_dac_mode(volatile struct nco *o[2], uint32_t dual_buffer[128], uint8_t table_size){
+    for(uint8_t z=0; z < table_size; ++z){
+        dual_buffer[z] = o[1]->data_buff[z] << 16U |\
+                         o[0]->data_buff[z];
+    }
+}

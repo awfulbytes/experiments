@@ -31,14 +31,11 @@ void DMA1_Channel2_3_IRQHandler(void){
             align_phase(cosmos.oscillators);
         }
 
-        generate_half_signal(data_size, cosmos.oscillators[0]);
-        generate_half_signal(data_size, cosmos.oscillators[1]);
-
-        for(uint8_t u=0; u < data_size; ++u){
-            merged_dual_buffer[u] =
-                cosmos.oscillators[1]->data_buff[u] << 16U |\
-                cosmos.oscillators[0]->data_buff[u];
+        for(uint8_t o=0; o < 2; ++o){
+            /* cosmos.oscillators[o]->phase.inc = cosmos.oscillators[o]->phase.pending_update_inc; */
+            generate_half_signal(data_size, cosmos.oscillators[o]);
         }
+        merge_signals_dual_dac_mode(cosmos.oscillators, merged_dual_buffer, data_size);
     }
 
     if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2)) {
