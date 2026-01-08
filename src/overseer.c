@@ -6,6 +6,12 @@ void tune(struct overseer *overseer,
     overseer->selected = overseer->oscillators[osc_idx];
 
     if(overseer->selected->phase.pending_update){
+        if(overseer->sync){
+            /* hack:: overseer->oscillators[1]->phase.inc = overseer->oscillators[0]->phase.inc;
+             *        this makes a nice distortion value following the 0th oscillator!! test if i can manipulate it further
+             */
+            overseer->universe_data->current_value_cv_1_pitch = overseer->universe_data->current_value_cv_0_pitch;
+        }
         register uint16_t pitch_raw_digital =
             (overseer->selected->in_the_house.report == 0)
             ? overseer->universe_data->current_value_cv_0_pitch

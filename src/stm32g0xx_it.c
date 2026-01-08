@@ -23,16 +23,14 @@ void DMA1_Channel2_3_IRQHandler(void){
 
     if (cosmos.oscillators[0]->phase.done_update && cosmos.oscillators[1]->phase.done_update) {
         l_osc.phase.inc = l_osc.phase.pending_update_inc;
-        /* this was just for testing now i have to equalize adc pins */
-        /* sync_1_to_0(&l_osc, &r_osc); */
         r_osc.phase.inc = r_osc.phase.pending_update_inc;
+
         if(cosmos.sync){
-            sync_fcw(cosmos.oscillators);
+            /* sync_fcw(cosmos.oscillators); */
             align_phase(cosmos.oscillators);
         }
 
         for(uint8_t o=0; o < 2; ++o){
-            /* cosmos.oscillators[o]->phase.inc = cosmos.oscillators[o]->phase.pending_update_inc; */
             generate_half_signal(data_size, cosmos.oscillators[o]);
         }
         merge_signals_dual_dac_mode(cosmos.oscillators, merged_dual_buffer, data_size);
@@ -86,10 +84,6 @@ static inline void handle_osc_distortion(struct nco nco[static 1]){
         GPIOB->ODR |= (1 << 5);
 #endif // encoder_leds
         nco->distortion.on = false;
-        /* todo(nxt) what if i made a mode where you can make the accumulators equal independent of the way (PD or not PD)
-         *           and make sure that the accumulators are the same. that way i can phase align the distorted output also!!
-         */
-        /* align_phase(cosmos.oscillators); */
         cosmos.sync = true;
     }
 }
