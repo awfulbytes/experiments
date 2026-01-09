@@ -20,8 +20,8 @@ void TIM7_LPTIM2_IRQHandler(void){
 }
 
 void DMA1_Channel2_3_IRQHandler(void){
-
-    if (cosmos.oscillators[0]->phase.done_update && cosmos.oscillators[1]->phase.done_update) {
+    /* optimized access for compiler massage */
+    if (l_osc.phase.done_update && r_osc.phase.done_update) {
         l_osc.phase.inc = l_osc.phase.pending_update_inc;
         r_osc.phase.inc = r_osc.phase.pending_update_inc;
 
