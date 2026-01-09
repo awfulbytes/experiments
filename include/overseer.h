@@ -12,8 +12,8 @@ struct overworld {
     volatile uint16_t osc_1_cv_distortion_ammount;
 
     const freq_modes_e  starting_synced_mode;
-    const uint_fast32_t dac1_clock;
-    const uint_fast32_t adc1_clock;
+    const uint32_t dac1_clock;
+    const uint32_t adc1_clock;
 };
 
 struct overseer {

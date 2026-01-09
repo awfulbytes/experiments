@@ -36,6 +36,6 @@ extern bool phase_pending_update;
 uint16_t adc_data = 0x000;
 uint16_t osc_max_current_mode;
 
-uint_fast32_t master_clock = 198000;
+uint32_t master_clock = 198000;
 uint32_t required_freq = 440;
 uint16_t acc_bits = (sizeof l_osc.phase.accum) * 8;

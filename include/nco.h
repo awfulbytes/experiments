@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include "reciprocal_division.h"
 #pragma once
+
 typedef enum freq_modes {high, low} freq_modes_e;
 typedef volatile enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
                                // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
@@ -67,11 +69,11 @@ uint16_t map_uint(uint16_t      adc_value,
 
 bool stage_pending_inc(volatile uint16_t      note,
                        volatile struct   nco  nco[static 1],
-                       const    uint_fast32_t sample_rate);
+                       const    uint32_t      sample_rate);
 
 __attribute__((pure, always_inline))
 inline static uint64_t compute_nco_increment(uint16_t            note,
-                                             const uint_fast32_t sample_rate){
+                                             const uint32_t sample_rate){
     int32_t tmp = ((note * (1<<16))/sample_rate);
     return (tmp<<16);
 }

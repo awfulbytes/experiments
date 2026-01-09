@@ -46,13 +46,13 @@ __attribute__((pure))
 uint16_t map_uint(uint16_t      value,
                   volatile struct limits boundaries[static 1]) {
     uint16_t range = boundaries->max - boundaries->min;
-    return (uint16_t)(boundaries->min + (value * range) / boundaries->cv_raw_max);
+    return (uint16_t)(boundaries->min + U16DIVBY32767((value * range))) /* / boundaries->cv_raw_max) */;
 }
 
 __attribute__((pure))
 bool stage_pending_inc(volatile uint16_t      note,
                        volatile struct nco    nco[static 1],
-                       const    uint_fast32_t sample_rate){
+                       const    uint32_t      sample_rate){
     if(note > 15100)
         return false;
 
@@ -60,7 +60,8 @@ bool stage_pending_inc(volatile uint16_t      note,
     return true;
 }
 
-static inline void mmcpy ( void* dst, const void* src, uint16_t length) {
+static inline void mmcpy(void* dst, const void* src, uint16_t length) {
+    /* todo :: (perf) copy by WORD instead of byte. */
     char* d = dst;
     const char* s = src;
     for (int z=0; z < length; ++z) {
