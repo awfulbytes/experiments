@@ -42,14 +42,12 @@ void generate_half_signal(uint16_t                sector_length,
     nco->phase.done_update = false;
 }
 
-__attribute__((pure))
 uint16_t map_uint(uint16_t      value,
                   volatile struct limits boundaries[static 1]) {
     uint16_t range = boundaries->max - boundaries->min;
     return (uint16_t)(boundaries->min + U16DIVBY32767((value * range))) /* / boundaries->cv_raw_max) */;
 }
 
-__attribute__((pure))
 bool stage_pending_inc(volatile uint16_t      note,
                        volatile struct nco    nco[static 1],
                        const    uint32_t      sample_rate){
@@ -68,7 +66,6 @@ static inline void fmmcpy32 (void* dst, const void* src, uint16_t length) {
     }
 }
 
-__attribute__((always_inline))
 inline void update_data_buff(const volatile  uint32_t data[static 128],
                              uint32_t       buffer_sector[static 128],
                              uint16_t       sector_length) {

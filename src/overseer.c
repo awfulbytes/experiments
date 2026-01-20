@@ -9,7 +9,6 @@ void tune(struct overseer *overseer,
         if(overseer->sync){
             /* hack::
              *        this makes a nice distortion value following the 0th oscillator!! test if i can manipulate it further
-             *        yes it does the above but only in -Os not -Ofast
              */
             overseer->universe_data->current_value_cv_1_pitch = overseer->universe_data->current_value_cv_0_pitch;
         }
