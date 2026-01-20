@@ -60,11 +60,10 @@ bool stage_pending_inc(volatile uint16_t      note,
     return true;
 }
 
-static inline void mmcpy(void* dst, const void* src, uint16_t length) {
-    /* todo :: (perf) copy by WORD instead of byte. */
-    char* d = dst;
-    const char* s = src;
-    for (int z=0; z < length; ++z) {
+static inline void fmmcpy32 (void* dst, const void* src, uint16_t length) {
+    uint32_t* d = dst;
+    const uint32_t* s = src;
+    for (uint8_t z=0; z < length; ++z) {
         d[z] = s[z];
     }
 }
@@ -73,5 +72,5 @@ __attribute__((always_inline))
 inline void update_data_buff(const volatile  uint32_t data[static 128],
                              uint32_t       buffer_sector[static 128],
                              uint16_t       sector_length) {
-    mmcpy(buffer_sector, (const void*) data, sizeof(uint32_t) * sector_length);
+    fmmcpy32(buffer_sector, (const void*) data, sector_length);
 }
