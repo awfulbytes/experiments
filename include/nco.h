@@ -97,6 +97,3 @@ inline static void dbg_info_nco(volatile struct nco *nco,
     printf("\n");
 }
 #endif // TEST
-
-#pragma GCC diagnostic ignored "-Wunused-function"
-static inline void mmcpy ( void* dst, const void* src, uint16_t length);
