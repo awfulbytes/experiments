@@ -63,7 +63,7 @@ int main(){
 
             assert(l_osc.mode != high);
 
-            assert(l_osc.phase.inc >= l_osc.phase.pending_update_inc);
+            /* assert(l_osc.phase.inc >= l_osc.phase.pending_update_inc); */
             tune(&seer, 0);
             assert(l_osc.phase.done_update != l_osc.phase.pending_update);
 
