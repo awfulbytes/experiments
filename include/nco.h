@@ -74,8 +74,9 @@ bool stage_pending_inc(volatile uint16_t      note,
 __attribute__((pure, always_inline))
 inline static uint64_t compute_nco_increment(uint16_t            note,
                                              const uint32_t sample_rate){
-    int32_t tmp = ((note * (1<<16))/sample_rate);
-    return (tmp<<16);
+    int32_t tmp = ((note * (1<<16)));
+    tmp = U32DIVBY192000(tmp);
+    return (tmp << 16);
 }
 
 __attribute__((pure, always_inline))

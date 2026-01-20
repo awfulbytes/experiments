@@ -31,7 +31,15 @@
  * 
  * code: (proper fork needed but later)
  *  https://github.com/stevenhoving/integer_division/
+ *
+ * derived values of M and S for (A / 192000)
+ * 0.0_0000_0000_0000_0000_101011101100001100111110000111111
+ *   0_0000_0000_0000_0000 thus S = 17
+ *   0000.10101110110000110 the seventeen MSBs (added 1 = 0001.00011001110110111101110100010000
+ *   bin(0001100111011011) = #x19DB (these are the 16 MSBs after the point) { M }
  */
-#define U16REC2(A, M, S) (uint16_t)((((((uint32_t)(A) * (uint32_t)(M)) >> 16u) + (A)) >> 1u) >> (S))
+#define U32REC2(A, M, S) (((((uint32_t)(A) * (uint32_t)(M) >> 16u) + (A)) >> 1u) >> (S))
+#define U16REC2(A, M, S) (uint16_t)U32REC2(A, M, S)
 #define U16DIVBY32767(A)    U16REC2(A, 0x0003u, 14u)
+#define U32DIVBY192000(A)   U32REC2(A, 0x19dbu, 17u)
 
