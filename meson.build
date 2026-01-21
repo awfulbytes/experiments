@@ -59,6 +59,7 @@ lib_dirs = [core_inc_dir, hal_dev_inc, cmsis_dev_inc]
 MCU        = '-DSTM32G071xx'
 LL         = '-DUSE_FULL_LL_DRIVER'
 fast       = '-Ofast'
+arm_arch   = '-march=armv6-m'
 small      = '-Os'
 full       = '-O3'
 optimize   = small
@@ -72,7 +73,7 @@ elf = executable('testershit', src_files + src_deps,
                  # link_with: hal,
                  include_directories : lib_dirs + inc_dir,
                  override_options: [],
-                 c_args : [MCU , LL, optimize],
+                 c_args : [MCU, arm_arch, LL, optimize],
                  link_args : ['-nostdlib', '-nostartfiles', '-nodefaultlibs',
                               '--data-sections', optimize,
                               '--specs=nano.specs', '-Wl,-Map=testershit.map'],
@@ -90,7 +91,7 @@ striper = custom_target('stripped-binary',
 release = executable('release', src_files + src_deps,
                      include_directories : lib_dirs + inc_dir,
                      override_options: [],
-                     c_args : [MCU , LL, fast],
+                     c_args : [MCU, arm_arch, LL, fast],
                      link_args : ['-nostdlib', '-nostartfiles', '-nodefaultlibs',
                                   '--data-sections', fast,
                                   '--specs=nano.specs', '-Wl,-Map=release.map'],
