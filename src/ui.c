@@ -68,11 +68,11 @@ static void handle_wave_selection(struct encoder *e, volatile enum direction dir
 
 volatile void* apply_modulations_callback(struct encoder enc[static 1],
                                           struct nco o[static 1]){
-    if (o->distortion.on) {
-        handle_distortion(o, extract_encoder_direction(enc));
-    } else {
+    if (!o->distortion.on) {
         handle_wave_selection(enc, extract_encoder_direction(enc));
+        return (void*)0;
     }
+    handle_distortion(o, extract_encoder_direction(enc));
     o->phase.pending_update = true;
     return (void*)0;
 }
