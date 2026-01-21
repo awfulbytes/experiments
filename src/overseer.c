@@ -22,26 +22,23 @@ void tune(struct overseer *overseer,
             ? map_uint(pitch_raw_digital, &overseer->selected->bandwidth.high)
             : map_uint(pitch_raw_digital, &overseer->selected->bandwidth.low);
 
-        stage_modulated_values(overseer->selected, overseer->universe_data);
-        /* return note; */
+        if (overseer->selected->distortion.on)
+            tune_distortion(overseer->selected, overseer->universe_data);
+
+        overseer->selected->phase.done_update =
+            stage_pending_inc(overseer->universe_data->pitch_cv, overseer->selected, overseer->universe_data->dac1_clock);
+        overseer->selected->phase.pending_update = !overseer->selected->phase.done_update;
     }
 }
 
-static inline void stage_modulated_values(volatile struct nco osc[static 1],
-                                          volatile struct   overworld *data){
-    if (osc->distortion.on) {
-        /* check linked tasks */
-        uint16_t tmp =
-            (osc->in_the_house.report == 0)
-            ? data->osc_0_cv_distortion_amount
-            : data->osc_1_cv_distortion_ammount;
-        osc->distortion.amount_2 = map_uint(data->osc_0_cv_2_distortion_amount, &osc->distortion.level_range);
-        osc->distortion.amount = map_uint(tmp, &osc->distortion.level_range);
-    } else {
-        /* who tf knows */
-    }
-    osc->phase.done_update = stage_pending_inc(data->pitch_cv, osc, data->dac1_clock);
-    osc->phase.pending_update = !osc->phase.done_update;
+static inline void tune_distortion(volatile struct nco osc[static 1],
+                                   volatile struct   overworld *data){
+    uint16_t tmp =
+        (osc->in_the_house.report == 0)
+        ? data->osc_0_cv_distortion_amount
+        : data->osc_1_cv_distortion_ammount;
+    osc->distortion.amount_2 = map_uint(data->osc_0_cv_2_distortion_amount, &osc->distortion.level_range);
+    osc->distortion.amount = map_uint(tmp, &osc->distortion.level_range);
 }
 
 void merge_signals_dual_dac_mode(volatile struct nco *o[2], uint32_t dual_buffer[128], uint8_t table_size){
