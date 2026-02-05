@@ -38,6 +38,6 @@ __attribute((always_inline))
 inline void change_pitch_mode(struct nco oscillator[static 1]){
     /* todo (test that) should not give issues but i do-not have the time!! */
     oscillator->mode =
-        (oscillator->mode == high)
-        ? low : high;
+        (oscillator->mode == free)
+        ? tracking : free;
 }

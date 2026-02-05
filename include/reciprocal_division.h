@@ -41,5 +41,6 @@
 #define U32REC2(A, M, S) (((((uint32_t)(A) * (uint32_t)(M) >> 16u) + (A)) >> 1u) >> (S))
 #define U16REC2(A, M, S) (uint16_t)U32REC2(A, M, S)
 #define U16DIVBY32767(A)    U16REC2(A, 0x0003u, 14u)
+#pragma message("unused")
 #define U32DIVBY192000(A)   U32REC2(A, 0x19dbu, 17u)
 

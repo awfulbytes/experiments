@@ -13,7 +13,7 @@
 #define cv_init       0xff
 #define dac_clk       192000
 #define adc_clk       48000
-#define starting_mode low
+#define starting_mode free
 #define max_cv        0x7fff
 
 struct overworld world = {
@@ -39,9 +39,9 @@ struct nco l_osc = {.phase = {.accum = 0,
                     .in_the_house.report = 0,
                     .curr_wave_ptr = sine_wave,
                     .mode = starting_mode,
-                    .bandwidth.high = {.min=4000, .max=12000,
+                    .bandwidth.free = {.min=4000, .max=12000,
                                        .cv_raw_max=max_cv},
-                    .bandwidth.low = {.min=10, .max=6000,
+                    .bandwidth.tracking = {.min=20, .max=5764,
                                            .cv_raw_max=max_cv},
                     .distortion.amount=64,
                     .distortion.level_range={.min=23, .max=129,
@@ -58,9 +58,9 @@ struct nco r_osc = {.phase = {.accum = 0,
                     .in_the_house.report = 1,
                     .curr_wave_ptr = sine_wave,
                     .mode=starting_mode,
-                    .bandwidth.high = {.min=4000, .max=12000,
+                    .bandwidth.free = {.min=4000, .max=12000,
                                        .cv_raw_max=max_cv},
-                    .bandwidth.low = {.min=10, .max=6000,
+                    .bandwidth.tracking = {.min=20, .max=5764,
                                            .cv_raw_max=max_cv},
                     .distortion.amount=64,
                     .distortion.level_range={.min=23, .max=129,
@@ -69,7 +69,6 @@ struct nco r_osc = {.phase = {.accum = 0,
                     .distortion.past_dante = entrance,
                     .distortion.dante=entrance};
 
-volatile uint16_t dac_double_buff[256] = {0};
 volatile uint32_t dac_double_buff2[256] = {0};
 
 struct timer tim6_settings = {.id=TIM6,

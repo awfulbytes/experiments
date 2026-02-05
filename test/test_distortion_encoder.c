@@ -6,7 +6,7 @@
 
 extern volatile void* apply_modulations_callback(struct encoder enc[static 1], struct nco o[static 1]);
 struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc=0, .pending_update=true,},
-                    .mode=high,
+                    .mode=free,
                     .distortion.amount=64,
                     .distortion.on=false,
                     .distortion.distortion_value=0,
