@@ -2,9 +2,9 @@
 #include <stdbool.h>
 #include "nco.h"
 
-struct nco dummy = {.mode=high,
-                    .bandwidth={.high.min=100, .high.max=14000, .high.cv_raw_max=0x7fff,
-                                .low.min=220, .low.max=1661, .low.cv_raw_max=0x7fff},
+struct nco dummy = {.mode=free,
+                    .bandwidth={.free.min=100, .free.max=14000, .free.cv_raw_max=0x7fff,
+                                .tracking.min=220, .tracking.max=1661, .tracking.cv_raw_max=0x7fff},
                     .distortion.level_range={.min=25, .max=129, .cv_raw_max=0x7fff}};
 
 void test_distortion_amount_mapper(void){
@@ -15,24 +15,24 @@ void test_distortion_amount_mapper(void){
     assert(distortion_amount == dummy.distortion.level_range.min);
 }
 
-void test_pitch_high_mode_mapper(void){
-    uint16_t note = map_uint(0x7fff, &dummy.bandwidth.high);
-    assert(note == dummy.bandwidth.high.max);
+void test_pitch_free_mode_mapper(void){
+    uint16_t note = map_uint(0x7fff, &dummy.bandwidth.free);
+    assert(note == dummy.bandwidth.free.max);
 
-    note = map_uint(0x000, &dummy.bandwidth.high);
-    assert(note == dummy.bandwidth.high.min);
+    note = map_uint(0x000, &dummy.bandwidth.free);
+    assert(note == dummy.bandwidth.free.min);
 }
 
 void test_pitch_v_per_oct_mode_mapper(void){
-    uint16_t note = map_uint(0x7fff, &dummy.bandwidth.low);
-    assert(note == dummy.bandwidth.low.max);
+    uint16_t note = map_uint(0x7fff, &dummy.bandwidth.tracking);
+    assert(note == dummy.bandwidth.tracking.max);
 
-    note = map_uint(0x000, &dummy.bandwidth.low);
-    assert(note == dummy.bandwidth.low.min);
+    note = map_uint(0x000, &dummy.bandwidth.tracking);
+    assert(note == dummy.bandwidth.tracking.min);
 }
 
 int main(void){
     test_distortion_amount_mapper();
-    test_pitch_high_mode_mapper();
+    test_pitch_free_mode_mapper();
     test_pitch_v_per_oct_mode_mapper();
 }

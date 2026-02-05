@@ -1,9 +1,19 @@
 #include "overseer.h"
-#include "nco.h"
+
+volatile const uint16_t diatonic_g_major[] = {
+  24,   27,   30,   32,   36,   40,   45,
+  48,   54,   60,   64,   72,   80,   90,
+  96,  108,  120,  128,  144,  160,  180,
+ 192,  216,  240,  256,  288,  320,  360,
+ 384,  432,  480,  512,  576,  640,  720,
+ 768,  864,  960, 1024, 1152, 1280, 1440,
+1536, 1728, 1920, 2048, 2304, 2560, 2880,
+3072, 3456, 3840, 4096, 4608, 5120, 5760};
 
 void tune(struct overseer *overseer,
           uint8_t          osc_idx){
     overseer->selected = overseer->oscillators[osc_idx];
+    register size_t g_major_size = sizeof(diatonic_g_major)/sizeof(diatonic_g_major[0]);
 
     if(overseer->selected->phase.pending_update){
         if(overseer->sync){
@@ -17,12 +27,17 @@ void tune(struct overseer *overseer,
             ? overseer->universe_data->current_value_cv_0_pitch
             : overseer->universe_data->current_value_cv_1_pitch;
 
-        overseer->universe_data->pitch_cv =
-            (overseer->selected->mode == high)
-            ? map_uint(pitch_raw_digital, &overseer->selected->bandwidth.high)
-            : map_uint(pitch_raw_digital, &overseer->selected->bandwidth.low);
+        register uint16_t note =
+            (overseer->selected->mode == free)
+            ? map_uint(pitch_raw_digital, &overseer->selected->bandwidth.free)
+            : map_uint(pitch_raw_digital, &overseer->selected->bandwidth.tracking);
 
-        if (overseer->selected->distortion.on)
+        overseer->universe_data->pitch_cv =
+            (overseer->selected->on_scale)
+            ? diatonic_scale(note, diatonic_g_major, g_major_size)
+            : note;
+
+        if(overseer->selected->distortion.on)
             tune_distortion(overseer->selected, overseer->universe_data);
 
         overseer->selected->phase.done_update =
@@ -50,4 +65,35 @@ void merge_signals_dual_dac_mode(volatile struct nco *o[2], uint32_t dual_buffer
 
 void sync_fcw(volatile struct nco *o[2]){
     o[1]->phase.inc = o[0]->phase.inc;
+}
+
+static uint16_t diatonic_scale(volatile uint16_t note,
+                               volatile const uint16_t *scale_table,
+                               size_t g_major_tbl_size){
+    /*
+     * todo:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+     * optimize
+     * todo:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+     */
+    register uint16_t f = g_major_tbl_size;
+    register uint16_t diff_up = 0, diff_down = 0;
+
+    for(; f > 0; --f){
+
+        if(note > scale_table[g_major_tbl_size]){
+            return scale_table[g_major_tbl_size];
+        }
+
+        if(note < scale_table[f])
+            continue;
+        else {
+            diff_down = note - scale_table[f];
+            diff_up   = scale_table[f + 1] - note;
+            if(diff_up > diff_down){
+                return scale_table[f];
+            } else
+                return scale_table[f + 1];
+        }
+    }
+    return scale_table[0];
 }

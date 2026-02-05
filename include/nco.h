@@ -3,7 +3,7 @@
 #include "reciprocal_division.h"
 #pragma once
 
-typedef enum freq_modes {high, low} freq_modes_e;
+typedef enum freq_modes {free, tracking} freq_modes_e;
 typedef volatile enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
                                // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
                                hell} cyrcles_e;
@@ -30,8 +30,8 @@ struct phase_distortion{
 };
 
 struct bandwidth {
-    struct limits high;
-    struct limits low;
+    struct limits free;
+    struct limits tracking;
 };
 
 struct phasor {
@@ -52,7 +52,8 @@ struct nco {
     struct   phase_distortion distortion;
     struct   bandwidth        bandwidth;
     sanity_t                  in_the_house;
-    volatile const uint16_t *curr_wave_ptr;
+    volatile const uint16_t  *curr_wave_ptr;
+    volatile bool             on_scale;
 };
 
 #pragma GCC diagnostic ignored "-Wconversion"
@@ -72,8 +73,8 @@ bool stage_pending_inc(volatile uint16_t      note,
 
 inline static uint64_t compute_nco_increment(uint16_t            note,
                                              const uint32_t sample_rate){
-    int32_t tmp = ((note * (1<<16)));
-    tmp = U32DIVBY192000(tmp);
+    int32_t tmp = ((note * (1<<16))/sample_rate);
+    // tmp = U32DIVBY192000(tmp);
     return (tmp << 16);
 }
 

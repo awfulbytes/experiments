@@ -112,10 +112,12 @@ void EXTI4_15_IRQHandler(void) {
 
     if ((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
         change_pitch_mode(&l_osc);
+        l_osc.on_scale = (l_osc.mode == tracking) ? true : false;
         (EXTI->RPR1) = (freq_mode_but_dac1.exti.exti_line);
     }
     if ((EXTI->RPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line) {
         change_pitch_mode(&r_osc);
+        r_osc.on_scale = (r_osc.mode == tracking) ? true : false;
         (EXTI->RPR1) = (freq_mode_but_dac2.exti.exti_line);
     }
     if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line) {
