@@ -12,7 +12,7 @@ volatile const uint16_t diatonic_g_major[] = {
 
 void tune(struct overseer *seer, uint8_t osc_idx){
     seer->selected = seer->oscillators[osc_idx];
-    register size_t g_major_size = sizeof(diatonic_g_major)/sizeof(diatonic_g_major[0]);
+    register size_t g_major_size = array_size(diatonic_g_major);
 
     if(seer->selected->phase.pending_update){
         if(seer->sync){
