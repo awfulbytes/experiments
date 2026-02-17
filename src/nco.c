@@ -39,10 +39,10 @@ uint16_t map_uint(uint16_t      value,
     return (uint16_t)(boundaries->min + U16DIVBY32767((value * range))) /* / boundaries->cv_raw_max) */;
 }
 
-bool stage_pending_inc(volatile uint16_t      note,
-                       volatile struct nco    nco[static 1],
-                       const    uint32_t      sample_rate){
-    if(note > 15100)
+bool stage_pending_inc(volatile        uint16_t      note,
+                       volatile struct nco           nco[static 1],
+                       const           uint32_t      sample_rate){
+    if(note > nco->bandwidth.free.max)
         return false;
 
     nco->phase.pending_update_inc = compute_nco_increment(note, sample_rate);
