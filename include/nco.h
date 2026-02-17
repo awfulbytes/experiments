@@ -4,9 +4,8 @@
 #pragma once
 
 typedef enum freq_modes {free, tracking} freq_modes_e;
-typedef volatile enum cyrcles {entrance, first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
-                               // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
-                               hell} cyrcles_e;
+typedef volatile enum cyrcles {entrance, first, second, third, fourth, fifth,
+                               sixth, seventh, eighth, ninth, hell} cyrcles_e;
 
 struct limits {
     volatile uint16_t min;
@@ -30,25 +29,25 @@ struct bandwidth {
 };
 
 struct phasor {
-    volatile uint64_t         pending_update_inc;
-    volatile uint64_t         inc;
-    volatile uint32_t         accum;
-    volatile bool             pending_update;
-    volatile bool             done_update;
+    volatile        uint64_t        pending_update_inc;
+    volatile        uint64_t        inc;
+    volatile        uint32_t        accum;
+    volatile        bool            pending_update;
+    volatile        bool            done_update;
 };
 
 typedef struct sanity {
     uint8_t report;
 } sanity_t;
 struct nco {
-    struct   phasor           phase;
-    volatile freq_modes_e     mode;
-    volatile uint16_t         data_buff[128];
-    struct   phase_distortion distortion;
-    struct   bandwidth        bandwidth;
-    sanity_t                  in_the_house;
-    volatile const uint16_t  *curr_wave_ptr;
-    volatile bool             on_scale;
+    struct         phasor           phase;
+    volatile       freq_modes_e     mode;
+    volatile       uint16_t         data_buff[128];
+    struct         phase_distortion distortion;
+    struct         bandwidth        bandwidth;
+    sanity_t                        in_the_house;
+    volatile const uint16_t        *curr_wave_ptr;
+    volatile       bool             on_scale;
 };
 
 #pragma GCC diagnostic ignored "-Wconversion"

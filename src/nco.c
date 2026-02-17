@@ -5,7 +5,7 @@ void apply_pd_alg(volatile struct nco nco[static 1]){
 }
 
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-void generate_half_signal(uint16_t                sector_length,
+void generate_half_signal(uint16_t sector_length,
                           volatile struct nco     nco[static 1]){
     register uint32_t index, n_index, fract;
     register uint16_t a, b, y;
@@ -33,7 +33,7 @@ void generate_half_signal(uint16_t                sector_length,
     nco->phase.done_update = false;
 }
 
-uint16_t map_uint(uint16_t      value,
+uint16_t map_uint(uint16_t value,
                   volatile struct limits boundaries[static 1]) {
     uint16_t range = boundaries->max - boundaries->min;
     return (uint16_t)(boundaries->min + U16DIVBY32767((value * range))) /* / boundaries->cv_raw_max) */;
@@ -58,7 +58,7 @@ static inline void fmmcpy32 (void* dst, const void* src, uint16_t length) {
 }
 
 inline void update_data_buff(const volatile  uint32_t data[static 128],
-                             uint32_t       buffer_sector[static 128],
-                             uint16_t       sector_length) {
+                             uint32_t                 buffer_sector[static 128],
+                             uint16_t                 sector_length) {
     fmmcpy32(buffer_sector, (const void*) data, sector_length);
 }
