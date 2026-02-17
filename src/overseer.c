@@ -10,36 +10,36 @@ volatile const uint16_t diatonic_g_major[] = {
 1536, 1728, 1920, 2048, 2304, 2560, 2880,
 3072, 3456, 3840, 4096, 4608, 5120, 5760};
 
-void tune(struct overseer *overseer,
-          uint8_t          osc_idx){
-    overseer->selected = overseer->oscillators[osc_idx];
+void tune(struct overseer *seer, uint8_t osc_idx){
+    seer->selected = seer->oscillators[osc_idx];
     register size_t g_major_size = sizeof(diatonic_g_major)/sizeof(diatonic_g_major[0]);
 
-    if(overseer->selected->phase.pending_update){
-        if(overseer->sync){
-            overseer->universe_data->current_value_cv_1_pitch = overseer->universe_data->current_value_cv_0_pitch;
+    if(seer->selected->phase.pending_update){
+        if(seer->sync){
+            seer->_data->_cv_1_pitch = seer->_data->_cv_0_pitch;
         }
         register uint16_t pitch_raw_digital =
-            (overseer->selected->in_the_house.report == 0)
-            ? overseer->universe_data->current_value_cv_0_pitch
-            : overseer->universe_data->current_value_cv_1_pitch;
+            (seer->selected->in_the_house.report == 0)
+            ? seer->_data->_cv_0_pitch
+            : seer->_data->_cv_1_pitch;
 
         register uint16_t note =
-            (overseer->selected->mode == free)
-            ? map_uint(pitch_raw_digital, &overseer->selected->bandwidth.free)
-            : map_uint(pitch_raw_digital, &overseer->selected->bandwidth.tracking);
+            (seer->selected->mode == free)
+            ? map_uint(pitch_raw_digital, &seer->selected->bandwidth.free)
+            : map_uint(pitch_raw_digital, &seer->selected->bandwidth.tracking);
 
-        overseer->universe_data->pitch_cv =
-            (overseer->selected->on_scale)
+        seer->_data->pitch_cv =
+            (seer->selected->on_scale)
             ? diatonic_scale(note, diatonic_g_major, g_major_size)
             : note;
 
-        if(overseer->selected->distortion.on)
-            tune_distortion(overseer->selected, overseer->universe_data);
+        if(seer->selected->distortion.on)
+            tune_distortion(seer->selected, seer->_data);
 
-        overseer->selected->phase.done_update =
-            stage_pending_inc(overseer->universe_data->pitch_cv, overseer->selected, overseer->universe_data->dac1_clock);
-        overseer->selected->phase.pending_update = !overseer->selected->phase.done_update;
+        seer->selected->phase.done_update =
+            stage_pending_inc(seer->_data->pitch_cv, seer->selected,
+                              seer->_data->dac1_clock);
+        seer->selected->phase.pending_update = !seer->selected->phase.done_update;
     }
 }
 

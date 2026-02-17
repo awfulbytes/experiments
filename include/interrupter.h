@@ -18,11 +18,11 @@
 
 struct overworld world = {
     .pitch_cv                           = cv_init,
-    .current_value_cv_0_pitch           = cv_init,
+    ._cv_0_pitch                        = cv_init,
     .osc_0_cv_distortion_amount         = cv_init,
     .osc_0_cv_2_distortion_amount       = cv_init,
     .osc_1_cv_distortion_ammount        = cv_init,
-    .current_value_cv_1_pitch           = cv_init,
+    ._cv_1_pitch                        = cv_init,
     /* .pitch1_cv                          = cv_init, */
     .dac1_clock = dac_clk,
     .adc1_clock = adc_clk,
@@ -225,6 +225,6 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC,
 struct overseer cosmos = {
     .oscillators = {&l_osc, &r_osc},
     .selected = &l_osc,
-    .universe_data = &world,
+    ._data = &world,
     .sync = false,
 };

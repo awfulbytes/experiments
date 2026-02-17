@@ -39,10 +39,10 @@ void main() {
 #endif
     dma_config(&dac_dma);
     for (int i=0; i < 2; i++) {
-        tim_init(cosmos.universe_data->dac1_clock, timers[i]);
+        tim_init(cosmos._data->dac1_clock, timers[i]);
     }
 
-    tim_init(cosmos.universe_data->adc1_clock, &tim2_settings);
+    tim_init(cosmos._data->adc1_clock, &tim2_settings);
     adc_init_settings(&adc_settings);
 
 
