@@ -12,12 +12,14 @@ void SVC_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 
-void TIM7_LPTIM2_IRQHandler(void){
-    /* todo(nxt) make this a profiling timer */
+/*
+  void TIM7_LPTIM2_IRQHandler(void){
+  // todo(nxt) make this a profiling timer
     if (TIM7->SR & TIM_SR_UIF){
         TIM7->SR &= ~(TIM_SR_UIF);
     }
 }
+*/
 
 void DMA1_Channel2_3_IRQHandler(void){
     /* optimized access for compiler massage */
