@@ -21,9 +21,8 @@ struct overworld world = {
     ._cv_0_pitch                        = cv_init,
     .osc_0_cv_distortion_amount         = cv_init,
     .osc_0_cv_2_distortion_amount       = cv_init,
-    .osc_1_cv_distortion_ammount        = cv_init,
     ._cv_1_pitch                        = cv_init,
-    /* .pitch1_cv                          = cv_init, */
+    .osc_1_cv_distortion_ammount        = cv_init,
     .dac1_clock = dac_clk,
     .adc1_clock = adc_clk,
 };
@@ -197,7 +196,6 @@ struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                      .value = {0},
                                      .it_settings = { },
                                      .flag = 'D'},
-                               /* .increment=0, */
                                .direction=cw,
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};
 
@@ -212,13 +210,12 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                                .exti_port_conf=LL_EXTI_CONFIG_PORTC,
                                                .exti_line_conf=LL_EXTI_CONFIG_LINE6}},
                                .B = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_8,
-                                         .id=8,
-                                         .mode = LL_GPIO_MODE_INPUT,
-                                         .pull = LL_GPIO_PULL_UP},
+                                             .id=8,
+                                             .mode = LL_GPIO_MODE_INPUT,
+                                             .pull = LL_GPIO_PULL_UP},
                                      .value = {0},
                                      .it_settings = { },
                                      .flag = 'D'},
-                               /* .increment=0, */
                                .direction=cw,
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};
 

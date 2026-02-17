@@ -8,11 +8,6 @@ typedef volatile enum cyrcles {entrance, first, second, third, fourth, fifth, si
                                // tenth, eleventh, twelve, thirteenth, fourteenth, fifteenth, seventeenthh, eighteenth, ninteenth,
                                hell} cyrcles_e;
 
-/* struct ping_pong_buff{ */
-/*     uint8_t size; */
-/*     volatile uint16_t ping_buff[128]; */
-/* }; */
-
 struct limits {
     volatile uint16_t min;
     volatile uint16_t max;
