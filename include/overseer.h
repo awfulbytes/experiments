@@ -4,11 +4,11 @@
 
 struct overworld {
     volatile uint16_t pitch_cv;
-    volatile uint16_t current_value_cv_0_pitch;
+    volatile uint16_t _cv_0_pitch;
     volatile uint16_t osc_0_cv_distortion_amount;
     volatile uint16_t osc_0_cv_2_distortion_amount;
 
-    volatile uint16_t current_value_cv_1_pitch;
+    volatile uint16_t _cv_1_pitch;
     volatile uint16_t osc_1_cv_distortion_ammount;
 
     const freq_modes_e  starting_synced_mode;
@@ -19,7 +19,7 @@ struct overworld {
 struct overseer {
     volatile struct nco       *oscillators[2];
     volatile struct nco       *selected;
-    volatile struct overworld *universe_data;
+    volatile struct overworld *_data;
     volatile bool              sync;
     volatile bool              phase_align;
 };
