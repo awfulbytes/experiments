@@ -77,8 +77,8 @@ static uint16_t diatonic_scale(volatile uint16_t note,
 
     for(; f > 0; --f){
 
-        if(note > scale_table[g_major_tbl_size]){
-            return scale_table[g_major_tbl_size];
+        if(note > scale_table[g_major_tbl_size - 1]){
+            return scale_table[g_major_tbl_size - 1];
         }
 
         if(note < scale_table[f])
