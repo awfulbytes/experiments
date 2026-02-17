@@ -45,16 +45,16 @@ int main(){
     struct   encoder dummy_enc;
     struct overworld data = {
         .pitch_cv                                      = 0xfff,
-        .current_value_cv_0_pitch                      = 0x000,
+        ._cv_0_pitch                                   = 0x000,
         .osc_0_cv_distortion_amount                    = 0xfff,
         .dac1_clock                                    = dac_clk,
     };
-    struct overseer seer = { .oscillators[0]=&l_osc, .universe_data = &data };
+    struct overseer seer = { .oscillators[0]=&l_osc, ._data = &data };
     /* dummy_enc.increment = entrance; */
     l_osc.distortion.distortion_value = entrance;
     for ( ;l_osc.distortion.distortion_value <= hell; ) {
-        for( ;data.current_value_cv_0_pitch <= 0x7fff; ++data.current_value_cv_0_pitch){
-            printf("cv-value:\t%x\n", data.current_value_cv_0_pitch);
+        for( ;data._cv_0_pitch <= 0x7fff; ++data._cv_0_pitch){
+            printf("cv-value:\t%x\n", data._cv_0_pitch);
             emulate_distortion_on(&l_osc);
             emulate_distortion_change(&dummy_enc);
 
