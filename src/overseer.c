@@ -81,8 +81,7 @@ static uint16_t diatonic_scale(volatile uint16_t note,
             return scale_table[g_major_tbl_size - 1];
         }
 
-        if(note < scale_table[f]) /* invert --(!x)-- to possibly optimize */
-            #error "try to optimize table searching"
+        if(note < scale_table[f])
             continue;
         else {
             diff_down = note - scale_table[f];
