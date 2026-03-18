@@ -69,17 +69,18 @@ static uint16_t diatonic_scale(volatile uint16_t note,
                                size_t g_major_tbl_size){
     /*
      * todo:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-     * optimize
+     * a. make the table resizable!!
+     *    The idea is to have min/max (a range) of octaves or/and frequencies..?
      * todo:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
      */
     register uint16_t f = g_major_tbl_size;
     register uint16_t diff_up = 0, diff_down = 0;
 
-    for(; f > 0; --f){
+    if(note > scale_table[g_major_tbl_size - 1]){
+        return scale_table[g_major_tbl_size - 1];
+    }
 
-        if(note > scale_table[g_major_tbl_size - 1]){
-            return scale_table[g_major_tbl_size - 1];
-        }
+    for(; f > 0; --f){
 
         if(note < scale_table[f])
             continue;
