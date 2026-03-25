@@ -13,6 +13,7 @@ c_std = 'c11'
 c_args = ['-mcpu=arm600', '-ffreestanding',
             '-ffunction-sections',
             '-Wno-sign-conversion',
+            '-Wno-int-to-pointer-cast',
             '-Wno-unused-parameter',
             '-Wextra',
             # '-flto',

@@ -11,7 +11,7 @@
 
 
 #define cv_init       0xff
-#define dac_clk       192000
+#define dac_clk       144000
 #define adc_clk       48000
 #define starting_mode free
 #define max_cv        0x7fff
