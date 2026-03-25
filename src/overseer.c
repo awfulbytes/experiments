@@ -28,10 +28,39 @@ void tune(struct overseer *seer, uint8_t osc_idx){
             ? map_uint(pitch_raw_digital, &seer->selected->bandwidth.free)
             : map_uint(pitch_raw_digital, &seer->selected->bandwidth.tracking);
 
-        seer->_data->pitch_cv =
-            (seer->selected->on_scale)
-            ? diatonic_scale(note, diatonic_g_major, g_major_size)
-            : note;
+        switch(seer->selected->tempered.type) {
+            case none:
+                seer->_data->pitch_cv = note;
+                break;
+            case eq_tempered:
+                seer->_data->pitch_cv = equal_tempered(seer->selected, note);
+                break;
+            case diatonic_major_g:
+                seer->_data->pitch_cv = diatonic_lut_search(note, diatonic_g_major, g_major_size);
+                break;
+        }
+        /* seer->_data->pitch_cv =
+         *     (seer->selected->on_scale)
+         *     ? diatonic_scale(note, diatonic_g_major, g_major_size);
+         *     : note;
+         */
+
+        /*
+         * todo::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+         *
+         * -a. do the checking for this and make it a button??>?>?>?>
+         *     - [x] check for the mode of the oscillator (i.e. eq_tempered)
+         *
+         * a. To have 12 equal spaced intervals
+         * nxt -> may need a proper enum and switch approach in order for me to
+         *        have appropriate space for executing many instructions in one
+         *        case.
+         *
+         * b. use the tunning_method enum to manage the tunning effect.
+         *
+         * todo::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+         *
+         */
 
         if(seer->selected->distortion.on)
             tune_distortion(seer->selected, seer->_data);
@@ -64,13 +93,18 @@ void sync_fcw(volatile struct nco *o[2]){
     o[1]->phase.inc = o[0]->phase.inc;
 }
 
-static uint16_t diatonic_scale(volatile uint16_t note,
+static uint16_t diatonic_lut_search(volatile uint16_t note,
                                volatile const uint16_t *scale_table,
                                size_t g_major_tbl_size){
     /*
      * todo:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
      * a. make the table resizable!!
      *    The idea is to have min/max (a range) of octaves or/and frequencies..?
+     *    We need to have a first fundamental and the octave span and we can
+     *    calculate the last fundamental frequency. (Do not give more than 5-6
+     *    octaves.
+     * b. using intervals may be more efficient! --> make later -^
+     *    ^--this possible first and
      * todo:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
      */
     register uint16_t f = g_major_tbl_size;
@@ -94,4 +128,54 @@ static uint16_t diatonic_scale(volatile uint16_t note,
         }
     }
     return scale_table[0];
+}
+static inline uint16_t note_tempered(uint16_t note, uint16_t semitones){
+    return note + (note / semitones);
+}
+
+#pragma message("not working for now")
+uint16_t equal_tempered(volatile struct nco *o, uint16_t note){
+    register uint16_t tempered_note, range, oct_unit = 12;
+    register uint16_t _semi_tone_increment;
+
+    /* there should be a better way but... here we are! */
+    switch (o->tempered.oct_span) {
+        case 0:
+            tempered_note = note_tempered(note, oct_unit);
+            return tempered_note;
+        case 1:
+            _semi_tone_increment = oct_unit * 2;
+            break;
+        case 2:
+            _semi_tone_increment = oct_unit * 4;
+            break;
+        case 3:
+            _semi_tone_increment = oct_unit * 6;
+            break;
+        case 4:
+            _semi_tone_increment = oct_unit * 8;
+            break;
+        case 5:
+            _semi_tone_increment = oct_unit * 10;
+            break;
+    }
+    o->tempered.last_fundamental = (o->tempered.oct_span + 1) * o->tempered.first_fundamental;
+    range = o->tempered.last_fundamental - o->tempered.first_fundamental;
+    /* tempered_note = note_tempered(note, range / _semi_tone_increment); */
+    /* this should be calculeted in respect to the CV i have on the pot-4th-slot
+     * i should be able to make the decision with map_uint(x,y,r) but i have to think more on how
+     *
+     *
+     * todo::
+     * 12 equal spaces:
+     *         - [x] find how many octaves we span.
+     *               Most propably i can set this on a gpio...
+     *         - [ ] calculate how many notes we have to jump in contrast to the CV read by the adc (ammount2)
+     *         - [ ] add some number of increments to the pitch so there is no diviation from the "note"
+     *         - [ ] use that thing to jump to the right pitch?!?!?!?!
+     *         - [ ] use this to calculate on the fly what we need to have.
+     * todo::
+     */
+
+    return tempered_note;
 }

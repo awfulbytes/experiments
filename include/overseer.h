@@ -32,6 +32,7 @@ void tune(struct overseer *overseer, uint8_t osc_idx);
 
 void merge_signals_dual_dac_mode(volatile struct nco *o[2], uint32_t dual_buffer[128], uint8_t table_size);
 void sync_fcw(volatile struct nco *o[2]);
-static uint16_t diatonic_scale(volatile uint16_t note, volatile const uint16_t *scale_table, size_t g_major_tbl_size);
+static uint16_t diatonic_lut_search(volatile uint16_t note, volatile const uint16_t *scale_table, size_t g_major_tbl_size);
+uint16_t equal_tempered(volatile struct nco *o, uint16_t note);
 
 #define array_size(x) (sizeof(x) / sizeof(x[0]))

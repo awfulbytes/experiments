@@ -6,11 +6,20 @@
 typedef enum freq_modes {free, tracking} freq_modes_e;
 typedef volatile enum cyrcles {entrance, first, second, third, fourth, fifth,
                                sixth, seventh, eighth, ninth, hell} cyrcles_e;
+typedef enum tunning_method {none, eq_tempered, diatonic_major_g} tunning_method;
 
 struct limits {
     volatile uint16_t min;
     volatile uint16_t max;
     volatile uint16_t cv_raw_max;
+};
+
+struct tuner {
+    volatile bool           on;
+    volatile uint16_t       first_fundamental;
+    volatile uint16_t       last_fundamental;
+    volatile char           oct_span;
+    volatile tunning_method type;
 };
 
 struct phase_distortion{
@@ -48,6 +57,7 @@ struct nco {
     sanity_t                        in_the_house;
     volatile const uint16_t        *curr_wave_ptr;
     volatile       bool             on_scale;
+    volatile struct tuner           tempered;
 };
 
 #pragma GCC diagnostic ignored "-Wconversion"
