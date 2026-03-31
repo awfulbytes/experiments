@@ -39,28 +39,6 @@ void tune(struct overseer *seer, uint8_t osc_idx){
                 seer->_data->pitch_cv = diatonic_lut_search(note, diatonic_g_major, g_major_size);
                 break;
         }
-        /* seer->_data->pitch_cv =
-         *     (seer->selected->on_scale)
-         *     ? diatonic_scale(note, diatonic_g_major, g_major_size);
-         *     : note;
-         */
-
-        /*
-         * todo::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-         *
-         * -a. do the checking for this and make it a button??>?>?>?>
-         *     - [x] check for the mode of the oscillator (i.e. eq_tempered)
-         *
-         * a. To have 12 equal spaced intervals
-         * nxt -> may need a proper enum and switch approach in order for me to
-         *        have appropriate space for executing many instructions in one
-         *        case.
-         *
-         * b. use the tunning_method enum to manage the tunning effect.
-         *
-         * todo::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-         *
-         */
 
         if(seer->selected->distortion.on)
             tune_distortion(seer->selected, seer->_data);
@@ -68,6 +46,7 @@ void tune(struct overseer *seer, uint8_t osc_idx){
         seer->selected->phase.done_update =
             stage_pending_inc(seer->_data->pitch_cv, seer->selected,
                               seer->_data->dac1_clock);
+
         seer->selected->phase.pending_update = !seer->selected->phase.done_update;
     }
 }
@@ -133,47 +112,65 @@ static inline uint16_t note_tempered(uint16_t note, uint16_t semitones){
     return note + (note / semitones);
 }
 
-#pragma message("not working for now")
+#pragma message("not working")
 uint16_t equal_tempered(volatile struct nco *o, uint16_t note){
-    register uint16_t tempered_note, range, oct_unit = 12;
-    register uint16_t _semi_tone_increment;
+    register uint16_t tempered_note = 0xffff, range = 0, oct_unit = 12;
+    register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0;
 
+    o->tempered.octave_bounds =
+        (struct limits) {.min = 80,
+                         .max = 8000,
+                         .cv_raw_max = 0x7fff};
+
+    o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental, o->tempered.octave_bounds);
     /* there should be a better way but... here we are! */
     switch (o->tempered.oct_span) {
         case 0:
-            tempered_note = note_tempered(note, oct_unit);
-            return tempered_note;
+            _semi_tones_in_range = oct_unit * 1;
+            break;
         case 1:
-            _semi_tone_increment = oct_unit * 2;
+            _semi_tones_in_range = oct_unit * 2;
             break;
         case 2:
-            _semi_tone_increment = oct_unit * 4;
+            _semi_tones_in_range = oct_unit * 4;
             break;
         case 3:
-            _semi_tone_increment = oct_unit * 6;
+            _semi_tones_in_range = oct_unit * 6;
             break;
         case 4:
-            _semi_tone_increment = oct_unit * 8;
+            _semi_tones_in_range = oct_unit * 8;
             break;
         case 5:
-            _semi_tone_increment = oct_unit * 10;
+            _semi_tones_in_range = oct_unit * 10;
             break;
+        default:
+            o->tempered.oct_span = 0;
     }
-    o->tempered.last_fundamental = (o->tempered.oct_span + 1) * o->tempered.first_fundamental;
-    range = o->tempered.last_fundamental - o->tempered.first_fundamental;
-    /* tempered_note = note_tempered(note, range / _semi_tone_increment); */
-    /* this should be calculeted in respect to the CV i have on the pot-4th-slot
-     * i should be able to make the decision with map_uint(x,y,r) but i have to think more on how
-     *
-     *
-     * todo::
+
+    if(_semi_tones_in_range == oct_unit){
+        o->tempered.last_fundamental = o->tempered.first_fundamental * 2;
+    } else {
+        o->tempered.last_fundamental = o->tempered.first_fundamental * (o->tempered.oct_span * 2);
+    }
+
+    range    = o->tempered.last_fundamental - o->tempered.first_fundamental;
+    semitone = range / _semi_tones_in_range;
+
+    if(semitone == 0)
+        semitone = range / (_semi_tones_in_range - oct_unit);
+
+    cv_semitones  = (note - o->tempered.first_fundamental) / semitone;
+    tempered_note = note + (cv_semitones * semitone);
+
+    /* todo::
      * 12 equal spaces:
      *         - [x] find how many octaves we span.
      *               Most propably i can set this on a gpio...
-     *         - [ ] calculate how many notes we have to jump in contrast to the CV read by the adc (ammount2)
-     *         - [ ] add some number of increments to the pitch so there is no diviation from the "note"
-     *         - [ ] use that thing to jump to the right pitch?!?!?!?!
-     *         - [ ] use this to calculate on the fly what we need to have.
+     *         - [x] calculate one semitone
+     *         - [x] calculate how many notes we have to jump in contrast to the CV read by the adc (ammount2)
+     *               This could be done by mapping with map_uint() the second CV to a single octave range and
+     *               then the note could be mapped at the hole oct_span range which is already calculated above.
+     *         - [x] add the number of increments to the pitch so there is no deviation from the "note"
      * todo::
      */
 
