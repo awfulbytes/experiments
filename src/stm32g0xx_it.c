@@ -115,7 +115,7 @@ void EXTI4_15_IRQHandler(void) {
     if ((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
 
         change_pitch_mode(&l_osc);
-        /* l_osc.on_scale = (l_osc.mode == tracking) ? true : false; */
+        l_osc.tempered.on = (l_osc.tempered.on == false) ? true : false;
 
         if (l_osc.tempered.type == none)
             l_osc.tempered.type = diatonic_major_g;
