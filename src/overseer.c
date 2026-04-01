@@ -108,22 +108,15 @@ static uint16_t diatonic_lut_search(volatile uint16_t note,
     }
     return scale_table[0];
 }
-static inline uint16_t note_tempered(uint16_t note, uint16_t semitones){
-    return note + (note / semitones);
-}
 
 #pragma message("not working")
 uint16_t equal_tempered(volatile struct nco *o, uint16_t note){
     register uint16_t tempered_note = 0xffff, range = 0, oct_unit = 12;
     register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0;
 
-    o->tempered.octave_bounds =
-        (struct limits) {.min = 80,
-                         .max = 8000,
-                         .cv_raw_max = 0x7fff};
+    o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental,
+                                             o->tempered.octave_bounds);
 
-    o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental, o->tempered.octave_bounds);
-    /* there should be a better way but... here we are! */
     switch (o->tempered.oct_span) {
         case 0:
             _semi_tones_in_range = oct_unit * 1;
