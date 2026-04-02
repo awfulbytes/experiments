@@ -115,17 +115,13 @@ void EXTI4_15_IRQHandler(void) {
     if ((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
 
         change_pitch_mode(&l_osc);
-        l_osc.tempered.on = (l_osc.tempered.on == false) ? true : false;
-
-        if (l_osc.tempered.type == none)
-            l_osc.tempered.type = diatonic_major_g;
-        else if (l_osc.tempered.type == diatonic_major_g)
-            l_osc.tempered.type = eq_tempered;
+        l_osc.tempered.rec = true;
+        if (l_osc.tempered.oct_span < 5)
+            ++l_osc.tempered.oct_span;
         else
-            l_osc.tempered.type = none;
+            l_osc.tempered.oct_span = 0;
 
-        l_osc.tempered.on = (!l_osc.tempered.on) ? true : false;
-        l_osc.tempered.first_fundamental = (l_osc.tempered.on)
+        l_osc.tempered.first_fundamental = (l_osc.tempered.rec)
             ? world.osc_0_cv_2_distortion_amount
             : 0xffff;
 
@@ -133,6 +129,17 @@ void EXTI4_15_IRQHandler(void) {
     }
     if ((EXTI->RPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line) {
         change_pitch_mode(&r_osc);
+        switch (l_osc.tempered.type) {
+            case none:
+                l_osc.tempered.type = diatonic_major_g;
+                break;
+            case diatonic_major_g:
+                l_osc.tempered.type = eq_tempered;
+                break;
+            case eq_tempered:
+                l_osc.tempered.type = none;
+                break;
+        }
         r_osc.on_scale = (r_osc.mode == tracking) ? true : false;
         (EXTI->RPR1) = (freq_mode_but_dac2.exti.exti_line);
     }
