@@ -25,6 +25,11 @@ void main() {
     why = 0;
     gpio_init(nco_buttons, dacs, osc_cvs, c, d, a, why);
 
+    for(uint8_t u=0; u<2; ++u){
+        /* this needs more work to assign pins */
+        set_flip_switch(&octave_switch, u);
+    }
+
     enc_init(&osc_0_pd_enc);
     enc_init(&osc_1_pd_enc);
 

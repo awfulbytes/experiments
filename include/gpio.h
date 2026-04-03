@@ -47,3 +47,5 @@ void gpio_init(volatile struct button **p,
                uint16_t c, uint16_t d, uint16_t a, uint16_t why);
 
 char read_gpio(struct gpio *pin);
+
+void set_gpio(volatile struct gpio *pin);

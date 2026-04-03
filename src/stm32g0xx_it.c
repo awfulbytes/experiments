@@ -92,31 +92,36 @@ static inline void handle_osc_distortion(struct nco nco[static 1]){
 
 void EXTI4_15_IRQHandler(void) {
 
-    if ((EXTI->FPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
+    if((EXTI->FPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
         osc_0_pd_enc.B.value[0] = read_gpio(&osc_0_pd_enc.B.pin);
         (EXTI->FPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
     }
-    if ((EXTI->RPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
+    if((EXTI->RPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
         osc_0_pd_enc.B.value[1] = read_gpio(&osc_0_pd_enc.B.pin);
         apply_modulations_callback(&osc_0_pd_enc, &l_osc);
         (EXTI->RPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
     }
 
-    if ((EXTI->FPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
+    if((EXTI->FPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
         osc_1_pd_enc.B.value[0] = read_gpio(&osc_1_pd_enc.B.pin);
         (EXTI->FPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
     }
-    if ((EXTI->RPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
+    if((EXTI->RPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
         osc_1_pd_enc.B.value[1] = read_gpio(&osc_1_pd_enc.B.pin);
         apply_modulations_callback(&osc_1_pd_enc, &r_osc);
         (EXTI->RPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
     }
 
-    if ((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
-
-        change_pitch_mode(&l_osc);
+    if((EXTI->RPR1 & octave_switch.it[0].exti_line) == octave_switch.it[0].exti_line){
         l_osc.tempered.rec = true;
+        l_osc.tempered.first_fundamental = (l_osc.tempered.rec)
+            ? world.osc_0_cv_2_distortion_amount
+            : 0xffff;
+        (EXTI->RPR1) = (octave_switch.it[0].exti_line);
+    }
 
+    if((EXTI->RPR1 & octave_switch.it[1].exti_line) == octave_switch.it[1].exti_line){
+        l_osc.tempered.rec = false;
         switch (l_osc.tempered.oct_span) {
             case 5:
                 l_osc.tempered.oct_span = 0;
@@ -125,13 +130,17 @@ void EXTI4_15_IRQHandler(void) {
                 ++l_osc.tempered.oct_span;
                 break;
         }
+        (EXTI->RPR1) = (octave_switch.it[1].exti_line);
+    }
 
-        l_osc.tempered.first_fundamental = (l_osc.tempered.rec)
-            ? world.osc_0_cv_2_distortion_amount
-            : 0xffff;
-
+    if((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
+        if(!l_osc.tempered.rec){
+            change_pitch_mode(&l_osc);
+        } else {
+        }
         (EXTI->RPR1) = (freq_mode_but_dac1.exti.exti_line);
     }
+
     if ((EXTI->RPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line) {
         change_pitch_mode(&r_osc);
         switch (l_osc.tempered.type) {
@@ -153,5 +162,5 @@ void EXTI4_15_IRQHandler(void) {
         handle_osc_distortion(&r_osc);
         (EXTI->RPR1) = (distortion_choice.exti.exti_line);
     }
-    return;
+
 }

@@ -1,6 +1,7 @@
 #include "ui.h"
 
 static void exti_enc_setup(struct encoder_channel channel[static 1]);
+static void exti_flip_setup(struct flip_switch *f, uint8_t idx);
 
 inline void button_callback(struct button *abut){
     // nxt:: need some more work but elswhere..
@@ -79,4 +80,9 @@ volatile void* apply_modulations_callback(struct encoder enc[static 1],
 
 void align_phase(volatile struct nco *o[2]){
     o[1]->phase.accum = o[0]->phase.accum;
+}
+
+void set_flip_switch(struct flip_switch *f, uint8_t pin_idx){
+    set_gpio(f->pins + pin_idx);
+    exti_flip_setup(f, pin_idx);
 }
