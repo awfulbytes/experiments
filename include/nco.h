@@ -15,7 +15,7 @@ struct limits {
 };
 
 struct tuner {
-    volatile bool           on;
+    volatile bool           rec;
     volatile uint16_t       first_fundamental;
     volatile uint16_t       last_fundamental;
     volatile char           oct_span;

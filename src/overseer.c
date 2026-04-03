@@ -33,7 +33,8 @@ void tune(struct overseer *seer, uint8_t osc_idx){
                 seer->_data->pitch_cv = note;
                 break;
             case eq_tempered:
-                seer->_data->pitch_cv = equal_tempered(seer->selected, note);
+                // if(!seer->selected->tempered.rec)
+                seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital);
                 break;
             case diatonic_major_g:
                 seer->_data->pitch_cv = diatonic_lut_search(note, diatonic_g_major, g_major_size);
@@ -110,12 +111,15 @@ static uint16_t diatonic_lut_search(volatile uint16_t note,
 }
 
 #pragma message("not working")
-uint16_t equal_tempered(volatile struct nco *o, uint16_t note){
+uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t tempered_note = 0xffff, range = 0, oct_unit = 12;
     register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0;
+    register uint16_t main_pitch_cv = 0;
 
     o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental,
-                                             o->tempered.octave_bounds);
+                                             &o->tempered.octave_bounds);
+    if(o->tempered.rec)
+        return o->tempered.first_fundamental;
 
     switch (o->tempered.oct_span) {
         case 0:
@@ -146,14 +150,20 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t note){
         o->tempered.last_fundamental = o->tempered.first_fundamental * (o->tempered.oct_span * 2);
     }
 
+    o->tempered.octave_bounds =
+        (struct limits) {.min=o->tempered.first_fundamental, .max=o->tempered.last_fundamental, .cv_raw_max=0x7fff};
+
+    main_pitch_cv = map_uint(pitch_raw_dig,
+                             &o->tempered.octave_bounds);
+
     range    = o->tempered.last_fundamental - o->tempered.first_fundamental;
     semitone = range / _semi_tones_in_range;
 
     if(semitone == 0)
         semitone = range / (_semi_tones_in_range - oct_unit);
 
-    cv_semitones  = (note - o->tempered.first_fundamental) / semitone;
-    tempered_note = note + (cv_semitones * semitone);
+    cv_semitones  = (main_pitch_cv - o->tempered.first_fundamental) / semitone;
+    tempered_note = main_pitch_cv + (cv_semitones * semitone);
 
     /* todo::
      * 12 equal spaces:
