@@ -116,10 +116,14 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0;
     register uint16_t main_pitch_cv = 0;
 
-    o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental,
-                                             &o->tempered.octave_bounds);
-    if(o->tempered.rec)
-        return o->tempered.first_fundamental;
+    /* todo::
+     *       something happens here and we spiral out of control.
+     */
+    o->tempered.first_fundamental =
+        map_uint(o->tempered.first_fundamental, &o->tempered.octave_bounds);
+    /*
+     * todo::
+     */
 
     switch (o->tempered.oct_span) {
         case 0:
