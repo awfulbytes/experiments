@@ -116,10 +116,15 @@ void EXTI4_15_IRQHandler(void) {
 
         change_pitch_mode(&l_osc);
         l_osc.tempered.rec = true;
-        if (l_osc.tempered.oct_span < 5)
-            ++l_osc.tempered.oct_span;
-        else
-            l_osc.tempered.oct_span = 0;
+
+        switch (l_osc.tempered.oct_span) {
+            case 5:
+                l_osc.tempered.oct_span = 0;
+                break;
+            default:
+                ++l_osc.tempered.oct_span;
+                break;
+        }
 
         l_osc.tempered.first_fundamental = (l_osc.tempered.rec)
             ? world.osc_0_cv_2_distortion_amount
