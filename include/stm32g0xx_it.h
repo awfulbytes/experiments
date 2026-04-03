@@ -18,6 +18,7 @@ extern struct button            freq_mode_but_dac2;
 extern struct button            distortion_choice;
 extern struct encoder           osc_0_pd_enc;
 extern struct encoder           osc_1_pd_enc;
+extern struct flip_switch       octave_switch;
 
 #define prime_table_size                                       128
 #define buffer_size(buf)       ((sizeof buf) / (sizeof buf[0]))

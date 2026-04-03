@@ -193,6 +193,15 @@ struct gpio dist_amount_0_2_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_6, .mode=L
 struct gpio pitch_1_cv = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_0, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 struct gpio dist_amount_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_7, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 
+#pragma message("should be working")
+struct flip_switch octave_switch = {.pins[1] = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_9, .id = 9, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
+                                    .it[1]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_9, .exti_line_conf=LL_EXTI_CONFIG_LINE9, .exti_port_conf=LL_EXTI_CONFIG_PORTA},
+                                    .priority[1] = 0x40,
+
+                                    .pins[0] = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_8, .id = 8, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
+                                    .it[0]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_8, .exti_line_conf=LL_EXTI_CONFIG_LINE8, .exti_port_conf=LL_EXTI_CONFIG_PORTA},
+                                    .priority[0] = 0x40,
+};
 struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC,
                                              .id=4,
                                              .pin_id=LL_GPIO_PIN_4,
