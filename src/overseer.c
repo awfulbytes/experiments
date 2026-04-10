@@ -110,55 +110,75 @@ static uint16_t diatonic_lut_search(volatile uint16_t note,
     return scale_table[0];
 }
 
-#pragma message("not working")
+#pragma message("semi working")
 uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t tempered_note = 0xffff, range = 0, oct_unit = 12;
     register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0;
     register uint16_t main_pitch_cv = 0;
+    register uint16_t first_to_last_fundamental_jump = 0, diff = 0;
 
-    /* todo::
-     *       something happens here and we spiral out of control.
-     */
-    o->tempered.first_fundamental =
-        map_uint(o->tempered.first_fundamental, &o->tempered.octave_bounds);
-    /*
+    /* bug:: The flag remains open even if we dont record at the moment somehow
+     *      a. zero out the flag if we pass the early return point?
+     *      b. dont use the flag
+     *
      * todo::
+     *        - stabilize the interface to be more accurate and jump to musical
+     *          notes.
+     *        - group "runtime" variables above
      */
 
+    if(o->tempered.flag){
+        o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental,
+                                                 &o->tempered.hard_bounds);
+        return o->tempered.first_fundamental;
+    }
+
+    first_to_last_fundamental_jump = o->tempered.oct_span << 1;
+recalculate:
     switch (o->tempered.oct_span) {
         case 0:
             _semi_tones_in_range = oct_unit * 1;
             break;
         case 1:
-            _semi_tones_in_range = oct_unit * 2;
+            _semi_tones_in_range = oct_unit * first_to_last_fundamental_jump;
             break;
         case 2:
-            _semi_tones_in_range = oct_unit * 4;
+            _semi_tones_in_range = oct_unit * first_to_last_fundamental_jump;
             break;
         case 3:
-            _semi_tones_in_range = oct_unit * 6;
+            _semi_tones_in_range = oct_unit * first_to_last_fundamental_jump;
             break;
         case 4:
-            _semi_tones_in_range = oct_unit * 8;
+            _semi_tones_in_range = oct_unit * first_to_last_fundamental_jump;
             break;
         case 5:
-            _semi_tones_in_range = oct_unit * 10;
+            _semi_tones_in_range = oct_unit * first_to_last_fundamental_jump;
             break;
         default:
             o->tempered.oct_span = 0;
     }
 
     if(_semi_tones_in_range == oct_unit){
-        o->tempered.last_fundamental = o->tempered.first_fundamental * 2;
+        o->tempered.last_fundamental = o->tempered.first_fundamental << 1;
     } else {
-        o->tempered.last_fundamental = o->tempered.first_fundamental * (o->tempered.oct_span * 2);
+        o->tempered.last_fundamental = o->tempered.first_fundamental * first_to_last_fundamental_jump;
     }
 
-    o->tempered.octave_bounds =
-        (struct limits) {.min=o->tempered.first_fundamental, .max=o->tempered.last_fundamental, .cv_raw_max=0x7fff};
+    if(o->tempered.last_fundamental > o->tempered.hard_bounds.max){
+        diff = o->tempered.last_fundamental - o->tempered.hard_bounds.max;
+        o->tempered.first_fundamental -= (diff >> 1);
+        goto recalculate;
+    }
+    else if(o->tempered.first_fundamental > o->tempered.last_fundamental){
+        o->tempered.first_fundamental = o->tempered.last_fundamental / first_to_last_fundamental_jump;
+        goto recalculate;
+    }
+    o->tempered.mutable_bounds = 
+        (struct limits) {.min=o->tempered.first_fundamental,
+                         .max=o->tempered.last_fundamental};
 
     main_pitch_cv = map_uint(pitch_raw_dig,
-                             &o->tempered.octave_bounds);
+                             &o->tempered.mutable_bounds);
 
     range    = o->tempered.last_fundamental - o->tempered.first_fundamental;
     semitone = range / _semi_tones_in_range;
@@ -168,18 +188,6 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
 
     cv_semitones  = (main_pitch_cv - o->tempered.first_fundamental) / semitone;
     tempered_note = main_pitch_cv + (cv_semitones * semitone);
-
-    /* todo::
-     * 12 equal spaces:
-     *         - [x] find how many octaves we span.
-     *               Most propably i can set this on a gpio...
-     *         - [x] calculate one semitone
-     *         - [x] calculate how many notes we have to jump in contrast to the CV read by the adc (ammount2)
-     *               This could be done by mapping with map_uint() the second CV to a single octave range and
-     *               then the note could be mapped at the hole oct_span range which is already calculated above.
-     *         - [x] add the number of increments to the pitch so there is no deviation from the "note"
-     * todo::
-     */
 
     return tempered_note;
 }

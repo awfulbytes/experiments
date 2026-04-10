@@ -66,9 +66,17 @@ void main() {
       hell_walking()
 #endif
 
-        if (osc_0_pd_enc.virtual_wave_button.flag == 0x69) {
+        if(osc_0_pd_enc.virtual_wave_button.flag == 0x69){
             l_osc.curr_wave_ptr = waves_bank[osc_0_pd_enc.virtual_wave_button.state];
             osc_0_pd_enc.virtual_wave_button.flag = 'D';
+        }
+
+        if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[0])){
+            cosmos.oscillators[0]->tempered.first_fundamental = cosmos._data->osc_0_cv_2_distortion_amount;
+            l_osc.tempered.flag = 0x1;
+        } else if(!read_gpio(&octave_switch.pins[0])){
+            l_osc.tempered.flag = 0x0;
+            l_osc.tempered.rec = false;
         }
         tune(&cosmos, 0);
 
