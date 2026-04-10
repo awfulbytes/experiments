@@ -61,7 +61,7 @@ void TIM2_IRQHandler(void) {
             world.osc_0_cv_distortion_amount = cv_raw_adc_inp[1];
             world.osc_1_cv_distortion_ammount = cv_raw_adc_inp[2];
             world._cv_1_pitch = cv_raw_adc_inp[3];
-            world.osc_0_cv_2_distortion_amount = cv_raw_adc_inp[4];
+            world.tunner_pitch_raw_d = cv_raw_adc_inp[4];
             l_osc.phase.pending_update = r_osc.phase.pending_update = true;
 
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);

@@ -14,7 +14,7 @@ void main() {
     struct timer *timers[2] = {&tim6_settings, &tim7_settings};
     volatile struct button *nco_buttons[3] = {&freq_mode_but_dac1, &freq_mode_but_dac2, &distortion_choice};
     struct gpio *dacs[2] = {&dac1, &dac2};
-    struct gpio *osc_cvs[5] = {&pitch_0_cv, &dist_amount_0_cv, &dist_amount_0_2_cv, &pitch_1_cv, &dist_amount_1_cv};
+    struct gpio *osc_cvs[5] = {&pitch_0_cv, &dist_amount_0_cv, &tunner_adc_in, &pitch_1_cv, &dist_amount_1_cv};
     struct dac *dacs_settings[2] = {&dac_ch1_settings, &dac_ch2_settings};
     /* struct dma *dma_chans[1] = {&dac_dma}; */
     sys_clock_config();
@@ -72,7 +72,7 @@ void main() {
         }
 
         if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[0])){
-            cosmos.oscillators[0]->tempered.first_fundamental = cosmos._data->osc_0_cv_2_distortion_amount;
+            cosmos.oscillators[0]->tempered.first_fundamental = cosmos._data->tunner_pitch_raw_d;
             l_osc.tempered.flag = 0x1;
         } else if(!read_gpio(&octave_switch.pins[0])){
             l_osc.tempered.flag = 0x0;
