@@ -20,7 +20,7 @@ struct overworld world = {
     .pitch_cv                           = cv_init,
     ._cv_0_pitch                        = cv_init,
     .osc_0_cv_distortion_amount         = cv_init,
-    .osc_0_cv_2_distortion_amount       = cv_init,
+    .tunner_pitch_raw_d                 = cv_init,
     ._cv_1_pitch                        = cv_init,
     .osc_1_cv_distortion_ammount        = cv_init,
     .dac1_clock = dac_clk,
@@ -192,11 +192,10 @@ struct gpio dac1 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_4, .mode=LL_GPIO_MODE_AN
 struct gpio dac2 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_5, .mode=LL_GPIO_MODE_ANALOG};
 struct gpio pitch_0_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_0, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 struct gpio dist_amount_0_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_1, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
-struct gpio dist_amount_0_2_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_6, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
+struct gpio tunner_adc_in = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_6, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 struct gpio pitch_1_cv = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_0, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 struct gpio dist_amount_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_7, .mode=LL_GPIO_MODE_ANALOG, .pull=LL_GPIO_PULL_NO};
 
-#pragma message("should be working")
 struct flip_switch octave_switch = {.pins[1] = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_9, .id = 9, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
                                     .it[1]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_9, .exti_line_conf=LL_EXTI_CONFIG_LINE9, .exti_port_conf=LL_EXTI_CONFIG_PORTA},
                                     .priority[1] = 0x40,
