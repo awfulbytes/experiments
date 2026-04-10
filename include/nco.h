@@ -19,8 +19,10 @@ struct tuner {
     volatile uint16_t       first_fundamental;
     volatile uint16_t       last_fundamental;
     volatile char           oct_span;
-    volatile struct limits  octave_bounds;
+    volatile struct limits  hard_bounds;
+    volatile struct limits  mutable_bounds;
     volatile tunning_method type;
+    volatile char           flag;
 };
 
 struct phase_distortion{

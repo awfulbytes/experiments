@@ -114,9 +114,6 @@ void EXTI4_15_IRQHandler(void) {
 
     if((EXTI->RPR1 & octave_switch.it[0].exti_line) == octave_switch.it[0].exti_line){
         l_osc.tempered.rec = true;
-        l_osc.tempered.first_fundamental = (l_osc.tempered.rec)
-            ? world.osc_0_cv_2_distortion_amount
-            : 0xffff;
         (EXTI->RPR1) = (octave_switch.it[0].exti_line);
     }
 
@@ -134,14 +131,11 @@ void EXTI4_15_IRQHandler(void) {
     }
 
     if((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
-        if(!l_osc.tempered.rec){
-            change_pitch_mode(&l_osc);
-        } else {
-        }
+        change_pitch_mode(&l_osc);
         (EXTI->RPR1) = (freq_mode_but_dac1.exti.exti_line);
     }
 
-    if ((EXTI->RPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line) {
+    if((EXTI->RPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line){
         change_pitch_mode(&r_osc);
         switch (l_osc.tempered.type) {
             case none:
@@ -157,7 +151,7 @@ void EXTI4_15_IRQHandler(void) {
         r_osc.on_scale = (r_osc.mode == tracking) ? true : false;
         (EXTI->RPR1) = (freq_mode_but_dac2.exti.exti_line);
     }
-    if ((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line) {
+    if((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line){
         handle_osc_distortion(&l_osc);
         handle_osc_distortion(&r_osc);
         (EXTI->RPR1) = (distortion_choice.exti.exti_line);
