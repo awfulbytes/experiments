@@ -33,6 +33,7 @@ static void enable_falling(uint32_t exti_line){
     LL_EXTI_EnableFallingTrig_0_31(exti_line);
 }
 
+#pragma GCC diagnostic ignored "-Wunused-function"
 static void exti_flip_setup(struct flip_switch *f, uint8_t idx){
     LL_EXTI_SetEXTISource(f->it[idx].exti_port_conf, f->it[idx].exti_line_conf);
 
