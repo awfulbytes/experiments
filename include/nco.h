@@ -17,14 +17,14 @@ struct limits {
 struct tuner {
     volatile bool           rec;
     volatile uint16_t       first_fundamental;
-    volatile uint16_t       last_fundamental;
+    uint16_t                last_fundamental;
     uint16_t                quantized_et;
     volatile char           oct_span;
     char                    oct_unit;
-    volatile struct limits  hard_bounds;
-    volatile struct limits  mutable_bounds;
+    struct limits           hard_bounds;
+    struct limits           mutable_bounds;
     volatile tunning_method type;
-    volatile char           flag;
+    char                    flag;
 };
 
 struct phase_distortion{
