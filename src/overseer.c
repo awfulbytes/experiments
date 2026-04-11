@@ -121,9 +121,8 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
      *      b. dont use the flag
      *
      * todo::
-     *        - stabilize the interface to be more accurate and jump to musical
-     *          notes.
-     *        - group "runtime" variables above
+     *        - make sure the interval is been respected
+     *
      */
 
     if(o->tempered.flag){
@@ -172,6 +171,7 @@ recalculate:
         o->tempered.first_fundamental = o->tempered.last_fundamental / first_to_last_fundamental_jump;
         goto recalculate;
     }
+    /* i may have to guard this due to miss-mapped lower bounds */
     o->tempered.mutable_bounds = 
         (struct limits) {.min=o->tempered.first_fundamental,
                          .max=o->tempered.last_fundamental};
