@@ -114,7 +114,7 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t range = 0;
     register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0;
     register uint16_t main_pitch_cv = 0;
-    register uint16_t last_to_first_ratio = 0, diff = 0;
+    register uint16_t last_to_first_ratio = 0;
 
     last_to_first_ratio = o->tempered.oct_span << 1;
     /* bug:: The flag remains open even if we dont record at the moment somehow
@@ -163,15 +163,11 @@ recalculate:
     }
 
     if(o->tempered.last_fundamental > o->tempered.hard_bounds.max){
-        diff = o->tempered.last_fundamental - o->tempered.hard_bounds.max;
-        o->tempered.first_fundamental -= (diff >> 1);
+        //0.125 reduction...
+        o->tempered.first_fundamental -= (o->tempered.first_fundamental >> 3);
         goto recalculate;
     }
-    else if(o->tempered.first_fundamental > o->tempered.last_fundamental){
-        o->tempered.first_fundamental = o->tempered.last_fundamental / last_to_first_ratio;
-        goto recalculate;
-    }
-    /* i may have to guard this due to miss-mapped lower bounds */
+
     o->tempered.mutable_bounds = 
         (struct limits) {.min=o->tempered.first_fundamental,
                          .max=o->tempered.last_fundamental};
