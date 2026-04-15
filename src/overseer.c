@@ -116,6 +116,7 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t main_pitch_cv = 0;
     register uint16_t last_to_first_ratio = 0, diff = 0;
 
+    last_to_first_ratio = o->tempered.oct_span << 1;
     /* bug:: The flag remains open even if we dont record at the moment somehow
      *      a. zero out the flag if we pass the early return point?
      *      b. dont use the flag
@@ -131,8 +132,6 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
         return o->tempered.first_fundamental;
     }
 
-    last_to_first_ratio = o->tempered.oct_span << 1;
-recalculate:
     switch (o->tempered.oct_span) {
         case 0:
             _semi_tones_in_range = o->tempered.oct_unit * 1;
@@ -156,6 +155,7 @@ recalculate:
             o->tempered.oct_span = 0;
     }
 
+recalculate:
     if(_semi_tones_in_range == o->tempered.oct_unit){
         o->tempered.last_fundamental = o->tempered.first_fundamental << 1;
     } else {
