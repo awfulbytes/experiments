@@ -168,9 +168,8 @@ recalculate:
         goto recalculate;
     }
 
-    o->tempered.mutable_bounds = 
-        (struct limits) {.min=o->tempered.first_fundamental,
-                         .max=o->tempered.last_fundamental};
+    o->tempered.mutable_bounds.min = o->tempered.first_fundamental;
+    o->tempered.mutable_bounds.max = o->tempered.last_fundamental;
 
     main_pitch_cv = map_uint(pitch_raw_dig,
                              &o->tempered.mutable_bounds);
