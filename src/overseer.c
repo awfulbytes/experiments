@@ -114,7 +114,7 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t range = 0;
     register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0;
     register uint16_t main_pitch_cv = 0;
-    register uint16_t first_to_last_fundamental_jump = 0, diff = 0;
+    register uint16_t last_to_first_ratio = 0, diff = 0;
 
     /* bug:: The flag remains open even if we dont record at the moment somehow
      *      a. zero out the flag if we pass the early return point?
@@ -131,26 +131,26 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
         return o->tempered.first_fundamental;
     }
 
-    first_to_last_fundamental_jump = o->tempered.oct_span << 1;
+    last_to_first_ratio = o->tempered.oct_span << 1;
 recalculate:
     switch (o->tempered.oct_span) {
         case 0:
             _semi_tones_in_range = o->tempered.oct_unit * 1;
             break;
         case 1:
-            _semi_tones_in_range = o->tempered.oct_unit * first_to_last_fundamental_jump;
+            _semi_tones_in_range = o->tempered.oct_unit * last_to_first_ratio;
             break;
         case 2:
-            _semi_tones_in_range = o->tempered.oct_unit * first_to_last_fundamental_jump;
+            _semi_tones_in_range = o->tempered.oct_unit * last_to_first_ratio;
             break;
         case 3:
-            _semi_tones_in_range = o->tempered.oct_unit * first_to_last_fundamental_jump;
+            _semi_tones_in_range = o->tempered.oct_unit * last_to_first_ratio;
             break;
         case 4:
-            _semi_tones_in_range = o->tempered.oct_unit * first_to_last_fundamental_jump;
+            _semi_tones_in_range = o->tempered.oct_unit * last_to_first_ratio;
             break;
         case 5:
-            _semi_tones_in_range = o->tempered.oct_unit * first_to_last_fundamental_jump;
+            _semi_tones_in_range = o->tempered.oct_unit * last_to_first_ratio;
             break;
         default:
             o->tempered.oct_span = 0;
@@ -159,7 +159,7 @@ recalculate:
     if(_semi_tones_in_range == o->tempered.oct_unit){
         o->tempered.last_fundamental = o->tempered.first_fundamental << 1;
     } else {
-        o->tempered.last_fundamental = o->tempered.first_fundamental * first_to_last_fundamental_jump;
+        o->tempered.last_fundamental = o->tempered.first_fundamental * last_to_first_ratio;
     }
 
     if(o->tempered.last_fundamental > o->tempered.hard_bounds.max){
@@ -168,7 +168,7 @@ recalculate:
         goto recalculate;
     }
     else if(o->tempered.first_fundamental > o->tempered.last_fundamental){
-        o->tempered.first_fundamental = o->tempered.last_fundamental / first_to_last_fundamental_jump;
+        o->tempered.first_fundamental = o->tempered.last_fundamental / last_to_first_ratio;
         goto recalculate;
     }
     /* i may have to guard this due to miss-mapped lower bounds */
