@@ -117,14 +117,6 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t last_to_first_ratio = 0;
 
     last_to_first_ratio = o->tempered.oct_span << 1;
-    /* bug:: The flag remains open even if we dont record at the moment somehow
-     *      a. zero out the flag if we pass the early return point?
-     *      b. dont use the flag
-     *
-     * todo::
-     *        - make sure the interval is been respected
-     *
-     */
 
     if(o->tempered.flag){
         o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental,
@@ -181,7 +173,7 @@ recalculate:
 fixup:
     // o->tempered.quantized_et = main_pitch_cv + cv_semitones;
     o->tempered.quantized_et = o->tempered.first_fundamental + (cv_semitones * semitone);
-    if(o->tempered.quantized_et > o->tempered.mutable_bounds.max){
+    if(o->tempered.quantized_et > (o->tempered.mutable_bounds.max + semitone)){
         cv_semitones -= semitone;
         goto fixup;
     }
