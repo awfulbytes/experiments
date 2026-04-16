@@ -179,7 +179,8 @@ recalculate:
 
     cv_semitones  = (main_pitch_cv - o->tempered.first_fundamental) / semitone;
 fixup:
-    o->tempered.quantized_et = main_pitch_cv + cv_semitones;
+    // o->tempered.quantized_et = main_pitch_cv + cv_semitones;
+    o->tempered.quantized_et = o->tempered.first_fundamental + (cv_semitones * semitone);
     if(o->tempered.quantized_et > o->tempered.mutable_bounds.max){
         cv_semitones -= semitone;
         goto fixup;
