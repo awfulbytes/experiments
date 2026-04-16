@@ -118,7 +118,6 @@ void EXTI4_15_IRQHandler(void) {
     }
 
     if((EXTI->RPR1 & octave_switch.it[1].exti_line) == octave_switch.it[1].exti_line){
-        l_osc.tempered.rec = false;
         switch (l_osc.tempered.oct_span) {
             case 5:
                 l_osc.tempered.oct_span = 0;
