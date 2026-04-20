@@ -71,10 +71,9 @@ void main() {
             osc_0_pd_enc.virtual_wave_button.flag = 'D';
         }
 
-        if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[0])){
-            cosmos.oscillators[0]->tempered.first_fundamental = cosmos._data->tunner_pitch_raw_d;
+        if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x1;
-        } else if(!read_gpio(&octave_switch.pins[0])){
+        } else if(!read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x0;
             l_osc.tempered.rec = false;
         }
