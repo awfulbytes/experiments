@@ -14,13 +14,19 @@ struct limits {
     volatile uint16_t cv_raw_max;
 };
 
+struct octave {
+    volatile char           span;
+    char                    unit;
+    bool                    shift;
+    int8_t                  jump;
+};
+
 struct tuner {
     volatile bool           rec;
     volatile uint16_t       first_fundamental;
     uint16_t                last_fundamental;
     uint16_t                quantized_et;
-    volatile char           oct_span;
-    char                    oct_unit;
+    struct octave           oct;
     struct limits           hard_bounds;
     struct limits           mutable_bounds;
     volatile tunning_method type;

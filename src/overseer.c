@@ -33,7 +33,11 @@ void tune(struct overseer *seer, uint8_t osc_idx){
                 seer->_data->pitch_cv = note;
                 break;
             case eq_tempered:
-                // if(!seer->selected->tempered.rec)
+                if(seer->selected->tempered.flag){
+                    seer->selected->tempered.first_fundamental = map_uint(seer->_data->tunner_pitch_raw_d, &seer->selected->tempered.hard_bounds);
+                    seer->_data->pitch_cv = seer->selected->tempered.first_fundamental;
+                    break;
+                }
                 seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital);
                 break;
             case diatonic_major_g:
@@ -116,43 +120,14 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t main_pitch_cv = 0;
     register uint16_t last_to_first_ratio = 0;
 
-    last_to_first_ratio = o->tempered.oct_span << 1;
-
-    if(o->tempered.flag){
-        o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental,
-                                                 &o->tempered.hard_bounds);
-        return o->tempered.first_fundamental;
-    }
-
-    switch (o->tempered.oct_span) {
-        case 0:
-            _semi_tones_in_range = o->tempered.oct_unit * 1;
-            break;
-        case 1:
-            _semi_tones_in_range = o->tempered.oct_unit * last_to_first_ratio;
-            break;
-        case 2:
-            _semi_tones_in_range = o->tempered.oct_unit * last_to_first_ratio;
-            break;
-        case 3:
-            _semi_tones_in_range = o->tempered.oct_unit * last_to_first_ratio;
-            break;
-        case 4:
-            _semi_tones_in_range = o->tempered.oct_unit * last_to_first_ratio;
-            break;
-        case 5:
-            _semi_tones_in_range = o->tempered.oct_unit * last_to_first_ratio;
-            break;
-        default:
-            o->tempered.oct_span = 0;
-    }
+    last_to_first_ratio = o->tempered.oct.span << 1;
+    if(last_to_first_ratio == 2)
+        _semi_tones_in_range = o->tempered.oct.unit;
+    else
+        _semi_tones_in_range = o->tempered.oct.unit * last_to_first_ratio;
 
 recalculate:
-    if(_semi_tones_in_range == o->tempered.oct_unit){
-        o->tempered.last_fundamental = o->tempered.first_fundamental << 1;
-    } else {
-        o->tempered.last_fundamental = o->tempered.first_fundamental * last_to_first_ratio;
-    }
+    o->tempered.last_fundamental = o->tempered.first_fundamental * last_to_first_ratio;
 
     if(o->tempered.last_fundamental > o->tempered.hard_bounds.max){
         //0.125 reduction...
@@ -160,6 +135,23 @@ recalculate:
         goto recalculate;
     }
 
+    if(o->tempered.first_fundamental < o->tempered.hard_bounds.min){
+        o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental, &o->tempered.hard_bounds);
+        goto recalculate;
+    }
+
+    if(o->tempered.oct.shift){
+        while(o->tempered.oct.jump > 0){
+            o->tempered.first_fundamental <<= 1;
+            --o->tempered.oct.jump;
+        }
+        while(o->tempered.oct.jump < 0){
+            o->tempered.first_fundamental >>= 1;
+            ++o->tempered.oct.jump;
+        }
+        o->tempered.oct.shift = false;
+        goto recalculate;
+    }
     o->tempered.mutable_bounds.min = o->tempered.first_fundamental;
     o->tempered.mutable_bounds.max = o->tempered.last_fundamental;
 
@@ -171,7 +163,6 @@ recalculate:
 
     cv_semitones  = (main_pitch_cv - o->tempered.first_fundamental) / semitone;
 fixup:
-    // o->tempered.quantized_et = main_pitch_cv + cv_semitones;
     o->tempered.quantized_et = o->tempered.first_fundamental + (cv_semitones * semitone);
     if(o->tempered.quantized_et > (o->tempered.mutable_bounds.max + semitone)){
         cv_semitones -= semitone;
