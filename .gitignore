@@ -6,6 +6,7 @@ obj
 compile_commands*
 builddir
 
+src/*.asm
 .clang*
 ventor/*
 
