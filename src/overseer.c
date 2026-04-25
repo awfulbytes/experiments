@@ -132,10 +132,13 @@ recalculate:
 
     if(o->tempered.last_fundamental > (o->tempered.hard_bounds.max * 2)){
         if(last_to_first_ratio != 2){
+            // bug::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+            //blocks the rounding around of the octave span 1-5.... but when
+            //i have the octaves shifted up i dont want this...
+            // bug::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             o->tempered.oct.span -= 1;
             goto the_begining;
         }
-        //0.125 reduction...
         o->tempered.first_fundamental -= (o->tempered.first_fundamental >> 6);
         goto recalculate;
     }
