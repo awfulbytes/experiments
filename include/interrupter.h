@@ -92,11 +92,6 @@ struct timer tim6_settings = {.id=TIM6,
                               .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM6,
                               .trigger_output=LL_TIM_TRGO_UPDATE,
                               .irq_settings={.nvic_id=TIM6_DAC_LPTIM1_IRQn, .priority=0x00}};
-#pragma message("remove unused timer 7 if it's not repurpused")
-struct timer tim7_settings = {.id=TIM7,
-                              .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM7,
-                              .trigger_output=LL_TIM_TRGO_UPDATE,
-                              .irq_settings={.nvic_id=TIM7_LPTIM2_IRQn, .priority=0x00}};
 struct timer tim2_settings = {.id=TIM2,
                               .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2,
                               .trigger_output=LL_TIM_TRGO_UPDATE,

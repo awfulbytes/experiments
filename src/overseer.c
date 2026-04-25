@@ -135,7 +135,7 @@ recalculate:
             o->tempered.oct.span -= 1;
             goto the_begining;
         }
-        //0.125 reduction...
+        //reduction
         o->tempered.first_fundamental -= (o->tempered.first_fundamental >> 6);
         goto recalculate;
     }

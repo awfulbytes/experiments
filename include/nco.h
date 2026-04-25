@@ -88,7 +88,6 @@ bool stage_pending_inc(volatile uint16_t      note,
 inline static uint64_t compute_nco_increment(uint16_t            note,
                                              const uint32_t sample_rate){
     int32_t tmp = ((note * (1<<16))/sample_rate);
-    // tmp = U32DIVBY192000(tmp);
     return (tmp << 16);
 }
 
