@@ -11,7 +11,7 @@ volatile int go_front = 0;
 #endif // walk
 
 void main() {
-    struct timer *timers[2] = {&tim6_settings, &tim7_settings};
+    struct timer *timers[1] = {&tim6_settings};
     volatile struct button *nco_buttons[3] = {&freq_mode_but_dac1, &freq_mode_but_dac2, &distortion_choice};
     struct gpio *dacs[2] = {&dac1, &dac2};
     struct gpio *osc_cvs[5] = {&pitch_0_cv, &dist_amount_0_cv, &tunner_adc_in, &pitch_1_cv, &dist_amount_1_cv};
