@@ -138,6 +138,7 @@ recalculate:
             o->tempered.oct.jump = -1;
             o->tempered.oct.shift = true;
         }
+        //reduction
         o->tempered.first_fundamental -= (o->tempered.first_fundamental >> 6);
         goto recalculate;
     }
