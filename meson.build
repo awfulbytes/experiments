@@ -7,6 +7,7 @@ src_files = files(
   'drivers/timx.c',
   'drivers/adc.c',
   'drivers/dma.c',
+  'drivers/flash.c',
   'src/interrupter.c',
   'src/startup_stm32g071xx.s',
   'src/system_stm32g0xx.c',
