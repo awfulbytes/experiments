@@ -10,7 +10,7 @@ strip = 'arm-none-eabi-strip'
 
 [built-in options]
 c_std = 'c11'
-c_args = ['-mcpu=arm600', '-ffreestanding',
+c_args = ['-mcpu=cortex-m0plus', '-ffreestanding',
             '-ffunction-sections',
             '-Wno-sign-conversion',
             '-Wno-int-to-pointer-cast',
@@ -22,7 +22,7 @@ c_args = ['-mcpu=arm600', '-ffreestanding',
             ]
 c_link_args = ['-T', '../STM32G071RBTX_FLASH.ld',
                 '-mfloat-abi=soft', '-g3', '-MT', # '-flto',
-                '-mcpu=arm600', '-lc', '-lgcc', '-static']
+                '-mcpu=cortex-m0plus', '-lc', '-lgcc', '-static']
 
 [host_machine]
 system = 'baremetal'
