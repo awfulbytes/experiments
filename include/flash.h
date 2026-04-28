@@ -42,5 +42,5 @@ struct flash_memory{
     uint32_t bank;
 };
 
-
 void wait_flash_ops(struct flash_memory *fl);
+void perform_mass_erase(struct flash_memory *fl);

@@ -90,5 +90,22 @@ void mass_flash_erase(struct flash_memory *fl){
     fl->flash_proc.Lock = removed;
 }
 
+void system_reset(void){
+    register uint32_t unlock_rq = (0x05fa << 16);
+    register uint32_t enable_rq = (1<<2);
+    SCB->AIRCR = unlock_rq | enable_rq;
+}
+
 void perform_erase(struct flash_memory *fl){
+    cr_error_e flash_locking_errors = none;
+
+    flash_locking_errors = unlock_flash_cr_access(fl);
+    if(flash_locking_errors == none){
+        mass_flash_erase(fl);
+    }
+
+    flash_locking_errors = lock_flash_cr_access(fl);
+    if(flash_locking_errors == none){
+        system_reset();
+    }
 }
