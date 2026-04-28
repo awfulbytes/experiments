@@ -59,14 +59,14 @@ cr_error_e unlock_flash_cr_access(struct flash_memory *fl){
             return unlock;
         }
     }
-    return done;
+    return none;
 }
 
 cr_error_e lock_flash_cr_access(struct flash_memory *fl){
     wait_flash_ops(fl);
     (fl->flash->CR) |= (fl->cr.lock);
     if(read_flash_lock_state(fl) != 0x0U){
-        return done;
+        return none;
     }
     return lock;
 }

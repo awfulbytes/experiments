@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef enum {unlock, lock, done}cr_error_e;
+typedef enum {unlock, lock, none}cr_error_e;
 typedef enum {removed = 0x0U, locked = 0x1U}lock_e;
 
 struct keys{
