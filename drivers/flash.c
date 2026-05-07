@@ -52,6 +52,7 @@ static inline uint32_t read_flash_lock_state(struct flash_memory *fl){
 }
 
 cr_error_e unlock_flash_cr_access(struct flash_memory *fl){
+    wait_flash_ops(fl);
     if((read_flash_lock_state(fl)) != 0x0U){
         (fl->flash->KEYR) = (fl->k.key1); /* FLASH_KEY1 */
         (fl->flash->KEYR) = (fl->k.key2); /* FLASH_KEY2 */
@@ -90,10 +91,14 @@ void mass_flash_erase(struct flash_memory *fl){
     fl->flash_proc.Lock = removed;
 }
 
-void system_reset(void){
-    register uint32_t unlock_rq = (0x05fa << 16);
-    register uint32_t enable_rq = (1<<2);
+void sw_system_reset(void){
+    register uint32_t unlock_rq = (0x05faU << 16);
+    register uint32_t enable_rq = (1U<<2);
     SCB->AIRCR = unlock_rq | enable_rq;
+}
+
+void set_empty_flag(struct flash_memory *fl){
+    fl->flash->ACR |= (1<<16);
 }
 
 void perform_erase(struct flash_memory *fl){
@@ -106,6 +111,6 @@ void perform_erase(struct flash_memory *fl){
 
     flash_locking_errors = lock_flash_cr_access(fl);
     if(flash_locking_errors == none){
-        system_reset();
+        set_empty_flag(fl); /* power reset after */
     }
 }
