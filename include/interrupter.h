@@ -196,7 +196,7 @@ struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC, .id=4, .pin_id=LL_G
                                                      .exti_line_conf=LL_EXTI_CONFIG_LINE4}},
                                .B = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_5, .id=5, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
                                      .value = {0},
-                                     .it_settings = { },
+                                     .it_settings = {0},
                                      .flag = 'D'},
                                .direction=cw,
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};
@@ -209,7 +209,7 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN
                                                .exti_line_conf=LL_EXTI_CONFIG_LINE6}},
                                .B = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_8, .id=8, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
                                      .value = {0},
-                                     .it_settings = { },
+                                     .it_settings = {0},
                                      .flag = 'D'},
                                .direction=cw,
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};

@@ -72,7 +72,7 @@ cr_error_e lock_flash_cr_access(struct flash_memory *fl){
     return lock;
 }
 
-#pragma GCC diagnostic ignored "-Wimplicit-enum-enum-cast"
+#pragma GCC diagnostic ignored "-Wenum-conversion"
 void mass_flash_erase(struct flash_memory *fl){
     fl->flash_proc.Lock = locked;
     fl->flash_proc.ErrorCode = 0x0u;
