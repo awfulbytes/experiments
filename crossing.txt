@@ -15,6 +15,8 @@ c_args = ['-mcpu=cortex-m0plus', '-ffreestanding',
             '-Wno-sign-conversion',
             '-Wno-int-to-pointer-cast',
             '-Wno-unused-parameter',
+            '-pedantic',
+            '-pedantic-errors',
             '-Wextra',
             # '-flto',
             '-fdata-sections', '-Wall', '-fstack-usage', '-MMD', '-MP',
@@ -22,8 +24,11 @@ c_args = ['-mcpu=cortex-m0plus', '-ffreestanding',
             ]
 c_link_args = ['-T', '../STM32G071RBTX_FLASH.ld',
                 '-mthumb',
-                '-mfloat-abi=soft', '-g3', '-MT', # '-flto',
-                '-mcpu=cortex-m0plus', '-lc', '-lgcc', '-static']
+                '--specs=nano.specs',
+                '-Wl,--gc-sections',
+                '-Wl,--start-group', '-lc', '-lgcc', '-Wl,--end-group',
+                '-mfloat-abi=soft', '-g3', # '-flto',
+                '-mcpu=cortex-m0plus', '-static']
 
 [host_machine]
 system = 'baremetal'
