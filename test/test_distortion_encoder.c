@@ -9,9 +9,7 @@ struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc
                     .mode=free,
                     .distortion.amount=64,
                     .distortion.on=false,
-                    .distortion.distortion_value=0,
-                    .distortion.dante=entrance,
-                    .distortion.past_dante=entrance,};
+                    .distortion.distortion_value=0};
 
 struct button distortion_choice = {.state=0, .flag='D',
                                 .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_12, .exti_port_conf=LL_EXTI_CONFIG_PORTC,

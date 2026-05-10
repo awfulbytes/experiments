@@ -8,10 +8,10 @@ testing    = '-DTEST'
 
 src_f = files('./test_nco_increment.c', '../src/nco.c')
 src_f_s = files('./test_signal_generation.c', '../src/nco.c')
-src_f_enc = files('./test_distortion_encoder.c', '../src/ui.c')
+src_f_enc = files('./test_distortion_encoder.c', '../src/ui.c', '../drivers/gpio.c')
 src_f_math = files('./test_math.c', '../src/nco.c')
 
-src_f_d = files('./test_distortion_on_signal.c', '../src/nco.c', '../src/ui.c', '../src/overseer.c')
+src_f_d = files('./test_distortion_on_signal.c', '../src/nco.c', '../src/ui.c', '../src/overseer.c', '../drivers/gpio.c')
 
 inc_f_all = include_directories('../include', '../ventor/stm32g0xx_hal_driver/Inc',
                             '../ventor/cmsis_device_g0/Include/', '../include/Core/Include/')

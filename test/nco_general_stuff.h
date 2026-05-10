@@ -14,7 +14,6 @@ struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc
                     .distortion.distortion_value=0,
                     .bandwidth={.free.min=100, .free.max=14000, .free.cv_raw_max=0xfff,
                                 .tracking.min=220, .tracking.max=1661, .tracking.cv_raw_max=0xfff},
-                    .distortion.dante=9,
                     .distortion.level_range={.min=23, .max=129, .cv_raw_max=0xfff},
 };
 struct nco r_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc=0, .pending_update=false,},
@@ -23,7 +22,6 @@ struct nco r_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc
                     .distortion.amount=64,
                     .distortion.on=true,
                     .distortion.distortion_value=0,
-                    .distortion.dante=9,
 };
 
 uint32_t some[256];

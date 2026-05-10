@@ -4,8 +4,6 @@
 #pragma once
 
 typedef enum freq_modes {free, tracking} freq_modes_e;
-typedef volatile enum cyrcles {entrance, first, second, third, fourth, fifth,
-                               sixth, seventh, eighth, ninth, hell} cyrcles_e;
 typedef enum tunning_method {none, eq_tempered, diatonic_major_g} tunning_method;
 
 struct limits {
@@ -36,8 +34,6 @@ struct tuner {
 struct phase_distortion{
     volatile bool     on;
     volatile uint16_t amount;
-    cyrcles_e         dante;
-    cyrcles_e         past_dante;
     struct   limits   level_range;
     volatile uint32_t distortion_value;
 };

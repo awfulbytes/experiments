@@ -55,9 +55,7 @@ struct nco l_osc = {.phase = {.accum = 0,
                     .distortion.amount=64,
                     .distortion.level_range={.min=1, .max=127,
                                              .cv_raw_max=0x7fff},
-                    .distortion.on=false,
-                    .distortion.past_dante = entrance,
-                    .distortion.dante=entrance};
+                    .distortion.on=false,};
 
 struct nco r_osc = {.phase = {.accum = 0,
                               .inc = 0x01000000,
@@ -82,9 +80,7 @@ struct nco r_osc = {.phase = {.accum = 0,
                     .distortion.amount=64,
                     .distortion.level_range={.min=1, .max=127,
                                              .cv_raw_max=0x7fff},
-                    .distortion.on=false,
-                    .distortion.past_dante = entrance,
-                    .distortion.dante=entrance};
+                    .distortion.on=false,};
 
 volatile uint32_t dac_double_buff2[256] = {0};
 

@@ -32,25 +32,6 @@ static inline enum direction extract_encoder_direction(struct encoder enc[static
     return (decode_quad_enc(enc) == 1) ? cw : ccw;
 }
 
-static void handle_distortion(struct nco *o, volatile enum direction dir){
-    const cyrcles_e absurd_dante_floor = hell + 0xe;
-    switch (dir) {
-    case cw:
-        ++o->distortion.dante;
-        break;
-    case ccw:
-        --o->distortion.dante;
-        break;
-    }
-
-    if (o->distortion.dante > hell && o->distortion.dante < absurd_dante_floor) {
-        o->distortion.dante = hell;
-    } else if (o->distortion.dante > absurd_dante_floor) {
-        o->distortion.dante = entrance;
-    }
-    o->distortion.past_dante = o->distortion.dante;
-}
-
 static void handle_wave_selection(struct encoder *e, volatile enum direction dir){
     switch (dir) {
     case cw:
@@ -66,11 +47,7 @@ static void handle_wave_selection(struct encoder *e, volatile enum direction dir
 
 volatile void* apply_modulations_callback(struct encoder enc[static 1],
                                           struct nco o[static 1]){
-    if (!o->distortion.on) {
-        handle_wave_selection(enc, extract_encoder_direction(enc));
-        return (void*)0;
-    }
-    handle_distortion(o, extract_encoder_direction(enc));
+    handle_wave_selection(enc, extract_encoder_direction(enc));
     o->phase.pending_update = true;
     return (void*)0;
 }
