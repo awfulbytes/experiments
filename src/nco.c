@@ -49,7 +49,7 @@ bool stage_pending_inc(volatile        uint16_t      note,
     return true;
 }
 
-static inline void fmmcpy32 (void* dst, const void* src, uint16_t length) {
+void fmmcpy32 (void* dst, const void* src, uint16_t length) {
     uint32_t* d = dst;
     const uint32_t* s = src;
     for (uint8_t z=0; z < length; ++z) {
