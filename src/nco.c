@@ -1,7 +1,7 @@
 #include "nco.h"
 
 void apply_pd_alg(volatile struct nco nco[static 1]){
-    nco->distortion.distortion_value = nco->phase.inc << nco->distortion.dante;
+    nco->distortion.distortion_value = nco->phase.inc << 1;
 }
 
 #pragma GCC diagnostic ignored "-Wsign-conversion"
@@ -11,23 +11,29 @@ void generate_half_signal(uint16_t sector_length,
     register uint16_t a, b, y;
     register int16_t  diff;
     for (y = 0; y < sector_length; ++y) {
+
         index   = compute_lut_index(nco->phase.accum);
+
+        if (index==nco->distortion.amount && index!=0 && nco->distortion.on) {
+            apply_pd_alg(nco);
+            // hack:: make additive or subtractive it makes nice sounds
+            nco->phase.inc -= nco->distortion.distortion_value;
+        }
+
         n_index = index + 1;
         a       = nco->curr_wave_ptr[index];
         b       = nco->curr_wave_ptr[n_index & 0x7f];
         diff    = (int16_t) (b-a);
-        fract   = ((uint64_t)((nco->phase.accum) * (1<<7)) >> 16) /* & 0xffff */;
 
 #ifdef TEST
         dbg_info_nco(nco, fract, diff);
 #endif // TEST
-        if (y == nco->distortion.amount
-            && nco->distortion.on) {
-            apply_pd_alg(nco);
-            // hack:: make additive or subtractive it makes nice sounds
-            nco->phase.inc -= (nco->distortion.distortion_value);
+        if(diff>2000 || diff<-2000)
+            nco->data_buff[y] = a;
+        else{
+            fract   = ((uint64_t)((nco->phase.accum) * (1<<7)) >> 16);
+            nco->data_buff[y] = (a + ((uint16_t)(((diff * fract) >> 16))));
         }
-        nco->data_buff[y] = (a + ((uint16_t)(((diff * fract) >> 16))));
         nco->phase.accum += nco->phase.inc;
     }
     nco->phase.done_update = false;
