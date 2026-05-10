@@ -6,7 +6,6 @@
 #include "dma.h"
 #include "nco.h"
 #include "ui.h"
-#include "src/dbg.h"
 #include "overseer.h"
 
 
