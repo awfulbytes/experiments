@@ -52,10 +52,9 @@ char read_gpio(struct gpio *pin) {
     return (pin->port_id->IDR & (1U << pin->id) ? 1U : 0);
 }
 
-void gpio_logic_high(struct gpio *gpio){
-    gpio->port_id->ODR |= (1U << gpio->id);
-}
-
-void gpio_logic_low(struct gpio *gpio){
-    gpio->port_id->ODR &= ~(1U << gpio->id);
+void write_gpio(struct gpio *pin, bool val){
+    if(val)
+        pin->port_id->ODR |= (1U << pin->id);
+    else
+        pin->port_id->ODR &= ~(1U << pin->id);
 }

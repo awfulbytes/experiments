@@ -3,6 +3,7 @@
 #include "stm32g0xx_ll_exti.h"
 #include "stm32g0xx_ll_utils.h"
 #include "stm32g0xx_ll_bus.h"
+#include <stdbool.h>
 
 // #define DEBUGDAC
 #if defined(DEBUG) || defined(DEBUGDAC) || defined(DEBUGDAC1) || defined (encoder)
@@ -49,3 +50,4 @@ void gpio_init(volatile struct button **p,
 char read_gpio(struct gpio *pin);
 
 void set_gpio(volatile struct gpio *pin);
+void write_gpio(struct gpio *pin, bool val);
