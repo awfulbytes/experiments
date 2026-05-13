@@ -18,7 +18,8 @@ void gpio_init(volatile struct button **choice_buttons,
                uint16_t c, uint16_t d, uint16_t a, uint16_t why){
     LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA |
                             LL_IOP_GRP1_PERIPH_GPIOB |
-                            LL_IOP_GRP1_PERIPH_GPIOC);
+                            LL_IOP_GRP1_PERIPH_GPIOC |
+                            LL_IOP_GRP1_PERIPH_GPIOD);
 
     wave_choice_gpio(choice_buttons, c, why);
     dac_gpio(dacs, d, why);

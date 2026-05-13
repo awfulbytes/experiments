@@ -1,5 +1,7 @@
+#pragma once
+#include "reciprocal_division.h"
 #include "gpio.h"
-#include "nco.h"
+#include <stdint.h>
 
 enum waves {SINE, SAWU, SAWD, PULSE, WAVE_CTR};
 enum direction {cw, ccw};
@@ -23,6 +25,27 @@ struct flip_switch {
     struct gpio pins[2];
     struct exti it[2];
     uint32_t    priority[2];
+};
+
+struct led {
+    struct gpio pin;
+    bool        state;
+};
+
+typedef enum tuner_view{recording, playing}tuner_view;
+typedef enum current_view{tuning, dist, wave, diatonic}current_view;
+
+struct distortion_info{
+    uint8_t twenty_percent;
+    uint8_t change;
+};
+
+struct display {
+    current_view view;
+    tuner_view tuner_view;
+    uint16_t shift_registers[2];
+    struct led leds[6];
+    struct distortion_info distortion;
 };
 
 static void enable_rising(uint32_t exti_line){
@@ -58,10 +81,12 @@ static void exti_enc_setup(struct encoder_channel channel[static 1]){
     NVIC_EnableIRQ(channel->it_settings.exti_irqn);
 }
 
+
 void enc_init(struct encoder *enc);
-void button_callback(struct button *abut);
-void WaitForUserButtonPress (struct button *button);
-volatile void* apply_modulations_callback(struct encoder enc[static 1],
-                                          struct nco o[static 1]);
-void align_phase(volatile struct nco *o[2]);
 void set_flip_switch(struct flip_switch *f, uint8_t pin_idx);
+void config_display(struct display *d);
+
+volatile void* apply_modulations_callback(struct encoder enc[static 1]);
+
+void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc);
+void handle_display(struct display *d, uint8_t distortion_level, uint8_t octave_span, uint8_t current_wave, uint8_t osc);

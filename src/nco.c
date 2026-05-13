@@ -68,3 +68,11 @@ inline void update_data_buff(const volatile  uint32_t data[static 128],
                              uint16_t                 sector_length) {
     fmmcpy32(buffer_sector, (const void*) data, sector_length);
 }
+
+void align_phase(volatile struct nco *o[2]){
+    o[1]->phase.accum = o[0]->phase.accum;
+}
+
+void sync_fcw(volatile struct nco *o[2]){
+    o[1]->phase.inc = o[0]->phase.inc;
+}

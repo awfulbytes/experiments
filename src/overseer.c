@@ -30,23 +30,32 @@ void tune(struct overseer *seer, uint8_t osc_idx){
 
         switch(seer->selected->tempered.type) {
             case none:
+                if(osc_idx == 0)
+                    display.view = wave;
                 seer->_data->pitch_cv = note;
                 break;
             case eq_tempered:
+                display.view = tuning;
+                display.tuner_view = playing; //global shit
                 if(seer->selected->tempered.flag){
                     seer->selected->tempered.first_fundamental = map_uint(seer->_data->tunner_pitch_raw_d, &seer->selected->tempered.hard_bounds);
                     seer->_data->pitch_cv = seer->selected->tempered.first_fundamental;
+                    display.tuner_view = recording; //global shit
                     break;
                 }
                 seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital);
+                octave_recorder(&display, seer->selected->tempered.oct.span, osc_idx);
                 break;
             case diatonic_major_g:
+                display.view = diatonic;
                 seer->_data->pitch_cv = diatonic_lut_search(note, diatonic_g_major, g_major_size);
                 break;
         }
 
-        if(seer->selected->distortion.on)
+        if(seer->selected->distortion.on){
+            display.view = dist;
             tune_distortion(seer->selected, seer->_data);
+        }
 
         seer->selected->phase.done_update =
             stage_pending_inc(seer->_data->pitch_cv, seer->selected,
@@ -70,10 +79,6 @@ void merge_signals_dual_dac_mode(volatile struct nco *o[2], uint32_t dual_buffer
         dual_buffer[z] = o[1]->data_buff[z] << 16U |\
                          o[0]->data_buff[z];
     }
-}
-
-void sync_fcw(volatile struct nco *o[2]){
-    o[1]->phase.inc = o[0]->phase.inc;
 }
 
 static uint16_t diatonic_lut_search(volatile uint16_t note,

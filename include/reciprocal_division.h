@@ -42,3 +42,5 @@
 #define U16REC2(A, M, S) (uint16_t)U32REC2(A, M, S)
 #define U16DIVBY32767(A)    U16REC2(A, 0x0003u, 14u)
 
+#define U8REC1(A, M, S) ((((uint16_t)(A) * (uint16_t)(M) >> 8u)) >> (S))
+#define U8DIVBY25(A)    ((uint8_t)U8REC1(A, 0xA4u, 4u))

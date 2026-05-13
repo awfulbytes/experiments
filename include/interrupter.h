@@ -209,6 +209,24 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN
                                .direction=cw,
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};
 
+struct display display = {.shift_registers={0,0},
+                          .view=wave,
+                          .tuner_view=playing,
+                          .leds[0] = {.pin = {.port_id=GPIOD, .pin_id=LL_GPIO_PIN_0, .id=0, .mode=LL_GPIO_MODE_OUTPUT, .pull=LL_GPIO_PULL_NO},
+                                      .state=false},
+                          .leds[1] = {.pin = {.port_id=GPIOD, .pin_id=LL_GPIO_PIN_1, .id=1, .mode=LL_GPIO_MODE_OUTPUT, .pull=LL_GPIO_PULL_NO},
+                                      .state=false},
+                          .leds[2] = {.pin = {.port_id=GPIOD, .pin_id=LL_GPIO_PIN_2, .id=2, .mode=LL_GPIO_MODE_OUTPUT, .pull=LL_GPIO_PULL_NO},
+                                      .state=false},
+                          .leds[3] = {.pin = {.port_id=GPIOD, .pin_id=LL_GPIO_PIN_3, .id=3, .mode=LL_GPIO_MODE_OUTPUT, .pull=LL_GPIO_PULL_NO},
+                                      .state=false},
+                          .leds[4] = {.pin = {.port_id=GPIOD, .pin_id=LL_GPIO_PIN_4, .id=4, .mode=LL_GPIO_MODE_OUTPUT, .pull=LL_GPIO_PULL_NO},
+                                      .state=false},
+                          .leds[5] = {.pin = {.port_id=GPIOD, .pin_id=LL_GPIO_PIN_5, .id=5, .mode=LL_GPIO_MODE_OUTPUT, .pull=LL_GPIO_PULL_NO},
+                                      .state=false},
+};
+
+
 struct overseer cosmos = {
     .oscillators = {&l_osc, &r_osc},
     .selected = &l_osc,

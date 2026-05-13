@@ -10,7 +10,7 @@ volatile uint32_t hell_walk_counter = 0;
 volatile int go_front = 0;
 #endif // walk
 
-void main() {
+void main(void) {
     struct timer *timers[1] = {&tim6_settings};
     volatile struct button *nco_buttons[3] = {&freq_mode_but_dac1, &freq_mode_but_dac2, &distortion_choice};
     struct gpio *dacs[2] = {&dac1, &dac2};
@@ -32,6 +32,7 @@ void main() {
 
     enc_init(&osc_0_pd_enc);
     enc_init(&osc_1_pd_enc);
+    config_display(&display);
 
 #if defined(DEBUG) || defined(DEBUGDAC)
     /*
@@ -78,6 +79,11 @@ void main() {
             l_osc.tempered.rec = false;
         }
         tune(&cosmos, 0);
+        handle_display(&display,
+                       cosmos.oscillators[0]->distortion.amount,
+                       cosmos.oscillators[0]->tempered.oct.span,
+                       osc_0_pd_enc.virtual_wave_button.state,
+                       0);
 
         if (osc_1_pd_enc.virtual_wave_button.flag == 0x69) {
             r_osc.curr_wave_ptr = waves_bank[osc_1_pd_enc.virtual_wave_button.state];

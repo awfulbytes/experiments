@@ -92,6 +92,9 @@ inline static uint32_t compute_lut_index(uint32_t accum){
     return (uint32_t) (((uint64_t) accum * (1<<7))>>32);
 }
 
+void align_phase(volatile struct nco *o[2]);
+void sync_fcw(volatile struct nco *o[2]);
+
 #ifdef TEST
 #include <stdio.h>
 inline static void dbg_info_nco(volatile struct nco *nco,
