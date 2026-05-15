@@ -78,7 +78,7 @@ void main(void) {
             l_osc.tempered.flag = 0x0;
             l_osc.tempered.rec = false;
         }
-        tune(&cosmos, 0);
+        tune(&cosmos, 0, &display);
         handle_display(&display,
                        cosmos.oscillators[0]->distortion.amount,
                        osc_0_pd_enc.virtual_wave_button.state,
@@ -88,6 +88,6 @@ void main(void) {
             r_osc.curr_wave_ptr = waves_bank[osc_1_pd_enc.virtual_wave_button.state];
             osc_1_pd_enc.virtual_wave_button.flag = 'D';
         }
-        tune(&cosmos, 1);
+        tune(&cosmos, 1, &display);
     }
 }

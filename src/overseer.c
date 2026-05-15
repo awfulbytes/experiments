@@ -10,7 +10,7 @@ volatile const uint16_t diatonic_g_major[] = {
 1536, 1728, 1920, 2048, 2304, 2560, 2880,
 3072, 3456, 3840, 4096, 4608, 5120, 5760};
 
-void tune(struct overseer *seer, uint8_t osc_idx){
+void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
     seer->selected = seer->oscillators[osc_idx];
     register size_t g_major_size = array_size(diatonic_g_major);
 
@@ -31,40 +31,40 @@ void tune(struct overseer *seer, uint8_t osc_idx){
         switch(seer->selected->tempered.type) {
             case none:
                 if(osc_idx == 0)
-                    display.view = wave;
+                    d->view = wave;
                 seer->_data->pitch_cv = note;
                 break;
             case eq_tempered:
-                display.view = tuning;
-                display.tuner_view = playing; //global shit
+                d->view = tuning;
+                d->tuner_view = playing; //global shit
                 if(seer->selected->tempered.flag){
                     seer->selected->tempered.first_fundamental = map_uint(seer->_data->tunner_pitch_raw_d, &seer->selected->tempered.hard_bounds);
                     seer->_data->pitch_cv = seer->selected->tempered.first_fundamental;
-                    display.tuner_view = recording; //global shit
+                    d->tuner_view = recording; //global shit
                     break;
                 }
 
                 if(seer->selected->in_the_house.report == 0 && seer->selected->tempered.oct.shift){
-                    if(display.octave_shifts[0] < 4)
-                        display.octave_shifts[0] += (uint8_t) seer->oscillators[0]->tempered.oct.jump;
+                    if(d->octave_shifts[0] < 4)
+                        d->octave_shifts[0] += (uint8_t) seer->oscillators[0]->tempered.oct.jump;
                     else
-                        display.octave_shifts[0] = 4;
+                        d->octave_shifts[0] = 4;
                 }
 
-                seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital);
+                seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital, d);
 
                 if(seer->selected->in_the_house.report == 0)
                     octave_recorder(&display, seer->oscillators[0]->tempered.oct.span, 0);
 
                 break;
             case diatonic_major_g:
-                display.view = diatonic;
+                d->view = diatonic;
                 seer->_data->pitch_cv = diatonic_lut_search(note, diatonic_g_major, g_major_size);
                 break;
         }
 
         if(seer->selected->distortion.on){
-            display.view = dist;
+            d->view = dist;
             tune_distortion(seer->selected, seer->_data);
         }
 
@@ -130,7 +130,7 @@ static uint16_t diatonic_lut_search(volatile uint16_t note,
 }
 
 #pragma message("semi working")
-uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
+uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig, struct display *d){
     register uint16_t range = 0;
     register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0;
     register uint16_t main_pitch_cv = 0;
@@ -179,10 +179,10 @@ recalculate:
             --o->tempered.oct.jump;
         }
         while(o->tempered.oct.jump < 0){
-            if(display.backwards_jump[0] == 0)
-                display.backwards_jump[0] = 1; //gives us backwards but too much
+            if(d->backwards_jump[0] == 0)
+                d->backwards_jump[0] = 1; //gives us backwards but too much
             else
-                display.backwards_jump[0] = 0; //gives us backwards but too much
+                d->backwards_jump[0] = 0; //gives us backwards but too much
             o->tempered.first_fundamental >>= 1;
             ++o->tempered.oct.jump;
         }
