@@ -81,7 +81,6 @@ void main(void) {
         tune(&cosmos, 0);
         handle_display(&display,
                        cosmos.oscillators[0]->distortion.amount,
-                       cosmos.oscillators[0]->tempered.oct.span,
                        osc_0_pd_enc.virtual_wave_button.state,
                        0);
 

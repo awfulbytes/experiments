@@ -43,8 +43,19 @@ void tune(struct overseer *seer, uint8_t osc_idx){
                     display.tuner_view = recording; //global shit
                     break;
                 }
+
+                if(seer->selected->in_the_house.report == 0 && seer->selected->tempered.oct.shift){
+                    if(display.octave_shifts[0] < 4)
+                        display.octave_shifts[0] += (uint8_t) seer->oscillators[0]->tempered.oct.jump;
+                    else
+                        display.octave_shifts[0] = 4;
+                }
+
                 seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital);
-                octave_recorder(&display, seer->selected->tempered.oct.span, osc_idx);
+
+                if(seer->selected->in_the_house.report == 0)
+                    octave_recorder(&display, seer->oscillators[0]->tempered.oct.span, 0);
+
                 break;
             case diatonic_major_g:
                 display.view = diatonic;
@@ -138,8 +149,17 @@ recalculate:
     if(o->tempered.last_fundamental > (o->tempered.hard_bounds.max * 2)){
         if(last_to_first_ratio != 2){
             o->tempered.oct.span -= 1;
+            //this is not recorded for the display
+            // it should be as im recording the span later
             goto the_begining;
         }else{
+            // !;
+            //ooo i modify this also so i have to get all the states from here
+            //          lets say im jumping from last to previews octave.
+            //          we have to be sure if we jumped or spanned.
+            //    the above is not yet clear to the project so this is firing
+            //    issues because sampling the jump before here will ignore the
+            //    negative jumping!!!!
             o->tempered.oct.jump = -1;
             o->tempered.oct.shift = true;
         }
@@ -159,6 +179,10 @@ recalculate:
             --o->tempered.oct.jump;
         }
         while(o->tempered.oct.jump < 0){
+            if(display.backwards_jump[0] == 0)
+                display.backwards_jump[0] = 1; //gives us backwards but too much
+            else
+                display.backwards_jump[0] = 0; //gives us backwards but too much
             o->tempered.first_fundamental >>= 1;
             ++o->tempered.oct.jump;
         }

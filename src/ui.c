@@ -62,20 +62,25 @@ static bool extract_bit(uint8_t number, uint8_t bit){
     return ((number & (1U<<bit)) != 0);
 }
 
+#define discard_upper_3b_of_8b     (~0xfe0U)
+#define span_in_binary(z)          ((~(0xffU<<z)) & (0x1fU))
 void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc){
-    d->shift_registers[osc] = (~(0xff<<span_amount)) & (0x1f);
+    d->shift_registers[osc] = (
+        (uint16_t)(span_in_binary(span_amount) << (d->octave_shifts[osc] - d->backwards_jump[osc]))) & discard_upper_3b_of_8b;
 }
 
-void handle_display(struct display *d, uint8_t distortion_level, uint8_t octave_span, uint8_t current_wave, uint8_t osc){
+void handle_display(struct display *d, uint8_t distortion_level, uint8_t current_wave, uint8_t osc){
     for(uint8_t k=0; k < 6; ++k){
         d->leds[k].state = false;
     }
     switch(d->view){
-
         case tuning:
-            if(d->tuner_view == recording)
+            if(d->tuner_view == recording){
                 d->leds[5].state = true;
-            for(uint8_t j=0; j<octave_span; ++j){
+                d->octave_shifts[0] = 0;
+                d->backwards_jump[0] = 0;
+            }
+            for(uint8_t j=0; j<5; ++j){
                 d->leds[j].state = extract_bit(d->shift_registers[osc], j);
             }
             break;

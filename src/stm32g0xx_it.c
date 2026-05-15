@@ -69,6 +69,7 @@ static inline void handle_osc_distortion(struct nco nco[static 1]){
         GPIOB->ODR &= ~(1 << 5);
 #endif // encoder_leds
         nco->distortion.on = true;
+        display.view = dist;
         cosmos.sync = false;
     }
     else{
@@ -77,6 +78,7 @@ static inline void handle_osc_distortion(struct nco nco[static 1]){
         GPIOB->ODR |= (1 << 5);
 #endif // encoder_leds
         nco->distortion.on = false;
+        display.view = tuning;
         cosmos.sync = true;
     }
 }

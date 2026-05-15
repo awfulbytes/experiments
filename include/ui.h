@@ -44,6 +44,8 @@ struct display {
     current_view view;
     tuner_view tuner_view;
     uint16_t shift_registers[2];
+    uint8_t octave_shifts[2];
+    uint8_t backwards_jump[2];
     struct led leds[6];
     struct distortion_info distortion;
 };
@@ -89,4 +91,4 @@ void config_display(struct display *d);
 volatile void* apply_modulations_callback(struct encoder enc[static 1]);
 
 void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc);
-void handle_display(struct display *d, uint8_t distortion_level, uint8_t octave_span, uint8_t current_wave, uint8_t osc);
+void handle_display(struct display *d, uint8_t distortion_level, uint8_t current_wave, uint8_t osc);

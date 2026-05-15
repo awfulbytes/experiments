@@ -210,6 +210,7 @@ struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};
 
 struct display display = {.shift_registers={0,0},
+                          .octave_shifts={0,0},
                           .view=wave,
                           .tuner_view=playing,
                           .leds[0] = {.pin = {.port_id=GPIOD, .pin_id=LL_GPIO_PIN_0, .id=0, .mode=LL_GPIO_MODE_OUTPUT, .pull=LL_GPIO_PULL_NO},

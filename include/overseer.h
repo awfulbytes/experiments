@@ -28,6 +28,7 @@ struct overseer {
 static inline void tune_distortion(volatile struct nco osc[static 1],
                                    volatile struct   overworld *data);
 
+extern struct overseer cosmos;
 extern struct display display;
 void tune(struct overseer *overseer, uint8_t osc_idx);
 
