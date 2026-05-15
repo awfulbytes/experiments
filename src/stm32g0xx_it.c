@@ -129,6 +129,10 @@ void EXTI4_15_IRQHandler(void) {
     if((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
         l_osc.tempered.oct.shift = true;
         l_osc.tempered.oct.jump += 1;
+        if(display.octave_shifts[0] < 4)
+            display.octave_shifts[0] += (uint8_t) l_osc.tempered.oct.jump;
+        else
+            display.octave_shifts[0] = 4;
         (EXTI->RPR1) = (freq_mode_but_dac1.exti.exti_line);
     }
 

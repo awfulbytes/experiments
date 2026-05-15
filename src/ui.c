@@ -77,8 +77,7 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
         case tuning:
             if(d->tuner_view == recording){
                 d->leds[5].state = true;
-                d->octave_shifts[0] = 0;
-                d->backwards_jump[0] = 0;
+                d->octave_shifts[0] = d->backwards_jump[0] = 0;
             }
             for(uint8_t j=0; j<5; ++j){
                 d->leds[j].state = extract_bit(d->shift_registers[osc], j);

@@ -38,23 +38,15 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
                 d->view = tuning;
                 d->tuner_view = playing; //global shit
                 if(seer->selected->tempered.flag){
-                    seer->selected->tempered.first_fundamental = map_uint(seer->_data->tunner_pitch_raw_d, &seer->selected->tempered.hard_bounds);
                     seer->_data->pitch_cv = seer->selected->tempered.first_fundamental;
                     d->tuner_view = recording; //global shit
                     break;
                 }
 
-                if(seer->selected->in_the_house.report == 0 && seer->selected->tempered.oct.shift){
-                    if(d->octave_shifts[0] < 4)
-                        d->octave_shifts[0] += (uint8_t) seer->oscillators[0]->tempered.oct.jump;
-                    else
-                        d->octave_shifts[0] = 4;
-                }
-
                 seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital, d);
 
-                if(seer->selected->in_the_house.report == 0)
-                    octave_recorder(&display, seer->oscillators[0]->tempered.oct.span, 0);
+                if(osc_idx!=1)
+                    octave_recorder(&display, seer->oscillators[osc_idx]->tempered.oct.span, osc_idx);
 
                 break;
             case diatonic_major_g:
