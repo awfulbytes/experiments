@@ -41,13 +41,13 @@ struct distortion_info{
 };
 
 struct display {
-    current_view view;
-    tuner_view tuner_view;
+    current_view view[2];
+    tuner_view tuner_view[2];
     uint16_t shift_registers[2];
     uint8_t octave_shifts[2];
     uint8_t backwards_jump[2];
     struct led leds[6];
-    struct distortion_info distortion;
+    struct distortion_info distortion[2];
 };
 
 static void enable_rising(uint32_t exti_line){

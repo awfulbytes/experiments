@@ -73,9 +73,9 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
     for(uint8_t k=0; k < 6; ++k){
         d->leds[k].state = false;
     }
-    switch(d->view){
+    switch(d->view[osc]){
         case tuning:
-            if(d->tuner_view == recording){
+            if(d->tuner_view[osc] == recording){
                 d->leds[5].state = true;
                 d->octave_shifts[0] = d->backwards_jump[0] = 0;
             }
@@ -85,10 +85,10 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
             break;
 
         case dist:
-            if(distortion_level > d->distortion.twenty_percent)
-                d->distortion.change = U8DIVBY25(distortion_level);
+            if(distortion_level > d->distortion[osc].twenty_percent)
+                d->distortion[osc].change = U8DIVBY25(distortion_level);
 
-            for(uint8_t k=0; k < d->distortion.change; ++k){
+            for(uint8_t k=0; k < d->distortion[osc].change; ++k){
                 d->leds[k].state = true;
             }
             break;

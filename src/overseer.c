@@ -30,16 +30,16 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
 
         switch(seer->selected->tempered.type) {
             case none:
-                if(osc_idx == 0)
-                    d->view = wave;
+                // if(osc_idx == 0)
+                d->view[osc_idx] = wave;
                 seer->_data->pitch_cv = note;
                 break;
             case eq_tempered:
-                d->view = tuning;
-                d->tuner_view = playing; //global shit
+                d->view[osc_idx] = tuning;
+                d->tuner_view[osc_idx] = playing; //global shit
                 if(seer->selected->tempered.flag){
                     seer->_data->pitch_cv = seer->selected->tempered.first_fundamental;
-                    d->tuner_view = recording; //global shit
+                    d->tuner_view[osc_idx] = recording; //global shit
                     break;
                 }
 
@@ -50,13 +50,13 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
 
                 break;
             case diatonic_major_g:
-                d->view = diatonic;
+                d->view[osc_idx] = diatonic;
                 seer->_data->pitch_cv = diatonic_lut_search(note, diatonic_g_major, g_major_size);
                 break;
         }
 
         if(seer->selected->distortion.on){
-            d->view = dist;
+            d->view[osc_idx] = dist;
             tune_distortion(seer->selected, seer->_data);
         }
 
