@@ -167,15 +167,13 @@ recalculate:
     }
 
     if(o->tempered.oct.shift){
-        while(o->tempered.oct.jump > 0){
+        for(;o->tempered.oct.jump > 0;){
             o->tempered.first_fundamental <<= 1;
             --o->tempered.oct.jump;
         }
-        while(o->tempered.oct.jump < 0){
-            if(d->backwards_jump[0] == 0)
-                d->backwards_jump[0] = 1; //gives us backwards but too much
-            else
-                d->backwards_jump[0] = 0; //gives us backwards but too much
+        for(;o->tempered.oct.jump < 0;){
+            //gives us backwards but too much
+            d->backwards_jump[0] = (d->backwards_jump[0] == 0) ? 1 : 0;
             o->tempered.first_fundamental >>= 1;
             ++o->tempered.oct.jump;
         }
