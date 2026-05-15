@@ -27,6 +27,7 @@ struct tuner {
     struct octave           oct;
     struct limits           hard_bounds;
     struct limits           mutable_bounds;
+    struct limits           absolute;
     volatile tunning_method type;
     char                    flag;
 };

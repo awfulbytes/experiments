@@ -1,15 +1,6 @@
 #include "interrupter.h"
 #include "sysclk.c"
 
-/*
-#define hell_jump
-#define walk
-*/
-#ifdef walk
-volatile uint32_t hell_walk_counter = 0;
-volatile int go_front = 0;
-#endif // walk
-
 void main(void) {
     struct timer *timers[1] = {&tim6_settings};
     volatile struct button *nco_buttons[3] = {&freq_mode_but_dac1, &freq_mode_but_dac2, &distortion_choice};
@@ -56,16 +47,9 @@ void main(void) {
         dac_act(dacs_settings[i]);
     }
 
-#ifdef hell_jump
-    #define floor_on_hell             fifth
-    land_on_hell_floor()
-#endif
+    l_osc.tempered.absolute.max = l_osc.tempered.hard_bounds.max * 2;
 
     while (1) {
-
-#ifdef  walk
-      hell_walking()
-#endif
 
         if(osc_0_pd_enc.virtual_wave_button.flag == 0x69){
             l_osc.curr_wave_ptr = waves_bank[osc_0_pd_enc.virtual_wave_button.state];

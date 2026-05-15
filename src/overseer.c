@@ -133,7 +133,7 @@ the_begining:
 recalculate:
     o->tempered.last_fundamental = o->tempered.first_fundamental * last_to_first_ratio;
 
-    if(o->tempered.last_fundamental > (o->tempered.hard_bounds.max * 2)){
+    if(o->tempered.last_fundamental > o->tempered.absolute.max){
         if(last_to_first_ratio != 2){
             o->tempered.oct.span -= 1;
             //this is not recorded for the display
