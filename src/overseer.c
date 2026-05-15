@@ -124,16 +124,17 @@ static uint16_t diatonic_lut_search(volatile uint16_t note,
 #pragma message("semi working")
 uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig, struct display *d){
     register uint16_t range = 0;
+    volatile uint16_t freq_diff_from_base;
     register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0;
     register uint16_t main_pitch_cv = 0;
     register uint16_t last_to_first_ratio = 0;
 
 the_begining:
     last_to_first_ratio = o->tempered.oct.span << 1;
-    if(last_to_first_ratio == 2)
-        _semi_tones_in_range = o->tempered.oct.unit;
-    else
+    if(last_to_first_ratio != 2)
         _semi_tones_in_range = o->tempered.oct.unit * last_to_first_ratio;
+    else
+        _semi_tones_in_range = o->tempered.oct.unit;
 
 recalculate:
     o->tempered.last_fundamental = o->tempered.first_fundamental * last_to_first_ratio;
@@ -188,9 +189,13 @@ recalculate:
                              &o->tempered.mutable_bounds);
 
     range    = o->tempered.last_fundamental - o->tempered.first_fundamental;
+    /* todo
+     * test this actually works and gives us back real numbers...
+     *      we might need division before multiplication...
+     */
+    freq_diff_from_base = (main_pitch_cv - o->tempered.first_fundamental);
     semitone = range / _semi_tones_in_range;
-
-    cv_semitones  = (main_pitch_cv - o->tempered.first_fundamental) / semitone;
+    cv_semitones  = freq_diff_from_base / semitone;
 fixup:
     o->tempered.quantized_et = o->tempered.first_fundamental + (cv_semitones * semitone);
     if(o->tempered.quantized_et > (o->tempered.mutable_bounds.max + semitone)){
