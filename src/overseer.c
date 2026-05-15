@@ -42,12 +42,8 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
                     d->tuner_view[osc_idx] = recording; //global shit
                     break;
                 }
-
                 seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital, d);
-
-                if(osc_idx!=1)
-                    octave_recorder(&display, seer->oscillators[osc_idx]->tempered.oct.span, osc_idx);
-
+                octave_recorder(&display, seer->oscillators[osc_idx]->tempered.oct.span, osc_idx);
                 break;
             case diatonic_major_g:
                 d->view[osc_idx] = diatonic;
@@ -123,11 +119,9 @@ static uint16_t diatonic_lut_search(volatile uint16_t note,
 
 #pragma message("semi working")
 uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig, struct display *d){
-    register uint16_t range = 0;
-    volatile uint16_t freq_diff_from_base;
-    register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0;
+    volatile uint16_t freq_diff_from_base = 0;
+    register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0, range = 0, last_to_first_ratio = 0;
     register uint16_t main_pitch_cv = 0;
-    register uint16_t last_to_first_ratio = 0;
 
 the_begining:
     last_to_first_ratio = o->tempered.oct.span << 1;
@@ -162,20 +156,19 @@ recalculate:
     }
 
     if(o->tempered.first_fundamental < o->tempered.hard_bounds.min){
+        // test if we need this now that we sample in main loop
         o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental, &o->tempered.hard_bounds);
         goto recalculate;
     }
 
     if(o->tempered.oct.shift){
-        for(;o->tempered.oct.jump > 0;){
+        for(;o->tempered.oct.jump > 0; --o->tempered.oct.jump){
             o->tempered.first_fundamental <<= 1;
-            --o->tempered.oct.jump;
         }
-        for(;o->tempered.oct.jump < 0;){
+        for(;o->tempered.oct.jump < 0; ++o->tempered.oct.jump){
             //gives us backwards but too much
             d->backwards_jump[0] = (d->backwards_jump[0] == 0) ? 1 : 0;
             o->tempered.first_fundamental >>= 1;
-            ++o->tempered.oct.jump;
         }
         o->tempered.oct.shift = false;
         goto recalculate;
