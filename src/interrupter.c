@@ -47,8 +47,6 @@ void main(void) {
         dac_act(dacs_settings[i]);
     }
 
-    l_osc.tempered.absolute.max = l_osc.tempered.hard_bounds.max * 2;
-
     while (1) {
 
         if(osc_0_pd_enc.virtual_wave_button.flag == 0x69){
