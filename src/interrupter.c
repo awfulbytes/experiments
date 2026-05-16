@@ -58,9 +58,11 @@ void main(void) {
 
         if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x1;
-            l_osc.tempered.first_fundamental = map_uint(cosmos._data->tunner_pitch_raw_d, &l_osc.tempered.hard_bounds);
+            display.tuner_view[0] = recording;
+            l_osc.tempered.first_fundamental = map_uint(cosmos._data->tunner_pitch_raw_d, &cosmos.oscillators[0]->tempered.hard_bounds);
         } else if(!read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x0;
+            display.tuner_view[0] = playing;
             l_osc.tempered.rec = false;
         }
         tune(&cosmos, 0, &display);

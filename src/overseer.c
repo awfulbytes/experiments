@@ -30,16 +30,13 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
 
         switch(seer->selected->tempered.type) {
             case none:
-                // if(osc_idx == 0)
                 d->view[osc_idx] = wave;
                 seer->_data->pitch_cv = note;
                 break;
             case eq_tempered:
                 d->view[osc_idx] = tuning;
-                d->tuner_view[osc_idx] = playing; //global shit
                 if(seer->selected->tempered.flag){
                     seer->_data->pitch_cv = seer->selected->tempered.first_fundamental;
-                    d->tuner_view[osc_idx] = recording; //global shit
                     break;
                 }
                 seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital, d);
