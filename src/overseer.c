@@ -131,7 +131,7 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig, struct d
         if(o->tempered.oct.span != 1){
             o->tempered.oct.span -= 1;
         }else{
-            o->tempered.first_fundamental -= o->tempered.first_fundamental >> 6;
+            o->tempered.first_fundamental = o->tempered.absolute.max >> 1;
         }
         last_to_first_ratio = o->tempered.oct.span << 1;
     }
