@@ -11,6 +11,12 @@ void NMI_Handler(void){}
 void SVC_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
+inline void blocking_delay(volatile uint16_t arbitrary_integer){
+    for(volatile uint16_t Z=0; Z<arbitrary_integer; ++Z){
+        ;
+    }
+}
+
 
 void DMA1_Channel2_3_IRQHandler(void){
     /* optimized access for compiler massage */
@@ -108,6 +114,7 @@ void EXTI4_15_IRQHandler(void) {
     }
 
     if((EXTI->RPR1 & octave_switch.it[0].exti_line) == octave_switch.it[0].exti_line){
+        blocking_delay(0x7fff);
         if(read_gpio(&octave_switch.pins[0])){
             switch (l_osc.tempered.oct.span) {
                 case 5:
@@ -127,30 +134,37 @@ void EXTI4_15_IRQHandler(void) {
     }
 
     if((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
-        l_osc.tempered.oct.shift = true;
-        l_osc.tempered.oct.jump += 1;
-        if(display.octave_shifts[0] < 4)
-            display.octave_shifts[0] += (uint8_t) l_osc.tempered.oct.jump;
-        else
-            display.octave_shifts[0] = 4;
+        blocking_delay(0xffff);
+        if(!read_gpio(&freq_mode_but_dac1.pin)){
+            l_osc.tempered.oct.shift = true;
+            // l_osc.tempered.oct.jump += 1;
+            if(display.octave_shifts[0] < 5)
+                display.octave_shifts[0] += 1;
+            else
+                display.octave_shifts[0] = 5;
+        }
         (EXTI->RPR1) = (freq_mode_but_dac1.exti.exti_line);
+        ;
     }
 
     if((EXTI->RPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line){
         change_pitch_mode(&r_osc);
-        switch (l_osc.tempered.type) {
-            case none:
-                l_osc.mode = tracking;
-                l_osc.tempered.type = diatonic_major_g;
-                break;
-            case diatonic_major_g:
-                l_osc.mode = free;
-                l_osc.tempered.type = eq_tempered;
-                break;
-            case eq_tempered:
-                l_osc.mode = free;
-                l_osc.tempered.type = none;
-                break;
+        blocking_delay(0xffff);
+        if(!read_gpio(&freq_mode_but_dac2.pin)){
+            switch (l_osc.tempered.type) {
+                case none:
+                    l_osc.mode = tracking;
+                    l_osc.tempered.type = diatonic_major_g;
+                    break;
+                case diatonic_major_g:
+                    l_osc.mode = free;
+                    l_osc.tempered.type = eq_tempered;
+                    break;
+                case eq_tempered:
+                    l_osc.mode = free;
+                    l_osc.tempered.type = none;
+                    break;
+            }
         }
         r_osc.on_scale = (r_osc.mode == tracking) ? true : false;
         (EXTI->RPR1) = (freq_mode_but_dac2.exti.exti_line);
