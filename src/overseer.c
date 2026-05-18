@@ -120,56 +120,29 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig, struct d
     register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0, range = 0, last_to_first_ratio = 0;
     register uint16_t main_pitch_cv = 0;
 
-the_begining:
     last_to_first_ratio = o->tempered.oct.span << 1;
+
+    if(o->tempered.oct.shift){
+        o->tempered.first_fundamental <<= 1;
+    }
+    // todo
+    //needs more testing but its promicing!!!
+    while((o->tempered.first_fundamental * last_to_first_ratio) > o->tempered.absolute.max){
+        if(o->tempered.oct.span != 1){
+            o->tempered.oct.span -= 1;
+        }else{
+            o->tempered.first_fundamental -= o->tempered.first_fundamental >> 6;
+        }
+        last_to_first_ratio = o->tempered.oct.span << 1;
+    }
+
     if(last_to_first_ratio != 2)
         _semi_tones_in_range = o->tempered.oct.unit * last_to_first_ratio;
     else
         _semi_tones_in_range = o->tempered.oct.unit;
 
-recalculate:
     o->tempered.last_fundamental = o->tempered.first_fundamental * last_to_first_ratio;
 
-    if(o->tempered.last_fundamental > o->tempered.absolute.max){
-        if(last_to_first_ratio != 2){
-            o->tempered.oct.span -= 1;
-            //this is not recorded for the display
-            // it should be as im recording the span later
-            goto the_begining;
-        }else{
-            // !;
-            //ooo i modify this also so i have to get all the states from here
-            //          lets say im jumping from last to previews octave.
-            //          we have to be sure if we jumped or spanned.
-            //    the above is not yet clear to the project so this is firing
-            //    issues because sampling the jump before here will ignore the
-            //    negative jumping!!!!
-            o->tempered.oct.jump = -1;
-            o->tempered.oct.shift = true;
-        }
-        //reduction
-        o->tempered.first_fundamental -= (o->tempered.first_fundamental >> 6);
-        goto recalculate;
-    }
-
-    if(o->tempered.first_fundamental < o->tempered.hard_bounds.min){
-        // test if we need this now that we sample in main loop
-        o->tempered.first_fundamental = map_uint(o->tempered.first_fundamental, &o->tempered.hard_bounds);
-        goto recalculate;
-    }
-
-    if(o->tempered.oct.shift){
-        for(;o->tempered.oct.jump > 0; --o->tempered.oct.jump){
-            o->tempered.first_fundamental <<= 1;
-        }
-        for(;o->tempered.oct.jump < 0; ++o->tempered.oct.jump){
-            //gives us backwards but too much
-            d->backwards_jump[0] = (d->backwards_jump[0] == 0) ? 1 : 0;
-            o->tempered.first_fundamental >>= 1;
-        }
-        o->tempered.oct.shift = false;
-        goto recalculate;
-    }
     o->tempered.mutable_bounds.min = o->tempered.first_fundamental;
     o->tempered.mutable_bounds.max = o->tempered.last_fundamental;
 
@@ -192,5 +165,6 @@ fixup:
     }
 
 
+    o->tempered.oct.shift = false;               //do that at the end
     return o->tempered.quantized_et;
 }
