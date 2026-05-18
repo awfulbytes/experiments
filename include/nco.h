@@ -25,7 +25,7 @@ struct tuner {
     uint16_t                last_fundamental;
     uint16_t                quantized_et;
     struct octave           oct;
-    struct limits           hard_bounds;
+    struct limits           tuner_bounds;
     struct limits           mutable_bounds;
     struct limits           absolute;
     volatile tunning_method type;
