@@ -19,10 +19,14 @@ static inline enum direction extract_encoder_direction(struct encoder enc[static
     return (decode_quad_enc(enc) == 1) ? cw : ccw;
 }
 
+#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
+char debounce_act_h(volatile struct gpio *g, uint32_t _state){
+    return (((_state<<1U) | (read_gpio(g))) == 3);
+}
 
 #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
-char debounce(volatile struct gpio *g, uint32_t _state){
-    return (((_state<<1U) | (read_gpio(g))) == 3);
+char debounce_act_l(volatile struct gpio *g, uint32_t _state){
+    return (((_state<<1U) | (read_gpio(g))) == 0);
 }
 
 static void handle_wave_selection(struct encoder *e, volatile enum direction dir){
