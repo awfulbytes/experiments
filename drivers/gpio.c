@@ -49,7 +49,7 @@ static void dac_gpio(struct gpio **dac_pins, uint16_t d, uint16_t why){
     }
 }
 
-char read_gpio(struct gpio *pin) {
+char read_gpio(volatile struct gpio *pin) {
     return (pin->port_id->IDR & (1U << pin->id) ? 1U : 0);
 }
 

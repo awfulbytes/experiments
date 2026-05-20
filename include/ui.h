@@ -25,6 +25,7 @@ struct flip_switch {
     struct gpio pins[2];
     struct exti it[2];
     uint32_t    priority[2];
+    uint16_t    _state[2];
 };
 
 struct led {
@@ -92,3 +93,5 @@ volatile void* apply_modulations_callback(struct encoder enc[static 1]);
 
 void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc);
 void handle_display(struct display *d, uint8_t distortion_level, uint8_t current_wave, uint8_t osc);
+
+char debounce(volatile struct gpio *g, uint32_t _state);
