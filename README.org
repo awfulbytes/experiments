@@ -1,0 +1,81 @@
+* build process
+We use the ST-Microelectronics official repositories for some of the LL_*
+driver code and expanding upon these procedures where less is better. Those
+and the cmsis headers for the mcu from ARM(TM) are installed by cloning with
+the `--recurse-submodule` flag in `git clone` command later at the cloning
+stage.
+
+To clone the project and build it locally make sure there is a working GCC arm
+embedded toolchain. The build system will search for the compiler and other
+needed applications on the `PATH`.
+
+To build succesfully for now you should install `stlink` from your favorite
+software ventor. This is fully open source and can be found [[https://github.com/stlink-org/stlink][here]].
+We plan to add it as a submodule later to save the hassle from you but for now
+it is your responsibility.
+
+- clone
+  #+begin_src bash :exports code
+   mkdir -p "my-folder" && cd "my-folder"
+   git clone --recurse-submodules https://github.com/awfulbytes/experiments.git
+  #+end_src
+- build
+  #+begin_src bash :results none
+   meson setup build --cross-file crossing.txt
+  #+end_src
+- reconfigure the build directory (clean up build system cache etc.)
+  #+begin_src bash :results raw
+   meson setup build --cross-file crossing.txt --wipe
+  #+end_src
+
+------------------------------------------------------------------------------
+  #+RESULTS:
+  The Meson build system
+  Version: 1.11.1
+  Source dir: /home/toro/personal/tryC
+  Build dir: /home/toro/personal/tryC/build
+  Build type: cross build
+  Project name: tryC
+  Project version: 0.1.0
+  C compiler for the host machine: arm-none-eabi-gcc (gcc 15.2.1 "arm-none-eabi-gcc (Awfulbytes) 15.2.1 20251203")
+  C linker for the host machine: arm-none-eabi-gcc ld.bfd 2.45.1.20251203
+  C compiler for the build machine: cc (gcc 16.1.1 "cc (GCC) 16.1.1 20260430")
+  C linker for the build machine: cc ld.bfd 2.46.0
+  Build machine cpu family: x86_64
+  Build machine cpu: x86_64
+  Host machine cpu family: arm
+  Host machine cpu: cortex-m0plus
+  Target machine cpu family: arm
+  Target machine cpu: cortex-m0plus
+  Program arm-none-eabi-objcopy found: YES (/home/toro/.local/compiler/x/arm/bin/arm-none-eabi-objcopy)
+  Program arm-none-eabi-strip found: YES (/home/toro/.local/compiler/x/arm/bin/arm-none-eabi-strip)
+  Program arm-none-eabi-size found: YES (/home/toro/.local/compiler/x/arm/bin/arm-none-eabi-size)
+  Program st-flash found: YES (/usr/bin/st-flash)
+  Build targets in project: 11
+
+  tryC 0.1.0
+
+    User defined options
+      Cross files: crossing.txt
+
+  Found ninja-1.13.2 at /usr/bin/ninja
+  ----------------------------------------------------------------------------
+  if there are no build errors and the output seems like the above proceed to
+  compiling.
+------------------------------------------------------------------------------
+- compilation
+  There are 2 available binaries to build. Release and Debug builds named for
+  now release and testershit in the build directory. To produce them run
+  inside the build directory just created by meson the below command:
+  - to build both elf files
+    #+begin_src bash
+     ninja testershit release
+    #+end_src
+  - to flash a Debug build binary via SWD protocol and STLink programmer.
+    #+begin_src bash
+     ninja sendit
+    #+end_src
+  - to flash a Release build binary via SWD protocol and STLink programmer.
+    #+begin_src bash
+     ninja fast
+    #+end_src
