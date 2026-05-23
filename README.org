@@ -29,7 +29,7 @@ it is your responsibility.
   #+end_src
 
 ------------------------------------------------------------------------------
-  #+RESULTS:
+#+begin_example
   The Meson build system
   Version: 1.11.1
   Source dir: /home/toro/personal/tryC
@@ -59,14 +59,15 @@ it is your responsibility.
       Cross files: crossing.txt
 
   Found ninja-1.13.2 at /usr/bin/ninja
+#+end_example
   ----------------------------------------------------------------------------
   if there are no build errors and the output seems like the above proceed to
   compiling.
 ------------------------------------------------------------------------------
 - compilation
-  There are 2 available binaries to build. Release and Debug builds named for
-  now release and testershit in the build directory. To produce them run
-  inside the build directory just created by meson the below command:
+    There are 2 available binaries to build. Release and Debug builds named for
+    now release and testershit in the build directory. To produce them run
+    inside the build directory just created by meson the below command:
   - to build both elf files
     #+begin_src bash
      ninja testershit release
