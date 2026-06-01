@@ -38,7 +38,7 @@ struct nco l_osc = {.phase = {.accum = 0,
                     .tempered = { .first_fundamental = 0x7fff,
                                   .last_fundamental = 0x7fff,
                                   .quantized_et = 0x7fff,
-                                  .oct = {.shift=false, .span=1, .unit=12, .jump = 0},
+                                  .oct = {.shift=false, .change=false, .span=1, .unit=12, .jump = 0},
                                   .flag = 0x0,
                                   .rec = false,
                                   .type = none,
@@ -167,7 +167,7 @@ struct button distortion_choice = {.state=0, .flag='D',
                                           .exti_line=LL_EXTI_LINE_12,
                                           .exti_port_conf=LL_EXTI_CONFIG_PORTC,
                                           .exti_line_conf=LL_EXTI_CONFIG_LINE12},
-                                   .pin={.pin_id=LL_GPIO_PIN_12, .id=0xff, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_DOWN}};
+                                   .pin={.pin_id=LL_GPIO_PIN_12, .id=0xff, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
 
 struct gpio dac1 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_4, .mode=LL_GPIO_MODE_ANALOG};
 struct gpio dac2 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_5, .mode=LL_GPIO_MODE_ANALOG};
@@ -180,10 +180,12 @@ struct gpio dist_amount_1_cv = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_7, .mode=LL_
 struct flip_switch octave_switch = {.pins[1] = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_7, .id = 7, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
                                     .it[1]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_7, .exti_line_conf=LL_EXTI_CONFIG_LINE7, .exti_port_conf=LL_EXTI_CONFIG_PORTC},
                                     .priority[1] = 0x40,
+                                    ._state[1] = true,
 
                                     .pins[0] = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_8, .id = 8, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
                                     .it[0]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_8, .exti_line_conf=LL_EXTI_CONFIG_LINE8, .exti_port_conf=LL_EXTI_CONFIG_PORTA},
                                     .priority[0] = 0x40,
+                                    ._state[0] = true,
 };
 struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC, .id=4, .pin_id=LL_GPIO_PIN_4, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
                                      .value={0}, .flag='D',

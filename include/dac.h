@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "stm32g0xx_ll_dac.h"
-#include <stdint.h>
+#include "gpio.h"
 
 struct dac {
     DAC_TypeDef        *dacx;

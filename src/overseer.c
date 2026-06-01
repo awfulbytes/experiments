@@ -165,6 +165,6 @@ fixup:
     }
 
 
-    o->tempered.oct.shift = false;               //do that at the end
+    o->tempered.oct.shift = false;
     return o->tempered.quantized_et;
 }

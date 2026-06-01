@@ -1,6 +1,4 @@
 #include "dac.h"
-#include "gpio.c"
-#include <stdbool.h>
 
 #pragma GCC push_options
 #pragma GCC optimize ("O0")

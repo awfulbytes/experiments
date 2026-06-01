@@ -12,6 +12,14 @@ void SVC_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 
+static inline void memory_barier(void){
+    __asm("dmb sy");
+}
+
+static inline void sync_barier(void){
+    __asm("dsb sy");
+}
+
 void DMA1_Channel2_3_IRQHandler(void){
     /* optimized access for compiler massage */
     if (l_osc.phase.done_update && r_osc.phase.done_update) {
@@ -23,6 +31,7 @@ void DMA1_Channel2_3_IRQHandler(void){
             align_phase(cosmos.oscillators);
         }
 
+        sync_barier();
         for(uint8_t o=0; o < 2; ++o){
             generate_half_signal(data_size, cosmos.oscillators[o]);
         }
@@ -44,8 +53,11 @@ void DMA1_Channel2_3_IRQHandler(void){
     }
 }
 
+/* optimized for asembler */
 void TIM2_IRQHandler(void) {
-    if (TIM2->SR & TIM_SR_UIF) {
+    memory_barier();
+    if((TIM2->SR & TIM_SR_UIF)){
+        TIM2->SR &= ~(TIM_SR_UIF);
 
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             world._cv_0_pitch = cv_raw_adc_inp[0];
@@ -57,8 +69,6 @@ void TIM2_IRQHandler(void) {
 
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
         }
-
-        TIM2->SR &= ~(TIM_SR_UIF);
     }
 }
 
@@ -108,57 +118,39 @@ void EXTI4_15_IRQHandler(void) {
     }
 
     if((EXTI->RPR1 & octave_switch.it[0].exti_line) == octave_switch.it[0].exti_line){
-        if(read_gpio(&octave_switch.pins[0])){
-            switch (l_osc.tempered.oct.span) {
-                case 5:
-                    l_osc.tempered.oct.span = 1;
-                    break;
-                default:
-                    ++l_osc.tempered.oct.span;
-                    break;
-            }
-        }
+        if(debounce(&octave_switch.pins[0], read_gpio(&octave_switch.pins[0])))
+           l_osc.tempered.oct.change = true;
         (EXTI->RPR1) = (octave_switch.it[0].exti_line);
     }
 
     if((EXTI->RPR1 & octave_switch.it[1].exti_line) == octave_switch.it[1].exti_line){
+        octave_switch._state[1] = read_gpio(&octave_switch.pins[1]);
         l_osc.tempered.rec = true;
         (EXTI->RPR1) = (octave_switch.it[1].exti_line);
     }
 
-    if((EXTI->RPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
+    if((EXTI->FPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
         l_osc.tempered.oct.shift = true;
         l_osc.tempered.oct.jump += 1;
         if(display.octave_shifts[0] < 4)
             display.octave_shifts[0] += (uint8_t) l_osc.tempered.oct.jump;
         else
             display.octave_shifts[0] = 4;
-        (EXTI->RPR1) = (freq_mode_but_dac1.exti.exti_line);
+        (EXTI->FPR1) = (freq_mode_but_dac1.exti.exti_line);
     }
 
-    if((EXTI->RPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line){
-        change_pitch_mode(&r_osc);
-        switch (l_osc.tempered.type) {
-            case none:
-                l_osc.mode = tracking;
-                l_osc.tempered.type = diatonic_major_g;
-                break;
-            case diatonic_major_g:
-                l_osc.mode = free;
-                l_osc.tempered.type = eq_tempered;
-                break;
-            case eq_tempered:
-                l_osc.mode = free;
-                l_osc.tempered.type = none;
-                break;
-        }
+    if((EXTI->FPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line){
+        //change_pitch_mode(&r_osc);
+
+        freq_mode_but_dac2.state = read_gpio(&freq_mode_but_dac2.pin);
+        freq_mode_but_dac2.flag = 'i';
         r_osc.on_scale = (r_osc.mode == tracking) ? true : false;
-        (EXTI->RPR1) = (freq_mode_but_dac2.exti.exti_line);
+        (EXTI->FPR1) = (freq_mode_but_dac2.exti.exti_line);
     }
-    if((EXTI->RPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line){
+    if((EXTI->FPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line){
         handle_osc_distortion(&l_osc);
         handle_osc_distortion(&r_osc);
-        (EXTI->RPR1) = (distortion_choice.exti.exti_line);
+        (EXTI->FPR1) = (distortion_choice.exti.exti_line);
     }
 
 }

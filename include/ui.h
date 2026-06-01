@@ -16,21 +16,20 @@ struct encoder_channel {
 
 struct encoder {
     struct encoder_channel A, B;
-    enum   direction       direction;
-    /* volatile uint16_t      increment; */
+    enum direction direction;
     volatile struct button virtual_wave_button;
 };
 
 struct flip_switch {
     struct gpio pins[2];
     struct exti it[2];
-    uint32_t    priority[2];
-    uint16_t    _state[2];
+    uint32_t priority[2];
+    volatile uint16_t _state[2];
 };
 
 struct led {
     struct gpio pin;
-    bool        state;
+    bool state;
 };
 
 typedef enum tuner_view{recording, playing}tuner_view;
@@ -89,10 +88,13 @@ void enc_init(struct encoder *enc);
 void set_flip_switch(struct flip_switch *f, uint8_t pin_idx);
 void config_display(struct display *d);
 
+char read_gpio(volatile struct gpio *pin);
+
 volatile void* apply_modulations_callback(struct encoder enc[static 1]);
 
 void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc);
 void handle_display(struct display *d, uint8_t distortion_level, uint8_t current_wave, uint8_t osc);
 
-char debounce_act_h(volatile struct gpio *g, uint32_t _state);
-char debounce_act_l(volatile struct gpio *g, uint32_t _state);
+bool debounce(volatile struct gpio *g, uint32_t _state);
+
+bool button_press(volatile struct button *b);

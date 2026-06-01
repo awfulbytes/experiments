@@ -57,12 +57,41 @@ void main(void) {
         if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x1;
             display.tuner_view[0] = recording;
-
             l_osc.tempered.first_fundamental = map_uint(cosmos._data->tunner_pitch_raw_d, &cosmos.oscillators[0]->tempered.tuner_bounds);
-        } else if(l_osc.tempered.rec && !read_gpio(&octave_switch.pins[1])){
+
+        }else if(l_osc.tempered.rec && !read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x0;
             display.tuner_view[0] = playing;
             l_osc.tempered.rec = false;
+        }
+
+        if(l_osc.tempered.oct.change){
+            switch (l_osc.tempered.oct.span) {
+                case 5:
+                    l_osc.tempered.oct.span = 1;
+                    break;
+                default:
+                    ++l_osc.tempered.oct.span;
+                    break;
+            }
+            l_osc.tempered.oct.change = false;
+        }
+        if(button_press(&freq_mode_but_dac2) && freq_mode_but_dac2.flag == 0x69){
+            switch (l_osc.tempered.type) {
+                case none:
+                    l_osc.mode = tracking;
+                    l_osc.tempered.type = diatonic_major_g;
+                    break;
+                case diatonic_major_g:
+                    l_osc.mode = free;
+                    l_osc.tempered.type = eq_tempered;
+                    break;
+                case eq_tempered:
+                    l_osc.mode = free;
+                    l_osc.tempered.type = none;
+                    break;
+            }
+            freq_mode_but_dac2.flag = 'D';
         }
         tune(&cosmos, 0, &display);
         handle_display(&display,

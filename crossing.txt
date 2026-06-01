@@ -18,14 +18,13 @@ c_args = ['-mcpu=cortex-m0plus', '-ffreestanding',
             '-pedantic',
             '-pedantic-errors',
             '-Wextra',
-            # '-flto',
             '-fdata-sections', '-Wall', '-fstack-usage', '-MMD', '-MP',
             '-fno-exceptions', '-g3'
             ]
 c_link_args = ['-T', '../STM32G071RBTX_FLASH.ld',
                 '-mthumb',
                 '--specs=nano.specs',
-                '-Wl,--gc-sections',
+                # '-Wl,--gc-sections',
                 '-Wl,--start-group', '-lc', '-lgcc', '-Wl,--end-group',
                 '-mfloat-abi=soft', '-g3', # '-flto',
                 '-mcpu=cortex-m0plus', '-static']

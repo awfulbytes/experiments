@@ -16,6 +16,7 @@ struct octave {
     volatile char           span;
     char                    unit;
     bool                    shift;
+    bool                    change;
     int8_t                  jump;
 };
 
