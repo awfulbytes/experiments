@@ -54,17 +54,18 @@ void DMA1_Channel2_3_IRQHandler(void){
 }
 
 /* optimized for asembler */
+enum adc_pins_ordered { adc0, adc1, adc9, adc8, adc6, adc_cnt};
 void TIM2_IRQHandler(void) {
     memory_barier();
     if((TIM2->SR & TIM_SR_UIF)){
         TIM2->SR &= ~(TIM_SR_UIF);
 
         if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
-            world._cv_0_pitch = cv_raw_adc_inp[0];
-            world.osc_0_cv_distortion_amount = cv_raw_adc_inp[1];
-            world.osc_1_cv_distortion_ammount = cv_raw_adc_inp[2];
-            world._cv_1_pitch = cv_raw_adc_inp[3];
-            world.tunner_pitch_raw_d = cv_raw_adc_inp[4];
+            world._cv_0_pitch = cv_raw_adc_inp[adc0];
+            world.osc_0_cv_distortion_amount = cv_raw_adc_inp[adc1];
+            world.osc_1_cv_distortion_ammount = cv_raw_adc_inp[adc9];
+            world._cv_1_pitch = cv_raw_adc_inp[adc8];
+            world.tunner_pitch_raw_d = cv_raw_adc_inp[adc6];
             l_osc.phase.pending_update = r_osc.phase.pending_update = true;
 
             (DMA1->IFCR) = (DMA_IFCR_CTCIF4);
