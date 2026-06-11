@@ -15,7 +15,7 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
     register size_t g_major_size = array_size(diatonic_g_major);
 
     if(seer->selected->phase.pending_update){
-        if(seer->sync){
+        if(seer->sync && osc_idx==1){
             seer->_data->_cv_1_pitch = seer->_data->_cv_0_pitch;
         }
         register uint16_t pitch_raw_digital =

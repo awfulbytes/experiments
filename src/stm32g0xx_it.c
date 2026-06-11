@@ -94,64 +94,71 @@ static inline void handle_osc_distortion(struct nco nco[static 1]){
     }
 }
 
+static inline bool check_pend(struct exti settings, uint32_t flag){
+    return (flag & settings.exti_line) == settings.exti_line;
+}
+
+#pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
+#define clear_pending(settings, flag) (flag) = settings.exti_line;
+
 void EXTI4_15_IRQHandler(void) {
 
-    if((EXTI->FPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
+    if(check_pend(osc_0_pd_enc.A.it_settings, EXTI->FPR1)){
         osc_0_pd_enc.B.value[0] = read_gpio(&osc_0_pd_enc.B.pin);
-        (EXTI->FPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
+        clear_pending(osc_0_pd_enc.A.it_settings, EXTI->FPR1);
     }
-    if((EXTI->RPR1 & osc_0_pd_enc.A.it_settings.exti_line) == osc_0_pd_enc.A.it_settings.exti_line){
+    if(check_pend(osc_0_pd_enc.A.it_settings, EXTI->RPR1)){
         osc_0_pd_enc.B.value[1] = read_gpio(&osc_0_pd_enc.B.pin);
         apply_modulations_callback(&osc_0_pd_enc);
         l_osc.phase.pending_update = true;
-        (EXTI->RPR1) = (osc_0_pd_enc.A.it_settings.exti_line);
+        clear_pending(osc_0_pd_enc.A.it_settings, EXTI->RPR1);
     }
 
-    if((EXTI->FPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
+    if(check_pend(osc_1_pd_enc.A.it_settings, EXTI->FPR1)){
         osc_1_pd_enc.B.value[0] = read_gpio(&osc_1_pd_enc.B.pin);
-        (EXTI->FPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
+        clear_pending(osc_1_pd_enc.A.it_settings, EXTI->FPR1);
     }
-    if((EXTI->RPR1 & osc_1_pd_enc.A.it_settings.exti_line) == osc_1_pd_enc.A.it_settings.exti_line){
+    if(check_pend(osc_1_pd_enc.A.it_settings, EXTI->RPR1)){
         osc_1_pd_enc.B.value[1] = read_gpio(&osc_1_pd_enc.B.pin);
         apply_modulations_callback(&osc_1_pd_enc);
         r_osc.phase.pending_update = true;
-        (EXTI->RPR1) = (osc_1_pd_enc.A.it_settings.exti_line);
+        clear_pending(osc_1_pd_enc.A.it_settings, EXTI->RPR1);
     }
 
-    if((EXTI->RPR1 & octave_switch.it[0].exti_line) == octave_switch.it[0].exti_line){
+    if(check_pend(octave_switch.it[0], EXTI->RPR1)){
         if(debounce(&octave_switch.pins[0], read_gpio(&octave_switch.pins[0])))
            l_osc.tempered.oct.change = true;
-        (EXTI->RPR1) = (octave_switch.it[0].exti_line);
+        clear_pending(octave_switch.it[0], EXTI->RPR1);
     }
 
-    if((EXTI->RPR1 & octave_switch.it[1].exti_line) == octave_switch.it[1].exti_line){
+    if(check_pend(octave_switch.it[1], EXTI->RPR1)){
         octave_switch._state[1] = read_gpio(&octave_switch.pins[1]);
         l_osc.tempered.rec = true;
-        (EXTI->RPR1) = (octave_switch.it[1].exti_line);
+        clear_pending(octave_switch.it[1], EXTI->RPR1);
     }
 
-    if((EXTI->FPR1 & freq_mode_but_dac1.exti.exti_line) == freq_mode_but_dac1.exti.exti_line){
+    if(check_pend(freq_mode_but_dac1.exti, EXTI->FPR1)){
         l_osc.tempered.oct.shift = true;
         l_osc.tempered.oct.jump += 1;
         if(display.octave_shifts[0] < 4)
             display.octave_shifts[0] += (uint8_t) l_osc.tempered.oct.jump;
         else
             display.octave_shifts[0] = 4;
-        (EXTI->FPR1) = (freq_mode_but_dac1.exti.exti_line);
+        clear_pending(freq_mode_but_dac1.exti, EXTI->FPR1);
     }
 
-    if((EXTI->FPR1 & freq_mode_but_dac2.exti.exti_line) == freq_mode_but_dac2.exti.exti_line){
+    if(check_pend(freq_mode_but_dac2.exti, EXTI->FPR1)){
         //change_pitch_mode(&r_osc);
 
         freq_mode_but_dac2.state = read_gpio(&freq_mode_but_dac2.pin);
         freq_mode_but_dac2.flag = 'i';
         r_osc.on_scale = (r_osc.mode == tracking) ? true : false;
-        (EXTI->FPR1) = (freq_mode_but_dac2.exti.exti_line);
+        clear_pending(freq_mode_but_dac2.exti, EXTI->FPR1);
     }
-    if((EXTI->FPR1 & distortion_choice.exti.exti_line) == distortion_choice.exti.exti_line){
+    if(check_pend(distortion_choice.exti, EXTI->FPR1)){
         handle_osc_distortion(&l_osc);
         handle_osc_distortion(&r_osc);
-        (EXTI->FPR1) = (distortion_choice.exti.exti_line);
+        clear_pending(distortion_choice.exti, EXTI->FPR1);
     }
 
 }
