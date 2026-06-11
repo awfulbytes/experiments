@@ -1,4 +1,5 @@
 #include "sysclk.h"
+#include "stm32g0xx_ll_system.h"
 
 void clk_config_settings(sysclk_t *clk){
     clk->clk_source = LL_RCC_PLLSOURCE_HSI;
@@ -13,6 +14,8 @@ void sys_clock_config
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
     LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_2);
+    LL_FLASH_EnablePrefetch();
+    LL_FLASH_EnableInstCache();
     LL_RCC_HSI_Enable();
     while (LL_RCC_HSI_IsReady() != 1);
 
