@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef enum {unlock, lock, none}cr_error_e;
+typedef enum {unlock, lock, noerr}cr_error_e;
 typedef enum {removed = 0x0U, locked = 0x1U}lock_e;
 
 struct keys{
@@ -43,4 +43,4 @@ struct flash_memory{
 };
 
 void wait_flash_ops(struct flash_memory *fl);
-void perform_mass_erase(struct flash_memory *fl);
+void perform_erase(struct flash_memory *fl);

@@ -1,32 +1,5 @@
 #include "flash.h"
 
-struct flash_memory flash_settings = {.flash = FLASH,
-                                      .bank  = FLASH_BANK_1,
-                                      .flash_proc = {.Lock             = HAL_UNLOCKED,
-                                                     .ErrorCode        = HAL_FLASH_ERROR_NONE,
-                                                     .ProcedureOnGoing = FLASH_TYPENONE,
-                                                     .Address          = 0x0U,
-                                                     .Banks            = 0x0U,
-                                                     .Page             = 0x0U,
-                                                     .NbPagesToErase   = 0x0U},
-                                      .option_bytes = {0}, /* todo */
-                                      .eraser = {.TypeErase = FLASH_TYPEERASE_MASS,
-                                                 .Banks     = 0x0U,
-                                                 .NbPages   = 0x0U,
-                                                 .Page      = 0x0U},
-                                      .k = {.key1 = FLASH_KEY1,
-                                            .key2 = FLASH_KEY2},
-                                      .sr = {.errors         = FLASH_SR_ERRORS,
-                                             .cfg_busy1_flag = FLASH_SR_CFGBSY,
-                                             .clear          = FLASH_SR_CLEAR,
-                                             .busy1_flag     = FLASH_SR_BSY1},
-                                      .cr = {.lock    = FLASH_CR_LOCK,
-                                             .start   = FLASH_CR_STRT,
-                                             .options = {.k = {.key1 = FLASH_OPTKEY1,
-                                                               .key2 = FLASH_OPTKEY2},
-                                                         .start = FLASH_CR_OPTSTRT,
-                                                         .lock  = FLASH_CR_OPTLOCK}}};
-
 void wait_flash_ops(struct flash_memory *fl){
     uint32_t error = 0;
 
@@ -60,14 +33,14 @@ cr_error_e unlock_flash_cr_access(struct flash_memory *fl){
             return unlock;
         }
     }
-    return none;
+    return noerr;
 }
 
 cr_error_e lock_flash_cr_access(struct flash_memory *fl){
     wait_flash_ops(fl);
     (fl->flash->CR) |= (fl->cr.lock);
     if(read_flash_lock_state(fl) != 0x0U){
-        return none;
+        return noerr;
     }
     return lock;
 }
@@ -102,15 +75,15 @@ void set_empty_flag(struct flash_memory *fl){
 }
 
 void perform_erase(struct flash_memory *fl){
-    cr_error_e flash_locking_errors = none;
+    cr_error_e flash_locking_errors = noerr;
 
     flash_locking_errors = unlock_flash_cr_access(fl);
-    if(flash_locking_errors == none){
+    if(flash_locking_errors == noerr){
         mass_flash_erase(fl);
     }
 
     flash_locking_errors = lock_flash_cr_access(fl);
-    if(flash_locking_errors == none){
+    if(flash_locking_errors == noerr){
         set_empty_flag(fl); /* power reset after */
     }
 }

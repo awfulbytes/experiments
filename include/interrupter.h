@@ -1,5 +1,6 @@
 #define DEBUGDAC
 #include "gpio.h"
+#include"flash.h"
 #include "adc.h"
 #include "forms.h"
 #include "timx.h"
@@ -238,3 +239,30 @@ struct overseer cosmos = {
     ._data = &world,
     .sync = false,
 };
+
+struct flash_memory flash_settings = {.flash = FLASH,
+                                      .bank  = FLASH_BANK_1,
+                                      .flash_proc = {.Lock             = HAL_UNLOCKED,
+                                                     .ErrorCode        = HAL_FLASH_ERROR_NONE,
+                                                     .ProcedureOnGoing = FLASH_TYPENONE,
+                                                     .Address          = 0x0U,
+                                                     .Banks            = 0x0U,
+                                                     .Page             = 0x0U,
+                                                     .NbPagesToErase   = 0x0U},
+                                      .option_bytes = {0}, /* todo */
+                                      .eraser = {.TypeErase = FLASH_TYPEERASE_MASS,
+                                                 .Banks     = 0x0U,
+                                                 .NbPages   = 0x0U,
+                                                 .Page      = 0x0U},
+                                      .k = {.key1 = FLASH_KEY1,
+                                            .key2 = FLASH_KEY2},
+                                      .sr = {.errors         = FLASH_SR_ERRORS,
+                                             .cfg_busy1_flag = FLASH_SR_CFGBSY,
+                                             .clear          = FLASH_SR_CLEAR,
+                                             .busy1_flag     = FLASH_SR_BSY1},
+                                      .cr = {.lock    = FLASH_CR_LOCK,
+                                             .start   = FLASH_CR_STRT,
+                                             .options = {.k = {.key1 = FLASH_OPTKEY1,
+                                                               .key2 = FLASH_OPTKEY2},
+                                                         .start = FLASH_CR_OPTSTRT,
+                                                         .lock  = FLASH_CR_OPTLOCK}}};
