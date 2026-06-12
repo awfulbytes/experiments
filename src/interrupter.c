@@ -65,7 +65,7 @@ void main(void) {
             l_osc.tempered.rec = false;
         }
 
-        if(l_osc.tempered.oct.change){
+        if(l_osc.tempered.oct.change && debounce(&octave_switch.pins[0], octave_switch._state[0])){
             switch (l_osc.tempered.oct.span) {
                 case 5:
                     l_osc.tempered.oct.span = 1;

@@ -126,8 +126,8 @@ void EXTI4_15_IRQHandler(void) {
     }
 
     if(check_pend(octave_switch.it[0], EXTI->RPR1)){
-        if(debounce(&octave_switch.pins[0], read_gpio(&octave_switch.pins[0])))
-           l_osc.tempered.oct.change = true;
+        octave_switch._state[0] = read_gpio(&octave_switch.pins[0]);
+        l_osc.tempered.oct.change = true;
         clear_pending(octave_switch.it[0], EXTI->RPR1);
     }
 
