@@ -77,37 +77,20 @@ void merge_signals_dual_dac_mode(volatile struct nco *o[2], uint32_t dual_buffer
     }
 }
 
-static uint16_t diatonic_lut_search(volatile uint16_t note,
-                               volatile const uint16_t *scale_table,
-                               size_t g_major_tbl_size){
-    /*
-     * todo:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-     * a. make the table resizable!!
-     *    The idea is to have min/max (a range) of octaves or/and frequencies..?
-     *    We need to have a first fundamental and the octave span and we can
-     *    calculate the last fundamental frequency. (Do not give more than 5-6
-     *    octaves.
-     * b. using intervals may be more efficient! --> make later -^
-     *    ^--this possible first and
-     * todo:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-     */
+static uint16_t diatonic_lut_search(volatile uint16_t note, volatile const uint16_t *scale_table, size_t g_major_tbl_size){
     register uint16_t f = g_major_tbl_size;
-    register uint16_t diff_up = 0, diff_down = 0;
 
     if(note > scale_table[g_major_tbl_size - 1]){
         return scale_table[g_major_tbl_size - 1];
     }
 
     for(; f > 0; --f){
-
         if(note < scale_table[f])
             continue;
         else {
-            diff_down = note - scale_table[f];
-            diff_up   = scale_table[f + 1] - note;
-            if(diff_up > diff_down){
+            if((scale_table[f + 1] - note) > (note - scale_table[f]))  /* (diff_up > diff_down) */
                 return scale_table[f];
-            } else
+            else
                 return scale_table[f + 1];
         }
     }
