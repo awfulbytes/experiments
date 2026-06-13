@@ -38,9 +38,14 @@
  *   0000.10101110110000110 the seventeen MSBs (added 1 = 0001.00011001110110111101110100010000
  *   bin(0001100111011011) = #x19DB (these are the 16 MSBs after the point) { M }
  */
+#define U16REC1(A, M, S) (uint16_t)((((uint32_t)(A) * (uint32_t)(M)) >> 16u) >> (S))
+
 #define U32REC2(A, M, S) (((((uint32_t)(A) * (uint32_t)(M) >> 16u) + (A)) >> 1u) >> (S))
 #define U16REC2(A, M, S) (uint16_t)U32REC2(A, M, S)
+
+#define U16DIVBY32766(A)    U16REC2(A, 0x0005u, 14u)
 #define U16DIVBY32767(A)    U16REC2(A, 0x0003u, 14u)
+#define U16DIVBY32768(A)    U16REC1(A, 0x8000u, 14u)
 
 #define U8REC1(A, M, S) ((((uint16_t)(A) * (uint16_t)(M) >> 8u)) >> (S))
 #define U8DIVBY25(A)    ((uint8_t)U8REC1(A, 0xA4u, 4u))

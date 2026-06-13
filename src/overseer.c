@@ -101,12 +101,12 @@ static uint16_t diatonic_lut_search(volatile uint16_t note, volatile const uint1
 uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig, struct display *d){
     register uint16_t main_pitch_cv = 0;
 
-    if(!o->tempered.oct.change && !o->tempered.oct.shift && o->tempered._semi_tones_in_range!=0 && !o->tempered.just_reced)
-        goto compute_eq;
+    if (!o->tempered.oct.change && !o->tempered.oct.shift &&
+        !o->tempered.just_reced && o->tempered._semi_tones_in_range != 0)
+      goto compute_eq;
 
     o->tempered.oct.change = false;
     o->tempered.just_reced = false;
-    o->tempered.last_to_first_ratio = o->tempered.oct.span << 1;
 
     if(o->tempered.oct.shift){
         o->tempered.first_fundamental <<= 1;
@@ -120,7 +120,10 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig, struct d
      * high that nomatterwhat we end up at higher than 12k, the fundamental is
      * modified after the octave span is at the lowest possible value.
      */
-    while((o->tempered.first_fundamental * o->tempered.last_to_first_ratio) > o->tempered.absolute.max){
+    o->tempered.last_to_first_ratio = o->tempered.oct.span << 1;
+
+    while((o->tempered.first_fundamental * o->tempered.last_to_first_ratio) >
+          o->tempered.absolute.max){
         if(o->tempered.oct.span != 1){
             o->tempered.oct.span -= 1;
         }else{
@@ -129,30 +132,38 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig, struct d
         o->tempered.last_to_first_ratio = o->tempered.oct.span << 1;
     }
 
-    if(o->tempered.last_to_first_ratio != 2)
-        o->tempered._semi_tones_in_range = o->tempered.oct.unit * o->tempered.last_to_first_ratio;
-    else
-        o->tempered._semi_tones_in_range = o->tempered.oct.unit;
+    if(o->tempered.last_to_first_ratio != 2){
+        o->tempered._semi_tones_in_range =
+            o->tempered.oct.unit * o->tempered.last_to_first_ratio;
 
-    o->tempered.last_fundamental = o->tempered.first_fundamental * o->tempered.last_to_first_ratio;
+        o->tempered.last_fundamental =
+            o->tempered.first_fundamental * o->tempered.last_to_first_ratio;
+    }else{
+        o->tempered._semi_tones_in_range = o->tempered.oct.unit;
+        o->tempered.last_fundamental = o->tempered.first_fundamental * 2;
+    }
 
     o->tempered.mutable_bounds.min = o->tempered.first_fundamental;
     o->tempered.mutable_bounds.max = o->tempered.last_fundamental;
 
-    o->tempered.semitone = (o->tempered.last_fundamental - o->tempered.first_fundamental) / o->tempered._semi_tones_in_range;
+    o->tempered.semitone =
+        (o->tempered.last_fundamental - o->tempered.first_fundamental) /\
+        o->tempered._semi_tones_in_range;
 
 compute_eq:
-    main_pitch_cv = map_uint(pitch_raw_dig,
-                             &o->tempered.mutable_bounds);
+    main_pitch_cv = map_uint(pitch_raw_dig, &o->tempered.mutable_bounds);
+    o->tempered.cv_semitones =
+        (main_pitch_cv - o->tempered.first_fundamental) / o->tempered.semitone;
 
-    o->tempered.cv_semitones  = (main_pitch_cv - o->tempered.first_fundamental) / o->tempered.semitone;
+fixup:
+    o->tempered.quantized_et =
+        o->tempered.first_fundamental +             \
+       (o->tempered.cv_semitones * o->tempered.semitone);
 
-    o->tempered.quantized_et = o->tempered.first_fundamental + (o->tempered.cv_semitones * o->tempered.semitone);
-    if(o->tempered.quantized_et > (o->tempered.mutable_bounds.max + o->tempered.semitone)){
+    if(o->tempered.quantized_et > o->tempered.mutable_bounds.max){
         o->tempered.cv_semitones -= o->tempered.semitone;
-        goto compute_eq;
+        goto fixup;
     }
-
 
     return o->tempered.quantized_et;
 }
