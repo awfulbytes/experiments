@@ -74,6 +74,7 @@ void main(void) {
             l_osc.tempered.flag = 0x0;
             display.tuner_view[0] = playing;
             l_osc.tempered.rec = false;
+            l_osc.tempered.just_reced = true;
         }
 
         if(l_osc.tempered.oct.change && debounce(&octave_switch.pins[0], octave_switch._state[0])){
@@ -88,7 +89,6 @@ void main(void) {
                     l_osc.tempered.oct.span = 1;
                     break;
             }
-            l_osc.tempered.oct.change = false;
         }
         if(button_press(&freq_mode_but_dac2) && freq_mode_but_dac2.flag == 0x69){
             switch (l_osc.tempered.type) {

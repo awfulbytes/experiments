@@ -99,54 +99,58 @@ static uint16_t diatonic_lut_search(volatile uint16_t note, volatile const uint1
 
 #pragma message("semi working")
 uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig, struct display *d){
-    volatile uint16_t freq_diff_from_base = 0;
-    register uint16_t _semi_tones_in_range = 0, semitone = 0, cv_semitones = 0, range = 0, last_to_first_ratio = 0;
     register uint16_t main_pitch_cv = 0;
 
-    last_to_first_ratio = o->tempered.oct.span << 1;
+    if(!o->tempered.oct.change && !o->tempered.oct.shift && o->tempered._semi_tones_in_range!=0 && !o->tempered.just_reced)
+        goto compute_eq;
+
+    o->tempered.oct.change = false;
+    o->tempered.just_reced = false;
+    o->tempered.last_to_first_ratio = o->tempered.oct.span << 1;
 
     if(o->tempered.oct.shift){
         o->tempered.first_fundamental <<= 1;
         o->tempered.oct.jump >>= 1;
         o->tempered.oct.shift = false;
     }
-    // todo
-    //needs more testing but its promicing!!!
-    while((o->tempered.first_fundamental * last_to_first_ratio) > o->tempered.absolute.max){
+
+    /**
+     * Mutate the octave span if we extend beyond 12 kHz.
+     * If the octave span is one to avoid underflow, or if the base note is so
+     * high that nomatterwhat we end up at higher than 12k, the fundamental is
+     * modified after the octave span is at the lowest possible value.
+     */
+    while((o->tempered.first_fundamental * o->tempered.last_to_first_ratio) > o->tempered.absolute.max){
         if(o->tempered.oct.span != 1){
             o->tempered.oct.span -= 1;
         }else{
             o->tempered.first_fundamental = o->tempered.absolute.max >> 1;
         }
-        last_to_first_ratio = o->tempered.oct.span << 1;
+        o->tempered.last_to_first_ratio = o->tempered.oct.span << 1;
     }
 
-    if(last_to_first_ratio != 2)
-        _semi_tones_in_range = o->tempered.oct.unit * last_to_first_ratio;
+    if(o->tempered.last_to_first_ratio != 2)
+        o->tempered._semi_tones_in_range = o->tempered.oct.unit * o->tempered.last_to_first_ratio;
     else
-        _semi_tones_in_range = o->tempered.oct.unit;
+        o->tempered._semi_tones_in_range = o->tempered.oct.unit;
 
-    o->tempered.last_fundamental = o->tempered.first_fundamental * last_to_first_ratio;
+    o->tempered.last_fundamental = o->tempered.first_fundamental * o->tempered.last_to_first_ratio;
 
     o->tempered.mutable_bounds.min = o->tempered.first_fundamental;
     o->tempered.mutable_bounds.max = o->tempered.last_fundamental;
 
+    o->tempered.semitone = (o->tempered.last_fundamental - o->tempered.first_fundamental) / o->tempered._semi_tones_in_range;
+
+compute_eq:
     main_pitch_cv = map_uint(pitch_raw_dig,
                              &o->tempered.mutable_bounds);
 
-    range    = o->tempered.last_fundamental - o->tempered.first_fundamental;
-    /* todo
-     * test this actually works and gives us back real numbers...
-     *      we might need division before multiplication...
-     */
-    freq_diff_from_base = (main_pitch_cv - o->tempered.first_fundamental);
-    semitone = range / _semi_tones_in_range;
-    cv_semitones  = freq_diff_from_base / semitone;
-fixup:
-    o->tempered.quantized_et = o->tempered.first_fundamental + (cv_semitones * semitone);
-    if(o->tempered.quantized_et > (o->tempered.mutable_bounds.max + semitone)){
-        cv_semitones -= semitone;
-        goto fixup;
+    o->tempered.cv_semitones  = (main_pitch_cv - o->tempered.first_fundamental) / o->tempered.semitone;
+
+    o->tempered.quantized_et = o->tempered.first_fundamental + (o->tempered.cv_semitones * o->tempered.semitone);
+    if(o->tempered.quantized_et > (o->tempered.mutable_bounds.max + o->tempered.semitone)){
+        o->tempered.cv_semitones -= o->tempered.semitone;
+        goto compute_eq;
     }
 
 

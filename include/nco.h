@@ -22,9 +22,14 @@ struct octave {
 
 struct tuner {
     volatile bool           rec;
+    volatile bool           just_reced;
     volatile uint16_t       first_fundamental;
     uint16_t                last_fundamental;
     uint16_t                quantized_et;
+    uint16_t                _semi_tones_in_range;
+    uint16_t                semitone;
+    uint16_t                cv_semitones;
+    uint16_t                last_to_first_ratio;
     struct octave           oct;
     struct limits           tuner_bounds;
     struct limits           mutable_bounds;
