@@ -6,6 +6,10 @@
                                x;\
                                __enable_irq();
 
+/* hack to avoid waveform change at POR */
+enum run{dry, on};
+enum run runtime = dry;
+
 void HardFault_Handler(void){while(1);}
 void NMI_Handler(void){}
 void SVC_Handler(void);
@@ -109,8 +113,10 @@ void EXTI4_15_IRQHandler(void) {
     }
     if(check_pend(osc_0_pd_enc.A.it_settings, EXTI->RPR1)){
         osc_0_pd_enc.B.value[1] = read_gpio(&osc_0_pd_enc.B.pin);
-        apply_modulations_callback(&osc_0_pd_enc);
-        l_osc.phase.pending_update = true;
+        if(runtime == on){ /* hack */
+            apply_modulations_callback(&osc_0_pd_enc);
+            l_osc.phase.pending_update = true;
+        }
         clear_pending(osc_0_pd_enc.A.it_settings, EXTI->RPR1);
     }
 
@@ -120,8 +126,10 @@ void EXTI4_15_IRQHandler(void) {
     }
     if(check_pend(osc_1_pd_enc.A.it_settings, EXTI->RPR1)){
         osc_1_pd_enc.B.value[1] = read_gpio(&osc_1_pd_enc.B.pin);
-        apply_modulations_callback(&osc_1_pd_enc);
-        r_osc.phase.pending_update = true;
+        if (runtime == on){ /* hack */
+            apply_modulations_callback(&osc_1_pd_enc);
+            r_osc.phase.pending_update = true;
+        }
         clear_pending(osc_1_pd_enc.A.it_settings, EXTI->RPR1);
     }
 
@@ -160,5 +168,8 @@ void EXTI4_15_IRQHandler(void) {
         handle_osc_distortion(&r_osc);
         clear_pending(distortion_choice.exti, EXTI->FPR1);
     }
+
+    if(runtime == dry)
+        runtime = on;
 
 }

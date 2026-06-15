@@ -47,12 +47,6 @@ void main(void) {
         dac_act(dacs_settings[i]);
     }
 
-////////////////////////////////////////////////////////////////////////////////
-// fucking really????? POR you mother fucker....
-////////////////////////////////////////////////////////////////////////////////
-    // l_osc.curr_wave_ptr = sine_wave;
-    // r_osc.curr_wave_ptr = sine_wave;
-
     //
     // like this we dont erase our selfs by default... that's handy...
     // if(read_gpio(&distortion_choice.pin))
