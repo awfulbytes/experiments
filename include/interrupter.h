@@ -162,7 +162,7 @@ volatile struct button freq_mode_but_dac1 = {.state=0, .flag='D',
                                                   .exti_port_conf=LL_EXTI_CONFIG_PORTC,
                                                   .exti_line_conf=LL_EXTI_CONFIG_LINE10},
                                            .pin={.pin_id=LL_GPIO_PIN_10, .id=0xff, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
-volatile struct button freq_mode_but_dac2 = {.state=0, .flag='D',
+volatile struct button osc_0_mode_choice = {.state=0, .flag='D',
                                            .exti={.exti_irqn=EXTI4_15_IRQn,
                                                   .exti_line=LL_EXTI_LINE_11,
                                                   .exti_port_conf=LL_EXTI_CONFIG_PORTC,

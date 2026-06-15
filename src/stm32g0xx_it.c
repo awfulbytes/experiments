@@ -155,13 +155,13 @@ void EXTI4_15_IRQHandler(void) {
         clear_pending(freq_mode_but_dac1.exti, EXTI->FPR1);
     }
 
-    if(check_pend(freq_mode_but_dac2.exti, EXTI->FPR1)){
+    if(check_pend(osc_0_mode_choice.exti, EXTI->FPR1)){
         //change_pitch_mode(&r_osc);
+        //r_osc.on_scale = (r_osc.mode == tracking) ? true : false;
 
-        freq_mode_but_dac2.state = read_gpio(&freq_mode_but_dac2.pin);
-        freq_mode_but_dac2.flag = 'i';
-        r_osc.on_scale = (r_osc.mode == tracking) ? true : false;
-        clear_pending(freq_mode_but_dac2.exti, EXTI->FPR1);
+        osc_0_mode_choice.state = read_gpio(&osc_0_mode_choice.pin);
+        osc_0_mode_choice.flag = 'i';
+        clear_pending(osc_0_mode_choice.exti, EXTI->FPR1);
     }
     if(check_pend(distortion_choice.exti, EXTI->FPR1)){
         handle_osc_distortion(&l_osc);

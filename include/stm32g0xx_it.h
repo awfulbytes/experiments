@@ -14,7 +14,7 @@ extern volatile uint8_t cnt_adc_cycles;
 extern struct overseer          cosmos;
 extern struct nco               l_osc, r_osc;
 extern struct button            freq_mode_but_dac1;
-extern struct button            freq_mode_but_dac2;
+extern struct button            osc_0_mode_choice;
 extern struct button            distortion_choice;
 extern struct encoder           osc_0_pd_enc;
 extern struct encoder           osc_1_pd_enc;

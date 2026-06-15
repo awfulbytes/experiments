@@ -3,7 +3,7 @@
 
 void main(void) {
     struct timer *timers[1] = {&tim6_settings};
-    volatile struct button *nco_buttons[3] = {&freq_mode_but_dac1, &freq_mode_but_dac2, &distortion_choice};
+    volatile struct button *nco_buttons[3] = {&freq_mode_but_dac1, &osc_0_mode_choice, &distortion_choice};
     struct gpio *dacs[2] = {&dac1, &dac2};
     struct gpio *osc_cvs[5] = {&pitch_0_cv, &dist_amount_0_cv, &tunner_adc_in, &pitch_1_cv, &dist_amount_1_cv};
     struct dac *dacs_settings[2] = {&dac_ch1_settings, &dac_ch2_settings};
@@ -84,7 +84,7 @@ void main(void) {
                     break;
             }
         }
-        if(button_press(&freq_mode_but_dac2) && freq_mode_but_dac2.flag == 0x69){
+        if(button_press(&osc_0_mode_choice) && osc_0_mode_choice.flag == 0x69){
             switch (l_osc.tempered.type) {
                 case none:
                     l_osc.mode = tracking;
@@ -99,7 +99,7 @@ void main(void) {
                     l_osc.tempered.type = none;
                     break;
             }
-            freq_mode_but_dac2.flag = 'D';
+            osc_0_mode_choice.flag = 'D';
         }
         tune(&cosmos, 0, &display);
         handle_display(&display,
