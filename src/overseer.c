@@ -149,19 +149,19 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     o->tempered.semitone =
         (o->tempered.last_fundamental - o->tempered.first_fundamental) /\
         o->tempered._semi_tones_in_range;
+    o->tempered.drift_error = o->tempered.semitone << 1U;
 
 compute_eq:
     main_pitch_cv = map_uint(pitch_raw_dig, &o->tempered.mutable_bounds);
     o->tempered.cv_semitones =
         (main_pitch_cv - o->tempered.first_fundamental) / o->tempered.semitone;
-
 fixup:
     o->tempered.quantized_et =
         o->tempered.first_fundamental +             \
        (o->tempered.cv_semitones * o->tempered.semitone);
 
     if(o->tempered.quantized_et >
-       (o->tempered.mutable_bounds.max + (o->tempered.semitone << 1U))){
+       (o->tempered.mutable_bounds.max + (o->tempered.drift_error))){
         o->tempered.cv_semitones -= o->tempered.semitone;
         goto fixup;
     }
