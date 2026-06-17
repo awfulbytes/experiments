@@ -160,7 +160,8 @@ fixup:
         o->tempered.first_fundamental +             \
        (o->tempered.cv_semitones * o->tempered.semitone);
 
-    if(o->tempered.quantized_et > o->tempered.mutable_bounds.max){
+    if(o->tempered.quantized_et >
+       (o->tempered.mutable_bounds.max + (o->tempered.semitone << 1U))){
         o->tempered.cv_semitones -= o->tempered.semitone;
         goto fixup;
     }
