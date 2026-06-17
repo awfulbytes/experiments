@@ -39,7 +39,7 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
                     seer->_data->pitch_cv = seer->selected->tempered.first_fundamental;
                     break;
                 }
-                seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital, d);
+                seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital);
                 octave_recorder(&display, seer->oscillators[osc_idx]->tempered.oct.span, osc_idx);
                 break;
             case diatonic_major_g:
@@ -98,7 +98,7 @@ static uint16_t diatonic_lut_search(volatile uint16_t note, volatile const uint1
 }
 
 #pragma message("semi working")
-uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig, struct display *d){
+uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t main_pitch_cv = 0;
 
     if (!o->tempered.oct.change && !o->tempered.oct.shift &&
