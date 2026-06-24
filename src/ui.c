@@ -77,7 +77,7 @@ static bool extract_bit(uint8_t number, uint8_t bit){
 }
 
 #define discard_upper_3b_of_8b     (~0xfe0U)
-#define span_in_binary(z)          ((~(0xffU<<z)) & (0x1fU))
+#define span_in_binary(z)          ((~(0xffU<<(z))) & (0x1fU))
 void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc){
     d->shift_registers[osc] = (
         (uint16_t)(span_in_binary(span_amount) << (d->octave_shifts[osc] - d->backwards_jump[osc]))) & discard_upper_3b_of_8b;
