@@ -97,13 +97,16 @@ static uint16_t diatonic_lut_search(volatile uint16_t note, volatile const uint1
     return scale_table[0];
 }
 
-#pragma message("semi working")
 uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t main_pitch_cv = 0;
 
-    if (!o->tempered.oct.change && !o->tempered.oct.shift &&
-        !o->tempered.just_reced && o->tempered._semi_tones_in_range != 0)
-      goto compute_eq;
+    /*
+     * procced to tempered note calculation if nothing has changed or this is
+     * a first run (checking for valid _semi_tones_in_range).
+     */
+    if(!o->tempered.oct.change && !o->tempered.oct.shift &&
+       !o->tempered.just_reced && o->tempered._semi_tones_in_range != 0)
+        goto compute_eq;
 
     o->tempered.oct.change = false;
     o->tempered.just_reced = false;
@@ -133,11 +136,8 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     }
 
     if(o->tempered.last_to_first_ratio != 2){
-        o->tempered._semi_tones_in_range =
-            o->tempered.oct.unit * o->tempered.last_to_first_ratio;
-
-        o->tempered.last_fundamental =
-            o->tempered.first_fundamental * o->tempered.last_to_first_ratio;
+        o->tempered._semi_tones_in_range = o->tempered.oct.unit * o->tempered.last_to_first_ratio;
+        o->tempered.last_fundamental = o->tempered.first_fundamental * o->tempered.last_to_first_ratio;
     }else{
         o->tempered._semi_tones_in_range = o->tempered.oct.unit;
         o->tempered.last_fundamental = o->tempered.first_fundamental << 1U;
@@ -146,9 +146,7 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     o->tempered.mutable_bounds.min = o->tempered.first_fundamental;
     o->tempered.mutable_bounds.max = o->tempered.last_fundamental;
 
-    o->tempered.semitone =
-        (o->tempered.last_fundamental - o->tempered.first_fundamental) /\
-        o->tempered._semi_tones_in_range;
+    o->tempered.semitone = (o->tempered.last_fundamental - o->tempered.first_fundamental) / o->tempered._semi_tones_in_range;
     o->tempered.drift_error = o->tempered.semitone << 1U;
 
 compute_eq:
@@ -156,12 +154,9 @@ compute_eq:
     o->tempered.cv_semitones =
         (main_pitch_cv - o->tempered.first_fundamental) / o->tempered.semitone;
 fixup:
-    o->tempered.quantized_et =
-        o->tempered.first_fundamental +             \
-       (o->tempered.cv_semitones * o->tempered.semitone);
+    o->tempered.quantized_et = o->tempered.first_fundamental + (o->tempered.cv_semitones * o->tempered.semitone);
 
-    if(o->tempered.quantized_et >
-       (o->tempered.mutable_bounds.max + (o->tempered.drift_error))){
+    if(o->tempered.quantized_et > (o->tempered.mutable_bounds.max + (o->tempered.drift_error))){
         o->tempered.cv_semitones -= o->tempered.semitone;
         goto fixup;
     }
