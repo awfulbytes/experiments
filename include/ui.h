@@ -34,6 +34,7 @@ struct led {
 
 typedef enum tuner_view{recording, playing}tuner_view;
 typedef enum current_view{tuning, dist, wave, diatonic}current_view;
+typedef enum display_lock{unlocked_view, mode_lock, tuner_lock}display_lock;
 
 struct distortion_info{
     uint8_t twenty_percent;
@@ -43,6 +44,7 @@ struct distortion_info{
 struct display {
     current_view view[2];
     tuner_view tuner_view[2];
+    display_lock locks[2];
     uint16_t shift_registers[2];
     uint8_t octave_shifts[2];
     uint8_t backwards_jump[2];

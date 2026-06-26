@@ -93,6 +93,19 @@ void main(void) {
             }
             osc_0_mode_choice.flag = 'D';
         }
+
+        if(debounce(&switch2_dev_rev0.pins[0], switch2_dev_rev0._state[0])){
+            display.view[0] = wave;
+            display.locks[0] = mode_lock;
+        }else
+            display.locks[0] = unlocked_view;
+
+        if(debounce(&switch2_dev_rev0.pins[1], switch2_dev_rev0._state[1])){
+            display.view[0] = tuning;
+            display.locks[0] = tuner_lock;
+        }else
+            display.locks[0] = unlocked_view;
+
         tune(&cosmos, 0, &display);
         handle_display(&display,
                        cosmos.oscillators[0]->distortion.amount,

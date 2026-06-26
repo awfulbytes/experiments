@@ -145,13 +145,13 @@ void EXTI4_15_IRQHandler(void) {
 
     if(check_pend(switch2_dev_rev0.it[0], EXTI->RPR1)){
         switch2_dev_rev0._state[0] = read_gpio(&switch2_dev_rev0.pins[0]);
-        // l_osc.tempered.oct.change = true;
+        /*                    test                    */
         clear_pending(switch2_dev_rev0.it[0], EXTI->RPR1);
     }
 
     if(check_pend(switch2_dev_rev0.it[1], EXTI->RPR1)){
         switch2_dev_rev0._state[1] = read_gpio(&switch2_dev_rev0.pins[1]);
-        // l_osc.tempered.rec = true;
+        /*                    test                    */
         clear_pending(switch2_dev_rev0.it[1], EXTI->RPR1);
     }
 
