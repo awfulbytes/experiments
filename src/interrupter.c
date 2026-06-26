@@ -18,8 +18,8 @@ void main(void) {
     gpio_init(nco_buttons, dacs, osc_cvs, c, d, a, why);
 
     for(uint8_t u=0; u<2; ++u){
-        /* this needs more work to assign pins */
         set_flip_switch(&octave_switch, u);
+        set_flip_switch(&switch2_dev_rev0, u);
     }
 
     enc_init(&osc_0_pd_enc);

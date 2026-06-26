@@ -187,17 +187,18 @@ struct flip_switch octave_switch = {.pins[1] = {.port_id=GPIOC, .pin_id=LL_GPIO_
                                     ._state[0] = true,
 };
 
-/* todo test: This alignes the code with pcb. */
-struct flip_switch octave_switch2_dev_rev0 = {.pins[1] = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_15, .id = 15, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
+/* note: these 2 flippers align the code with pcb. */
+struct flip_switch switch2_dev_rev0 = {.pins[1] = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_15, .id = 15, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
                                     .it[1]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_15, .exti_line_conf=LL_EXTI_CONFIG_LINE15, .exti_port_conf=LL_EXTI_CONFIG_PORTB},
-                                    .priority[1] = 0x40,
+                                    .priority[1] = 0x80,
                                     ._state[1] = true,
 
                                     .pins[0] = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_14, .id = 14, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
                                     .it[0]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_14, .exti_line_conf=LL_EXTI_CONFIG_LINE14, .exti_port_conf=LL_EXTI_CONFIG_PORTB},
-                                    .priority[0] = 0x40,
+                                    .priority[0] = 0x80,
                                     ._state[0] = true,
 };
+/* todo how to use the 3rd flipper */
 struct flip_switch octave_switch3_dev_rev0 = {.pins[1] = {.port_id=GPIOD, .pin_id=LL_GPIO_PIN_9, .id = 9, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
                                     .it[1]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_9, .exti_line_conf=LL_EXTI_CONFIG_LINE9, .exti_port_conf=LL_EXTI_CONFIG_PORTD},
                                     .priority[1] = 0x40,
@@ -208,7 +209,7 @@ struct flip_switch octave_switch3_dev_rev0 = {.pins[1] = {.port_id=GPIOD, .pin_i
                                     .priority[0] = 0x40,
                                     ._state[0] = true,
 };
-/* todo test */
+/* todo */
 
 struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC, .id=4, .pin_id=LL_GPIO_PIN_4, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
                                      .it_settings = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_4, .exti_port_conf=LL_EXTI_CONFIG_PORTC, .exti_line_conf=LL_EXTI_CONFIG_LINE4},
