@@ -84,6 +84,7 @@ void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc){
 }
 
 void handle_display(struct display *d, uint8_t distortion_level, uint8_t current_wave, uint8_t osc){
+    uint8_t mm_register = d->shift_registers[osc];
     for(uint8_t k=0; k < 6; ++k){
         d->leds[k].state = false;
     }
@@ -94,7 +95,7 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
                 d->octave_shifts[0] = d->backwards_jump[0] = 0;
             }
             for(uint8_t j=0; j<5; ++j){
-                d->leds[j].state = extract_bit(d->shift_registers[osc], j);
+                d->leds[j].state = extract_bit(mm_register, j);
             }
             break;
 
