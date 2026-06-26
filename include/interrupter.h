@@ -156,24 +156,17 @@ struct adc adc_settings = {.adcx=ADC1,
                                           .PeriphOrM2MSrcIncMode=LL_DMA_PERIPH_NOINCREMENT,
                                           .MemoryOrM2MDstIncMode=LL_DMA_MEMORY_INCREMENT}};
 
-volatile struct button freq_mode_but_dac1 = {.state=0, .flag='D',
-                                           .exti={.exti_irqn=EXTI4_15_IRQn,
-                                                  .exti_line=LL_EXTI_LINE_10,
-                                                  .exti_port_conf=LL_EXTI_CONFIG_PORTC,
-                                                  .exti_line_conf=LL_EXTI_CONFIG_LINE10},
-                                           .pin={.pin_id=LL_GPIO_PIN_10, .id=0xff, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
-volatile struct button osc_0_mode_choice = {.state=0, .flag='D',
-                                           .exti={.exti_irqn=EXTI4_15_IRQn,
-                                                  .exti_line=LL_EXTI_LINE_11,
-                                                  .exti_port_conf=LL_EXTI_CONFIG_PORTC,
-                                                  .exti_line_conf=LL_EXTI_CONFIG_LINE11},
-                                           .pin={.pin_id=LL_GPIO_PIN_11, .id=0xff, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
-struct button distortion_choice = {.state=0, .flag='D',
-                                   .exti={.exti_irqn=EXTI4_15_IRQn,
-                                          .exti_line=LL_EXTI_LINE_12,
-                                          .exti_port_conf=LL_EXTI_CONFIG_PORTC,
-                                          .exti_line_conf=LL_EXTI_CONFIG_LINE12},
-                                   .pin={.pin_id=LL_GPIO_PIN_12, .id=0xff, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP}};
+volatile struct button freq_mode_but_dac1 ={.pin={.pin_id=LL_GPIO_PIN_10, .id=0xff, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP},
+                                           .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_10, .exti_port_conf=LL_EXTI_CONFIG_PORTC, .exti_line_conf=LL_EXTI_CONFIG_LINE10},
+                                           .state=0, .flag='D'};
+
+volatile struct button osc_0_mode_choice = {.pin={.pin_id=LL_GPIO_PIN_11, .id=0xff, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP},
+                                           .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_11, .exti_port_conf=LL_EXTI_CONFIG_PORTC, .exti_line_conf=LL_EXTI_CONFIG_LINE11},
+                                           .state=0, .flag='D'};
+
+struct button distortion_choice = {.pin={.pin_id=LL_GPIO_PIN_12, .id=0xff, .port_id=GPIOC, .mode=LL_GPIO_MODE_INPUT, .pull=LL_GPIO_PULL_UP},
+                                   .exti={.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_12, .exti_port_conf=LL_EXTI_CONFIG_PORTC, .exti_line_conf=LL_EXTI_CONFIG_LINE12},
+                                   .state=0, .flag='D'};
 
 struct gpio dac1 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_4, .mode=LL_GPIO_MODE_ANALOG};
 struct gpio dac2 = {.port_id=GPIOA, .pin_id=LL_GPIO_PIN_5, .mode=LL_GPIO_MODE_ANALOG};
@@ -193,29 +186,47 @@ struct flip_switch octave_switch = {.pins[1] = {.port_id=GPIOC, .pin_id=LL_GPIO_
                                     .priority[0] = 0x40,
                                     ._state[0] = true,
 };
+
+/* todo test: This alignes the code with pcb. */
+struct flip_switch octave_switch2_dev_rev0 = {.pins[1] = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_15, .id = 15, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
+                                    .it[1]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_15, .exti_line_conf=LL_EXTI_CONFIG_LINE15, .exti_port_conf=LL_EXTI_CONFIG_PORTB},
+                                    .priority[1] = 0x40,
+                                    ._state[1] = true,
+
+                                    .pins[0] = {.port_id=GPIOB, .pin_id=LL_GPIO_PIN_14, .id = 14, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
+                                    .it[0]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_14, .exti_line_conf=LL_EXTI_CONFIG_LINE14, .exti_port_conf=LL_EXTI_CONFIG_PORTB},
+                                    .priority[0] = 0x40,
+                                    ._state[0] = true,
+};
+struct flip_switch octave_switch3_dev_rev0 = {.pins[1] = {.port_id=GPIOD, .pin_id=LL_GPIO_PIN_9, .id = 9, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
+                                    .it[1]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_9, .exti_line_conf=LL_EXTI_CONFIG_LINE9, .exti_port_conf=LL_EXTI_CONFIG_PORTD},
+                                    .priority[1] = 0x40,
+                                    ._state[1] = true,
+
+                                    .pins[0] = {.port_id=GPIOD, .pin_id=LL_GPIO_PIN_8, .id = 8, .mode=LL_GPIO_MODE_INPUT, .pull= LL_GPIO_PULL_DOWN},
+                                    .it[0]   = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_8, .exti_line_conf=LL_EXTI_CONFIG_LINE8, .exti_port_conf=LL_EXTI_CONFIG_PORTD},
+                                    .priority[0] = 0x40,
+                                    ._state[0] = true,
+};
+/* todo test */
+
 struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC, .id=4, .pin_id=LL_GPIO_PIN_4, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
-                                     .value={0}, .flag='D',
-                                     .it_settings = {.exti_irqn=EXTI4_15_IRQn,
-                                                     .exti_line=LL_EXTI_LINE_4,
-                                                     .exti_port_conf=LL_EXTI_CONFIG_PORTC,
-                                                     .exti_line_conf=LL_EXTI_CONFIG_LINE4}},
+                                     .it_settings = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_4, .exti_port_conf=LL_EXTI_CONFIG_PORTC, .exti_line_conf=LL_EXTI_CONFIG_LINE4},
+                                     .value={0}, .flag='D'},
+
                                .B = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_5, .id=5, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
-                                     .value = {0},
-                                     .it_settings = {0},
-                                     .flag = 'D'},
+                                     .value = {0}, .it_settings = {0}, .flag = 'D'},
+
                                .direction=cw,
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};
 
 struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_6, .id=6, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
-                               .value={0}, .flag='D',
-                               .it_settings = {.exti_irqn=EXTI4_15_IRQn,
-                                               .exti_line=LL_EXTI_LINE_6,
-                                               .exti_port_conf=LL_EXTI_CONFIG_PORTC,
-                                               .exti_line_conf=LL_EXTI_CONFIG_LINE6}},
+                                     .it_settings = {.exti_irqn=EXTI4_15_IRQn, .exti_line=LL_EXTI_LINE_6, .exti_port_conf=LL_EXTI_CONFIG_PORTC, .exti_line_conf=LL_EXTI_CONFIG_LINE6},
+                                     .value={0}, .flag='D'},
+
                                .B = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_8, .id=8, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
-                                     .value = {0},
-                                     .it_settings = {0},
-                                     .flag = 'D'},
+                                     .value = {0}, .it_settings = {0}, .flag = 'D'},
+
                                .direction=cw,
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};
 
