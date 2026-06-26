@@ -4,6 +4,3 @@
 [submodule "include/cmsis_device_g0"]
 	path = ventor/cmsis_device_g0
 	url = https://github.com/STMicroelectronics/cmsis_device_g0.git
-[submodule "ventor/cmsis-core"]
-	path = ventor/cmsis-core
-	url = https://github.com/STMicroelectronics/cmsis-core.git
