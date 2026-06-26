@@ -1,4 +1,3 @@
-#define DEBUGDAC
 #include "gpio.h"
 #include"flash.h"
 #include "adc.h"

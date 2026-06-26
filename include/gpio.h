@@ -5,7 +5,7 @@
 #include "stm32g0xx_ll_bus.h"
 #include <stdbool.h>
 
-// #define DEBUGDAC
+/* this is legacy but is a nice way of initializing gpio and discarding the configured structure from memory at the scope end. */
 #if defined(DEBUG) || defined(DEBUGDAC) || defined(DEBUGDAC1) || defined (encoder)
 void debug_tim2_pin31(void){
     LL_GPIO_InitTypeDef gpio_init = {0};
