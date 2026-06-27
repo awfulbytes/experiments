@@ -30,13 +30,9 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
 
         switch(seer->selected->tempered.type) {
             case none:
-                if(d->locks[osc_idx] == unlocked_view)
-                    d->view[osc_idx] = wave;
                 seer->_data->pitch_cv = note;
                 break;
             case eq_tempered:
-                if(d->locks[osc_idx] == unlocked_view)
-                    d->view[osc_idx] = tuning;
                 if(seer->selected->tempered.flag){
                     seer->_data->pitch_cv = seer->selected->tempered.first_fundamental;
                     break;
@@ -45,8 +41,6 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
                 octave_recorder(&display, seer->oscillators[osc_idx]->tempered.oct.span, osc_idx);
                 break;
             case diatonic_major_g:
-                if(d->locks[osc_idx] == unlocked_view)
-                    d->view[osc_idx] = diatonic;
                 seer->_data->pitch_cv = diatonic_lut_search(note, diatonic_g_major, g_major_size);
                 break;
         }

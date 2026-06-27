@@ -95,6 +95,16 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
     for(uint8_t k=0; k < 5; ++k){
         d->leds[k].state = false;
     }
+    switch(d->locks[osc]){
+        case mode_lock:
+            d->view[osc] = wave;
+            break;
+        case tuner_lock:
+            d->view[osc] = tuning;
+            break;
+        case unlocked_view:
+            ;
+    }
     switch(d->view[osc]){
         case tuning:
             if(d->tuner_view[osc] == recording){

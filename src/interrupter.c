@@ -83,28 +83,26 @@ void main(void) {
                 case none:
                     l_osc.mode = tracking;
                     l_osc.tempered.type = diatonic_major_g;
+                    display.view[0] = diatonic;
                     break;
                 case diatonic_major_g:
                     l_osc.mode = free;
                     start_blinker(&display, true);
                     l_osc.tempered.type = eq_tempered;
+                    display.view[0] = tuning;
                     break;
                 case eq_tempered:
                     l_osc.mode = free;
                     l_osc.tempered.type = none;
+                    display.view[0] = wave;
                     break;
             }
             osc_0_mode_choice.flag = 'D';
         }
 
         if(debounce(&switch2_dev_rev0.pins[0], switch2_dev_rev0._state[0])){
-            display.view[0] = wave;
             display.locks[0] = mode_lock;
-        }else
-            display.locks[0] = unlocked_view;
-
-        if(debounce(&switch2_dev_rev0.pins[1], switch2_dev_rev0._state[1])){
-            display.view[0] = tuning;
+        }else if(debounce(&switch2_dev_rev0.pins[1], switch2_dev_rev0._state[1])){
             display.locks[0] = tuner_lock;
         }else
             display.locks[0] = unlocked_view;
