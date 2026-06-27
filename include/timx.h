@@ -1,3 +1,4 @@
+#pragma once
 #include "stm32g071xx.h"
 #include <stdint.h>
 #ifdef USE_FULL_LL_DRIVER

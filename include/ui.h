@@ -2,6 +2,7 @@
 #include "reciprocal_division.h"
 #include "gpio.h"
 #include <stdint.h>
+#include "timx.h"
 
 enum waves {SINE, SAWU, SAWD, PULSE, WAVE_CTR};
 enum direction {cw, ccw};
@@ -50,6 +51,7 @@ struct display {
     uint8_t backwards_jump[2];
     struct led leds[6];
     struct distortion_info distortion[2];
+    struct timer *blinky;
 };
 
 static void enable_rising(uint32_t exti_line){
@@ -100,3 +102,7 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
 bool debounce(volatile struct gpio *g, uint32_t _state);
 
 bool button_press(volatile struct button *b);
+
+void toggle_blink_state(struct led *l);
+
+void start_blinker(struct display *d, bool yes_or_no);

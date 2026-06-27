@@ -75,6 +75,14 @@ void TIM2_IRQHandler(void) {
     }
 }
 
+void TIM7_LPTIM2_IRQHandler(void){
+    if((TIM7->SR & TIM_SR_UIF)){
+        toggle_blink_state(&display.leds[5]);
+        write_gpio(&display.leds[5].pin, display.leds[5].state);
+        TIM7->SR &= ~(TIM_SR_UIF);
+    }
+}
+
 static inline void handle_osc_distortion(struct nco nco[static 1]){
     if (!nco->distortion.on) {
 #ifdef encoder_leds

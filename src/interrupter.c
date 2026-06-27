@@ -2,7 +2,7 @@
 #include "sysclk.c"
 
 void main(void) {
-    struct timer *timers[1] = {&tim6_settings};
+    struct timer *timers[2] = {&tim6_settings, &tim7_settings};
     volatile struct button *nco_buttons[3] = {&freq_mode_but_dac1, &osc_0_mode_choice, &distortion_choice};
     struct gpio *dacs[2] = {&dac1, &dac2};
     struct gpio *osc_cvs[5] = {&pitch_0_cv, &dist_amount_0_cv, &tunner_adc_in, &pitch_1_cv, &dist_amount_1_cv};
@@ -28,8 +28,8 @@ void main(void) {
 
     dma_config(&dac_dma);
 
-    /* todo: use timer 7 as a blinking delay !!! */
     tim_init(cosmos._data->dac1_clock, timers[0]);
+    tim_init(1, timers[1]);                      /* ~~Hz*/
     tim_init(cosmos._data->adc1_clock, &tim2_settings);
     adc_init_settings(&adc_settings);
 
@@ -54,6 +54,7 @@ void main(void) {
         if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x1;
             display.tuner_view[0] = recording;
+            start_blinker(&display, false);
             l_osc.tempered.first_fundamental = map_uint(cosmos._data->tunner_pitch_raw_d, &cosmos.oscillators[0]->tempered.tuner_bounds);
 
         }else if(l_osc.tempered.rec && !read_gpio(&octave_switch.pins[1])){
@@ -61,6 +62,7 @@ void main(void) {
             display.tuner_view[0] = playing;
             l_osc.tempered.rec = false;
             l_osc.tempered.just_reced = true;
+            start_blinker(&display, true);
         }
 
         if(l_osc.tempered.oct.change && debounce(&octave_switch.pins[0], octave_switch._state[0])){
@@ -84,6 +86,7 @@ void main(void) {
                     break;
                 case diatonic_major_g:
                     l_osc.mode = free;
+                    start_blinker(&display, true);
                     l_osc.tempered.type = eq_tempered;
                     break;
                 case eq_tempered:

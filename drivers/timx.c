@@ -5,7 +5,10 @@
 static struct timer* timx_set(struct timer *t) {
     t->timx_clk_freq             = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock,
                                                                 LL_RCC_GetAPB1Prescaler());
-    t->settings.Prescaler   = 0;
+    if(t->id == TIM7)
+        t->settings.Prescaler = 0x1ff;
+    else
+        t->settings.Prescaler   = 0;
     t->settings.Autoreload  = 0;
     t->settings.CounterMode = LL_TIM_COUNTERMODE_UP;
     return t;
@@ -37,10 +40,6 @@ static void counter_and_update_events(TIM_TypeDef *t){
     LL_TIM_EnableUpdateEvent(t);
 }
 
-/* bug:: we initialize only the timer 2...?? how is this possible??
- *       but we have all clocks... we could have internally lock them...
- *       we may not have the update interrupts...
- *       this could be the reason i have only tim 2 working interrupt.*/
 void tim_init(uint32_t      output_freq,
               struct timer *tim){
     struct timer *setted = timx_set(tim);

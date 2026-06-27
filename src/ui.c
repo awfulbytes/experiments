@@ -83,16 +83,24 @@ void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc){
         (uint16_t)(span_in_binary(span_amount) << (d->octave_shifts[osc] - d->backwards_jump[osc]))) & discard_upper_3b_of_8b;
 }
 
+void start_blinker(struct display *d, bool yes_or_no){
+    if(yes_or_no)
+        (d->blinky->id->DIER) |= (TIM_DIER_UIE); /*enable*/
+    else
+        (d->blinky->id->DIER) &= ~(TIM_DIER_UIE); /*disable*/
+}
+
 void handle_display(struct display *d, uint8_t distortion_level, uint8_t current_wave, uint8_t osc){
     uint8_t mm_register = d->shift_registers[osc];
-    for(uint8_t k=0; k < 6; ++k){
+    for(uint8_t k=0; k < 5; ++k){
         d->leds[k].state = false;
     }
     switch(d->view[osc]){
         case tuning:
             if(d->tuner_view[osc] == recording){
-                d->leds[5].state = true;
                 d->octave_shifts[0] = d->backwards_jump[0] = 0;
+                d->leds[5].state = true;
+            } else {
             }
             for(uint8_t j=0; j<5; ++j){
                 d->leds[j].state = extract_bit(mm_register, j);
@@ -100,6 +108,7 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
             break;
 
         case dist:
+            d->leds[5].state = false;
             if(distortion_level > d->distortion[osc].twenty_percent)
                 d->distortion[osc].change = U8DIVBY25(distortion_level);
 
@@ -109,10 +118,12 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
             break;
 
         case wave:
+            d->leds[5].state = false;
             d->leds[current_wave].state = true;
             break;
 
         case diatonic:
+            d->leds[5].state = false;
             d->leds[4].state = true;
             break;
     }
