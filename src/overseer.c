@@ -45,10 +45,8 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
                 break;
         }
 
-        if(seer->selected->distortion.on){
-            d->view[osc_idx] = dist;
+        if(seer->selected->distortion.on)
             tune_distortion(seer->selected, seer->_data);
-        }
 
         seer->selected->phase.done_update =
             stage_pending_inc(seer->_data->pitch_cv, seer->selected,

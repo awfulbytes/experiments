@@ -97,6 +97,8 @@ void main(void) {
                     display.view[0] = wave;
                     break;
             }
+            if(l_osc.distortion.on)
+                display.view[0] = dist;
             osc_0_mode_choice.flag = 'D';
         }
 
