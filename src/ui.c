@@ -92,8 +92,8 @@ void start_blinker(struct display *d, bool yes_or_no){
 
 void handle_display(struct display *d, uint8_t distortion_level, uint8_t current_wave, uint8_t osc){
     uint8_t mm_register = d->shift_registers[osc];
-    for(uint8_t k=0; k < 5; ++k){
-        d->leds[k].state = false;
+    for(uint8_t a=0; a < 5; ++a){
+        d->leds[a].state = false;
     }
     switch(d->locks[osc]){
         case mode_lock:
@@ -136,7 +136,7 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
             d->leds[4].state = true;
             break;
     }
-    for(uint8_t k=0; k < 6; ++k){
-        write_gpio(&d->leds[k].pin, d->leds[k].state);
+    for(uint8_t l=0; l < 6; ++l){
+        write_gpio(&d->leds[l].pin, d->leds[l].state);
     }
 }
