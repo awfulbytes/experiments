@@ -22,6 +22,7 @@ struct octave {
 
 struct tuner {
     volatile bool           rec;
+    volatile bool           rec_history;
     volatile bool           just_reced;
     volatile uint16_t       first_fundamental;
     uint16_t                last_fundamental;

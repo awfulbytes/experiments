@@ -10,6 +10,7 @@ extern volatile const uint16_t *curr_wave_ptr, *curr_wave_ptr2;
 extern uint32_t dac_double_buff2[256];
 
 extern volatile uint8_t cnt_adc_cycles;
+extern volatile const uint16_t *waves_bank[4];
 
 extern struct overseer          cosmos;
 extern struct nco               l_osc, r_osc;

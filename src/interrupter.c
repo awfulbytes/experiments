@@ -47,25 +47,8 @@ void main(void) {
     //     perform_erase(&flash_settings);
 
     while (1) {
-
-        if(osc_0_pd_enc.virtual_wave_button.flag == 0x69){
-            l_osc.curr_wave_ptr = waves_bank[osc_0_pd_enc.virtual_wave_button.state];
-            osc_0_pd_enc.virtual_wave_button.flag = 'D';
-        }
-
-        if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[1])){
-            l_osc.tempered.flag = 0x1;
-            display.tuner_view[0] = recording;
-            start_blinker(&display, false);
+        if(l_osc.tempered.flag)
             l_osc.tempered.first_fundamental = map_uint(cosmos._data->tunner_pitch_raw_d, &cosmos.oscillators[0]->tempered.tuner_bounds);
-
-        }else if(l_osc.tempered.rec && !read_gpio(&octave_switch.pins[1])){
-            l_osc.tempered.flag = 0x0;
-            display.tuner_view[0] = playing;
-            l_osc.tempered.rec = false;
-            l_osc.tempered.just_reced = true;
-            start_blinker(&display, true);
-        }
 
         if(l_osc.tempered.oct.change && debounce(&octave_switch.pins[0], octave_switch._state[0])){
             switch (l_osc.tempered.oct.span) {
@@ -80,36 +63,6 @@ void main(void) {
                     break;
             }
         }
-        if(button_press(&osc_0_mode_choice) && osc_0_mode_choice.flag == 0x69){
-            switch (l_osc.tempered.type) {
-                case none:
-                    l_osc.mode = tracking;
-                    l_osc.tempered.type = diatonic_major_g;
-                    display.view[0] = diatonic;
-                    break;
-                case diatonic_major_g:
-                    l_osc.mode = free;
-                    start_blinker(&display, true);
-                    l_osc.tempered.type = eq_tempered;
-                    display.view[0] = tuning;
-                    break;
-                case eq_tempered:
-                    l_osc.mode = free;
-                    l_osc.tempered.type = none;
-                    display.view[0] = wave;
-                    break;
-            }
-            if(l_osc.distortion.on)
-                display.view[0] = dist;
-            osc_0_mode_choice.flag = 'D';
-        }
-
-        if(debounce(&switch2_dev_rev0.pins[0], switch2_dev_rev0._state[0])){
-            display.locks[0] = mode_lock;
-        }else if(debounce(&switch2_dev_rev0.pins[1], switch2_dev_rev0._state[1])){
-            display.locks[0] = tuner_lock;
-        }else
-            display.locks[0] = unlocked_view;
 
         tune(&cosmos, 0, &display);
         handle_display(&display,
@@ -117,10 +70,6 @@ void main(void) {
                        osc_0_pd_enc.virtual_wave_button.state,
                        0);
 
-        if (osc_1_pd_enc.virtual_wave_button.flag == 0x69) {
-            r_osc.curr_wave_ptr = waves_bank[osc_1_pd_enc.virtual_wave_button.state];
-            osc_1_pd_enc.virtual_wave_button.flag = 'D';
-        }
         tune(&cosmos, 1, &display);
     }
 }

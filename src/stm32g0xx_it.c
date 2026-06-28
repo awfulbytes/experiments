@@ -86,6 +86,63 @@ void TIM7_LPTIM2_IRQHandler(void){
 void TIM3_IRQHandler(void){
     if((TIM3->SR & TIM_SR_UIF)){
 
+        if(osc_0_pd_enc.virtual_wave_button.flag == 0x69){
+            l_osc.curr_wave_ptr = waves_bank[osc_0_pd_enc.virtual_wave_button.state];
+            osc_0_pd_enc.virtual_wave_button.flag = 'D';
+        }
+        if (osc_1_pd_enc.virtual_wave_button.flag == 0x69) {
+            r_osc.curr_wave_ptr = waves_bank[osc_1_pd_enc.virtual_wave_button.state];
+            osc_1_pd_enc.virtual_wave_button.flag = 'D';
+        }
+
+        if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[1])){
+            l_osc.tempered.flag = 0x1;
+            display.tuner_view[0] = recording;
+            start_blinker(&display, false);
+
+        }else if(l_osc.tempered.rec && !read_gpio(&octave_switch.pins[1])){
+            l_osc.tempered.flag = 0x0;
+            display.tuner_view[0] = playing;
+            l_osc.tempered.rec = false;
+            l_osc.tempered.just_reced = true;
+            start_blinker(&display, true);
+        }
+
+        if(button_press(&osc_0_mode_choice) && osc_0_mode_choice.flag == 0x69){
+            switch (l_osc.tempered.type) {
+                case none:
+                    l_osc.mode = tracking;
+                    l_osc.tempered.type = diatonic_major_g;
+                    display.view[0] = diatonic;
+                    break;
+                case diatonic_major_g:
+                    l_osc.mode = free;
+                    start_blinker(&display, true);
+                    l_osc.tempered.type = eq_tempered;
+                    display.view[0] = tuning;
+
+                    /* protect the hearing of people... */
+                    if(!l_osc.tempered.rec_history)
+                        l_osc.tempered.first_fundamental = l_osc.tempered.absolute.min;
+                    break;
+                case eq_tempered:
+                    l_osc.mode = free;
+                    l_osc.tempered.type = none;
+                    display.view[0] = wave;
+                    break;
+            }
+            if(l_osc.distortion.on)
+                display.view[0] = dist;
+            osc_0_mode_choice.flag = 'D';
+        }
+
+        if(debounce(&switch2_dev_rev0.pins[0], switch2_dev_rev0._state[0])){
+            display.locks[0] = mode_lock;
+        }else if(debounce(&switch2_dev_rev0.pins[1], switch2_dev_rev0._state[1])){
+            display.locks[0] = tuner_lock;
+        }else
+            display.locks[0] = unlocked_view;
+
         TIM3->SR &= ~(TIM_SR_UIF);
     }
 }
@@ -155,6 +212,7 @@ void EXTI4_15_IRQHandler(void) {
     if(check_pend(octave_switch.it[1], EXTI->RPR1)){
         octave_switch._state[1] = read_gpio(&octave_switch.pins[1]);
         l_osc.tempered.rec = true;
+        l_osc.tempered.rec_history = true;
         clear_pending(octave_switch.it[1], EXTI->RPR1);
     }
 
