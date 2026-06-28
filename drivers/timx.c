@@ -5,7 +5,7 @@
 static struct timer* timx_set(struct timer *t) {
     t->timx_clk_freq             = __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock,
                                                                 LL_RCC_GetAPB1Prescaler());
-    if(t->id == TIM7)
+    if(t->id == TIM7 || t->id == TIM3)
         t->settings.Prescaler = 0x1ff;
     else
         t->settings.Prescaler   = 0;
@@ -49,7 +49,7 @@ void tim_init(uint32_t      output_freq,
     tim_reg_config(setted);
     tim_nvic_config(&setted->irq_settings);
 
-    if (tim->id == TIM2) {
+    if (tim->id == TIM2 || tim->id == TIM3) {
         /* LL_TIM_Init(setted->id, &setted->settings); */
         LL_TIM_EnableIT_UPDATE(setted->id);
     }

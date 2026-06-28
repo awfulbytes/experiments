@@ -103,6 +103,10 @@ struct timer tim2_settings = {.id=TIM2,
                               .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM2,
                               .trigger_output=LL_TIM_TRGO_UPDATE,
                               .irq_settings={.nvic_id=TIM2_IRQn, .priority=0x00}};
+struct timer tim3_settings = {.id=TIM3,
+                              .apb_clock_reg=LL_APB1_GRP1_PERIPH_TIM3,
+                              .trigger_output=LL_TIM_TRGO_UPDATE,
+                              .irq_settings={.nvic_id=TIM3_IRQn, .priority=0x80}};
 
 struct dac dac_ch1_settings = {.dacx=DAC1, .channel=LL_DAC_CHANNEL_1,
                                .trg_src=LL_DAC_TRIG_EXT_TIM6_TRGO,

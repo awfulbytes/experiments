@@ -83,6 +83,13 @@ void TIM7_LPTIM2_IRQHandler(void){
     }
 }
 
+void TIM3_IRQHandler(void){
+    if((TIM3->SR & TIM_SR_UIF)){
+
+        TIM3->SR &= ~(TIM_SR_UIF);
+    }
+}
+
 static inline void handle_osc_distortion(struct nco nco[static 1]){
     if (!nco->distortion.on) {
 #ifdef encoder_leds
