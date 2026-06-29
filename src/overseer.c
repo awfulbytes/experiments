@@ -43,7 +43,7 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
                     d->tuner_view[osc_idx] = playing;
                 }
                 seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital);
-                octave_recorder(&display, seer->oscillators[osc_idx]->tempered.oct.span, osc_idx);
+                octave_recorder(d, seer->oscillators[osc_idx]->tempered.oct.span, osc_idx);
                 break;
             case diatonic_major_g:
                 d->view[osc_idx] = diatonic;
