@@ -98,7 +98,6 @@ void TIM3_IRQHandler(void){
         if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x1;
             display.tuner_view[0] = recording;
-            start_blinker(&display, false);
 
         }else if(l_osc.tempered.rec && !read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x0;

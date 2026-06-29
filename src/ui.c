@@ -110,6 +110,7 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
             if(d->tuner_view[osc] == recording){
                 d->octave_shifts[0] = d->backwards_jump[0] = 0;
                 d->leds[5].state = true;
+                start_blinker(d, false);
             }
             for(uint8_t j=0; j<5; ++j){
                 d->leds[j].state = extract_bit(mm_register, j);
