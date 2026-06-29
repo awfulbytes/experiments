@@ -97,11 +97,9 @@ void TIM3_IRQHandler(void){
 
         if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x1;
-            display.tuner_view[0] = recording;
 
         }else if(l_osc.tempered.rec && !read_gpio(&octave_switch.pins[1])){
             l_osc.tempered.flag = 0x0;
-            display.tuner_view[0] = playing;
             l_osc.tempered.rec = false;
             l_osc.tempered.just_reced = true;
         }
@@ -111,12 +109,10 @@ void TIM3_IRQHandler(void){
                 case none:
                     l_osc.mode = tracking;
                     l_osc.tempered.type = diatonic_major_g;
-                    display.view[0] = diatonic;
                     break;
                 case diatonic_major_g:
                     l_osc.mode = free;
                     l_osc.tempered.type = eq_tempered;
-                    display.view[0] = tuning;
 
                     /* protect the hearing of people... */
                     if(!l_osc.tempered.rec_history)
@@ -125,11 +121,8 @@ void TIM3_IRQHandler(void){
                 case eq_tempered:
                     l_osc.mode = free;
                     l_osc.tempered.type = none;
-                    display.view[0] = wave;
                     break;
             }
-            if(l_osc.distortion.on)
-                display.view[0] = dist;
             osc_0_mode_choice.flag = 'D';
         }
 

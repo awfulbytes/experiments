@@ -30,23 +30,31 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
 
         switch(seer->selected->tempered.type) {
             case none:
+                d->view[osc_idx] = wave;
                 seer->_data->pitch_cv = note;
                 break;
             case eq_tempered:
+                d->view[osc_idx] = tuning;
                 if(seer->selected->tempered.flag){
+                    d->tuner_view[osc_idx] = recording;
                     seer->_data->pitch_cv = seer->selected->tempered.first_fundamental;
                     break;
+                }else{
+                    d->tuner_view[osc_idx] = playing;
                 }
                 seer->_data->pitch_cv = equal_tempered(seer->selected, pitch_raw_digital);
                 octave_recorder(&display, seer->oscillators[osc_idx]->tempered.oct.span, osc_idx);
                 break;
             case diatonic_major_g:
+                d->view[osc_idx] = diatonic;
                 seer->_data->pitch_cv = diatonic_lut_search(note, diatonic_g_major, g_major_size);
                 break;
         }
 
-        if(seer->selected->distortion.on)
+        if(seer->selected->distortion.on){
+            d->view[osc_idx] = dist;
             tune_distortion(seer->selected, seer->_data);
+        }
 
         seer->selected->phase.done_update =
             stage_pending_inc(seer->_data->pitch_cv, seer->selected,
