@@ -104,7 +104,6 @@ void TIM3_IRQHandler(void){
             display.tuner_view[0] = playing;
             l_osc.tempered.rec = false;
             l_osc.tempered.just_reced = true;
-            start_blinker(&display, true);
         }
 
         if(button_press(&osc_0_mode_choice) && osc_0_mode_choice.flag == 0x69){
@@ -116,7 +115,6 @@ void TIM3_IRQHandler(void){
                     break;
                 case diatonic_major_g:
                     l_osc.mode = free;
-                    start_blinker(&display, true);
                     l_osc.tempered.type = eq_tempered;
                     display.view[0] = tuning;
 
