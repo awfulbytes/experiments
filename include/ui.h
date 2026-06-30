@@ -97,7 +97,7 @@ char read_gpio(volatile struct gpio *pin);
 volatile void* apply_modulations_callback(struct encoder enc[static 1]);
 
 void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc);
-void handle_display(struct display *d, uint8_t distortion_level, uint8_t current_wave, uint8_t osc);
+void handle_display(struct display *d, uint8_t distortion_level, struct encoder *e, uint8_t osc);
 
 bool debounce(volatile struct gpio *g, uint32_t _state);
 

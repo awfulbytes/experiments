@@ -90,8 +90,16 @@ void start_blinker(struct display *d, bool yes_or_no){
         (d->blinky->id->DIER) &= ~(TIM_DIER_UIE); /*disable*/
 }
 
-void handle_display(struct display *d, uint8_t distortion_level, uint8_t current_wave, uint8_t osc){
+static inline void render_display(struct display *d){
+    for(uint8_t l=0; l < 6; ++l){
+        write_gpio(&d->leds[l].pin, d->leds[l].state);
+    }
+}
+
+void handle_display(struct display *d, uint8_t distortion_level, struct encoder *e, uint8_t osc){
     uint8_t mm_register = d->shift_registers[osc];
+    uint8_t current_wave = e->virtual_wave_button.state;
+
     for(uint8_t a=0; a < 5; ++a){
         d->leds[a].state = false;
     }
@@ -139,7 +147,6 @@ void handle_display(struct display *d, uint8_t distortion_level, uint8_t current
             d->leds[4].state = true;
             break;
     }
-    for(uint8_t l=0; l < 6; ++l){
-        write_gpio(&d->leds[l].pin, d->leds[l].state);
-    }
+
+    render_display(d);
 }
