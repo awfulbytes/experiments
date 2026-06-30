@@ -177,7 +177,7 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     }
 
     if(o->tempered.last_to_first_ratio != 2){
-        o->tempered._semi_tones_in_range = o->tempered.oct.unit * o->tempered.last_to_first_ratio;
+        o->tempered._semi_tones_in_range = (o->tempered.oct.unit * o->tempered.last_to_first_ratio) >> 1U;
         o->tempered.last_fundamental = o->tempered.first_fundamental * o->tempered.last_to_first_ratio;
     }else{
         o->tempered._semi_tones_in_range = o->tempered.oct.unit;
