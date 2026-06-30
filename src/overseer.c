@@ -10,9 +10,34 @@ volatile const uint16_t diatonic_g_major[] = {
 1536, 1728, 1920, 2048, 2304, 2560, 2880,
 3072, 3456, 3840, 4096, 4608, 5120, 5760};
 
+static inline void modify_osc_tempering(volatile struct nco *o){
+    switch (o->tempered.type) {
+        case none:
+            o->mode = tracking;
+            o->tempered.type = diatonic_major_g;
+            break;
+        case diatonic_major_g:
+            o->mode = free;
+            o->tempered.type = eq_tempered;
+
+            /* protect the hearing of people... */
+            if(!o->tempered.rec_history)
+                o->tempered.first_fundamental = o->tempered.absolute.min;
+            break;
+        case eq_tempered:
+            o->mode = free;
+            o->tempered.type = none;
+            break;
+    }
+    o->tempered.type_change = false;
+}
+
 void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
     seer->selected = seer->oscillators[osc_idx];
     register size_t g_major_size = array_size(diatonic_g_major);
+
+    if(seer->selected->tempered.type_change)
+        modify_osc_tempering(seer->selected);
 
     if(seer->selected->phase.pending_update){
         if(seer->sync && osc_idx==1){

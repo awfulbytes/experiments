@@ -37,6 +37,7 @@ struct tuner {
     struct limits           mutable_bounds;
     struct limits           absolute;
     volatile tunning_method type;
+    volatile bool           type_change;
     char                    flag;
 };
 

@@ -105,24 +105,7 @@ void TIM3_IRQHandler(void){
         }
 
         if(button_press(&osc_0_mode_choice) && osc_0_mode_choice.flag == 0x69){
-            switch (l_osc.tempered.type) {
-                case none:
-                    l_osc.mode = tracking;
-                    l_osc.tempered.type = diatonic_major_g;
-                    break;
-                case diatonic_major_g:
-                    l_osc.mode = free;
-                    l_osc.tempered.type = eq_tempered;
-
-                    /* protect the hearing of people... */
-                    if(!l_osc.tempered.rec_history)
-                        l_osc.tempered.first_fundamental = l_osc.tempered.absolute.min;
-                    break;
-                case eq_tempered:
-                    l_osc.mode = free;
-                    l_osc.tempered.type = none;
-                    break;
-            }
+            l_osc.tempered.type_change = true;
             osc_0_mode_choice.flag = 'D';
         }
 
