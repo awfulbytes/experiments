@@ -136,7 +136,20 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
        !o->tempered.just_reced && o->tempered._semi_tones_in_range != 0)
         goto compute_eq;
 
-    o->tempered.oct.change = false;
+    if(o->tempered.oct.change){
+        switch(o->tempered.oct.span){
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                ++o->tempered.oct.span;
+                break;
+            case 5:
+                o->tempered.oct.span = 1;
+                break;
+        }
+        o->tempered.oct.change = false;
+    }
     o->tempered.just_reced = false;
 
     if(o->tempered.oct.shift){

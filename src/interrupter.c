@@ -50,19 +50,8 @@ void main(void) {
         if(l_osc.tempered.flag)
             l_osc.tempered.first_fundamental = map_uint(cosmos._data->tunner_pitch_raw_d, &cosmos.oscillators[0]->tempered.tuner_bounds);
 
-        if(l_osc.tempered.oct.change && debounce(&octave_switch.pins[0], octave_switch._state[0])){
-            switch (l_osc.tempered.oct.span) {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    ++l_osc.tempered.oct.span;
-                    break;
-                case 5:
-                    l_osc.tempered.oct.span = 1;
-                    break;
-            }
-        }
+        if(l_osc.tempered.oct.change && !debounce(&octave_switch.pins[0], octave_switch._state[0]))
+            l_osc.tempered.oct.change = false;
 
         tune(&cosmos, 0, &display);
         handle_display(&display,
