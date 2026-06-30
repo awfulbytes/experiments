@@ -103,6 +103,6 @@ bool debounce(volatile struct gpio *g, uint32_t _state);
 
 bool button_press(volatile struct button *b);
 
-void toggle_blink_state(struct led *l);
+bool toggle_state(struct led *l);
 
 void start_blinker(struct display *d, bool yes_or_no);

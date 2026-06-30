@@ -61,8 +61,8 @@ static void config_led(struct led *l){
     l->state = false;
 }
 
-void toggle_blink_state(struct led *l){
-    l->state = !(l->state);
+bool toggle_state(struct led *l){
+    return !l->state;
 }
 
 void config_display(struct display *d){
