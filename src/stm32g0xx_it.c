@@ -199,11 +199,7 @@ void EXTI4_15_IRQHandler(void) {
 
     if(check_pend(freq_mode_but_dac1.exti, EXTI->FPR1)){
         l_osc.tempered.oct.shift = true;
-        l_osc.tempered.oct.jump += 1;
-        if(display.octave_shifts[0] < 4)
-            display.octave_shifts[0] += (uint8_t) l_osc.tempered.oct.jump;
-        else
-            display.octave_shifts[0] = 4;
+        freq_mode_but_dac1.state = read_gpio(&freq_mode_but_dac1.pin);
         clear_pending(freq_mode_but_dac1.exti, EXTI->FPR1);
     }
 

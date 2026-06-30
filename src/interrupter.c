@@ -52,9 +52,24 @@ void main(void) {
 
         if(l_osc.tempered.oct.change && !debounce(&octave_switch.pins[0], octave_switch._state[0]))
             l_osc.tempered.oct.change = false;
+        if(l_osc.tempered.oct.shift && !debounce(&freq_mode_but_dac1.pin, freq_mode_but_dac1.state)){
+            l_osc.tempered.oct.shift = false;
+        }
 
         tune(&cosmos, 0, &display);
         tune(&cosmos, 1, &display);
+
+        if(l_osc.tempered.oct.shift_record){
+        /* todo */
+            l_osc.tempered.oct.jump += 1;
+            if(display.octave_shifts[0] < 4)
+                //why??
+                display.octave_shifts[0] += 1;
+            else if(display.octave_shifts[0] == 4)
+                display.octave_shifts[0] = 4; /*lock*/
+
+            l_osc.tempered.oct.shift_record = false;
+        }
 
         uint8_t rendered = 0;
         handle_display(&display,

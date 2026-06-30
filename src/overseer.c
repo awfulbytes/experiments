@@ -145,6 +145,7 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
 
     if(o->tempered.oct.shift){
         o->tempered.first_fundamental <<= 1;
+        o->tempered.oct.shift_record = true;
         o->tempered.oct.jump >>= 1;
         o->tempered.oct.shift = false;
     }
