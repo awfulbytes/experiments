@@ -33,20 +33,18 @@ static inline void modify_osc_tempering(volatile struct nco *o){
 }
 
 void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
-    seer->selected = seer->oscillators[osc_idx];
     register size_t g_major_size = array_size(diatonic_g_major);
+    seer->selected = seer->oscillators[osc_idx];
 
     if(seer->selected->tempered.type_change)
         modify_osc_tempering(seer->selected);
 
     if(seer->selected->phase.pending_update){
-        if(seer->sync && osc_idx==1){
+        if(seer->sync && osc_idx==1)
             seer->_data->_cv_1_pitch = seer->_data->_cv_0_pitch;
-        }
+
         register uint16_t pitch_raw_digital =
-            (seer->selected->in_the_house.report == 0)
-            ? seer->_data->_cv_0_pitch
-            : seer->_data->_cv_1_pitch;
+            (seer->selected->in_the_house.report == 0) ? seer->_data->_cv_0_pitch : seer->_data->_cv_1_pitch;
 
         register uint16_t note =
             (seer->selected->mode == free)
@@ -81,27 +79,20 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
             tune_distortion(seer->selected, seer->_data);
         }
 
-        seer->selected->phase.done_update =
-            stage_pending_inc(seer->_data->pitch_cv, seer->selected,
-                              seer->_data->dac1_clock);
+        seer->selected->phase.done_update = stage_pending_inc(seer->_data->pitch_cv, seer->selected, seer->_data->dac1_clock);
 
         seer->selected->phase.pending_update = !seer->selected->phase.done_update;
     }
 }
 
-static inline void tune_distortion(volatile struct nco osc[static 1],
-                                   volatile struct   overworld *data){
-    uint16_t tmp =
-        (osc->in_the_house.report == 0)
-        ? data->osc_0_cv_distortion_amount
-        : data->osc_1_cv_distortion_ammount;
+static inline void tune_distortion(volatile struct nco osc[static 1], volatile struct overworld *data){
+    uint16_t tmp = (osc->in_the_house.report == 0) ? data->osc_0_cv_distortion_amount : data->osc_1_cv_distortion_ammount;
     osc->distortion.amount = map_uint(tmp, &osc->distortion.level_range);
 }
 
 void merge_signals_dual_dac_mode(volatile struct nco *o[2], uint32_t dual_buffer[128], uint8_t table_size){
     for(uint8_t z=0; z < table_size; ++z){
-        dual_buffer[z] = o[1]->data_buff[z] << 16U |\
-                         o[0]->data_buff[z];
+        dual_buffer[z] = (o[1]->data_buff[z] << 16U) | o[0]->data_buff[z];
     }
 }
 
@@ -166,8 +157,7 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
      */
     o->tempered.last_to_first_ratio = o->tempered.oct.span << 1;
 
-    while((o->tempered.first_fundamental * o->tempered.last_to_first_ratio) >
-          o->tempered.absolute.max){
+    while((o->tempered.first_fundamental * o->tempered.last_to_first_ratio) > o->tempered.absolute.max){
         if(o->tempered.oct.span != 1){
             o->tempered.oct.span -= 1;
         }else{
@@ -192,8 +182,7 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
 
 compute_eq:
     main_pitch_cv = map_uint(pitch_raw_dig, &o->tempered.mutable_bounds);
-    o->tempered.cv_semitones =
-        (main_pitch_cv - o->tempered.first_fundamental) / o->tempered.semitone;
+    o->tempered.cv_semitones = (main_pitch_cv - o->tempered.first_fundamental) / o->tempered.semitone;
 fixup:
     o->tempered.quantized_et = o->tempered.first_fundamental + (o->tempered.cv_semitones * o->tempered.semitone);
 

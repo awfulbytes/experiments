@@ -24,7 +24,7 @@ static inline void sync_barier(void){
 
 void DMA1_Channel2_3_IRQHandler(void){
     /* optimized access for compiler massage */
-    if (l_osc.phase.done_update && r_osc.phase.done_update) {
+    if(l_osc.phase.done_update && r_osc.phase.done_update){
         l_osc.phase.inc = l_osc.phase.pending_update_inc;
         r_osc.phase.inc = r_osc.phase.pending_update_inc;
 
@@ -40,17 +40,13 @@ void DMA1_Channel2_3_IRQHandler(void){
         merge_signals_dual_dac_mode(cosmos.oscillators, merged_dual_buffer, data_size);
     }
 
-    if (((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2)) {
-        update_data_buff(merged_dual_buffer,
-                         dac_double_buff2,
-                         data_size);
+    if(((DMA1->ISR & DMA_ISR_HTIF2) == DMA_ISR_HTIF2)){
+        update_data_buff(merged_dual_buffer, dac_double_buff2, data_size);
         (DMA1->IFCR) = (DMA_IFCR_CHTIF2);
     }
 
-    if (((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2)) {
-        update_data_buff(merged_dual_buffer,
-                         dac_double_buff2 + data_size,
-                         data_size);
+    if(((DMA1->ISR & DMA_ISR_TCIF2) == DMA_ISR_TCIF2)){
+        update_data_buff(merged_dual_buffer, dac_double_buff2 + data_size, data_size);
         (DMA1->IFCR) = (DMA_IFCR_CTCIF2);
     }
 }
@@ -62,7 +58,7 @@ void TIM2_IRQHandler(void) {
     if((TIM2->SR & TIM_SR_UIF)){
         TIM2->SR &= ~(TIM_SR_UIF);
 
-        if ((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
+        if((DMA1->ISR & DMA_ISR_TCIF4) == DMA_ISR_TCIF4){
             world._cv_0_pitch = cv_raw_adc_inp[adc0];
             world.osc_0_cv_distortion_amount = cv_raw_adc_inp[adc1];
             world.osc_1_cv_distortion_ammount = cv_raw_adc_inp[adc9];
@@ -90,7 +86,7 @@ void TIM3_IRQHandler(void){
             l_osc.curr_wave_ptr = waves_bank[osc_0_pd_enc.virtual_wave_button.state];
             osc_0_pd_enc.virtual_wave_button.flag = 'D';
         }
-        if (osc_1_pd_enc.virtual_wave_button.flag == 0x69) {
+        if(osc_1_pd_enc.virtual_wave_button.flag == 0x69){
             r_osc.curr_wave_ptr = waves_bank[osc_1_pd_enc.virtual_wave_button.state];
             osc_1_pd_enc.virtual_wave_button.flag = 'D';
         }
@@ -121,7 +117,7 @@ void TIM3_IRQHandler(void){
 }
 
 static inline void handle_osc_distortion(struct nco nco[static 1]){
-    if (!nco->distortion.on) {
+    if(!nco->distortion.on){
 #ifdef encoder_leds
         GPIOB->ODR |= (1 << 3);
         GPIOB->ODR &= ~(1 << 5);
