@@ -30,7 +30,7 @@ void main(void) {
 
     tim_init(cosmos._data->dac1_clock, timers[0]);
     tim_init(1, timers[1]);                      /* ~~Hz*/
-    tim_init(10, &tim3_settings);
+    tim_init(20, &tim3_settings);/* todo find the best time to refreash...?? */
 
     tim_init(cosmos._data->adc1_clock, &tim2_settings);
     adc_init_settings(&adc_settings);
