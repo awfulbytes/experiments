@@ -116,6 +116,7 @@ static uint16_t diatonic_lut_search(volatile uint16_t note, volatile const uint1
     return scale_table[0];
 }
 
+#define no_change_on_osc (!o->tempered.oct.change && !o->tempered.oct.shift && !o->tempered.just_reced && o->tempered._semi_tones_in_range != 0)
 uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
     register uint16_t main_pitch_cv = 0;
 
@@ -123,8 +124,7 @@ uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig){
      * procced to tempered note calculation if nothing has changed or this is
      * a first run (checking for valid _semi_tones_in_range).
      */
-    if(!o->tempered.oct.change && !o->tempered.oct.shift &&
-       !o->tempered.just_reced && o->tempered._semi_tones_in_range != 0)
+    if no_change_on_osc
         goto compute_eq;
 
     if(o->tempered.oct.change){
