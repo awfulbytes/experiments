@@ -2,7 +2,7 @@
 #include "sysclk.c"
 
 void main(void) {
-    struct timer *timers[2] = {&tim6_settings, &tim7_settings};
+    struct timer *timers[3] = {&tim6_settings, &tim7_settings, &tim3_settings};
     volatile struct button *nco_buttons[3] = {&freq_mode_but_dac1, &osc_0_mode_choice, &distortion_choice};
     struct gpio *dacs[2] = {&dac1, &dac2};
     struct gpio *osc_cvs[5] = {&pitch_0_cv, &dist_amount_0_cv, &tunner_adc_in, &pitch_1_cv, &dist_amount_1_cv};
@@ -29,8 +29,8 @@ void main(void) {
     dma_config(&dac_dma);
 
     tim_init(cosmos._data->dac1_clock, timers[0]);
-    tim_init(1, timers[1]);                      /* ~~Hz*/
-    tim_init(20, &tim3_settings);/* todo find the best time to refreash...?? */
+    tim_init(1, timers[1]);                      /* 1.5 Hz*/
+    tim_init(20, timers[2]);/* todo find the best time to refreash...?? */
 
     tim_init(cosmos._data->adc1_clock, &tim2_settings);
     adc_init_settings(&adc_settings);
