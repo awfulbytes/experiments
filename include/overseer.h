@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define array_size(x) (sizeof(x) / sizeof(x[0]))
+#define no_change_on_osc (!o->tempered.oct.change && !o->tempered.oct.shift && !o->tempered.just_reced && o->tempered._semi_tones_in_range != 0)
+
 struct overworld {
     volatile uint16_t pitch_cv;
     volatile uint16_t _cv_0_pitch;
@@ -25,15 +28,11 @@ struct overseer {
     volatile bool              phase_align;
 };
 
-static inline void tune_distortion(volatile struct nco osc[static 1],
-                                   volatile struct   overworld *data);
-
-extern struct overseer cosmos;
 extern struct display display;
+
+static inline void tune_distortion(volatile struct nco osc[static 1], volatile struct   overworld *data);
+static uint16_t diatonic_lut_search(volatile uint16_t note, volatile const uint16_t *scale_table, size_t g_major_tbl_size);
+uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig);
 void tune(struct overseer *seer, uint8_t osc_idx, struct display *d);
 
 void merge_signals_dual_dac_mode(volatile struct nco *o[2], uint32_t dual_buffer[128], uint8_t table_size);
-static uint16_t diatonic_lut_search(volatile uint16_t note, volatile const uint16_t *scale_table, size_t g_major_tbl_size);
-uint16_t equal_tempered(volatile struct nco *o, uint16_t pitch_raw_dig);
-
-#define array_size(x) (sizeof(x) / sizeof(x[0]))
