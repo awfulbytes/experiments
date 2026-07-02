@@ -116,7 +116,7 @@ void handle_display(struct display *d, uint8_t distortion_level, struct encoder 
     switch(d->view[osc]){
         case tuning:
             if(d->tuner_view[osc] == recording){
-                d->octave_shifts[0] = d->backwards_jump[0] = 0;
+                d->octave_shifts[osc] = d->backwards_jump[osc] = 0;
                 d->leds[5].state = true;
                 start_blinker(d, false);
             }else{
