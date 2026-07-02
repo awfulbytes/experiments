@@ -93,16 +93,12 @@ void set_flip_switch(struct flip_switch *f, uint8_t pin_idx);
 void config_display(struct display *d);
 
 char read_gpio(volatile struct gpio *pin);
+bool debounce(volatile struct gpio *g, uint32_t _state);
+bool button_press(volatile struct button *b);
+bool toggle_state(struct led *l);
+void start_blinker(struct display *d, bool yes_or_no);
 
-volatile void* apply_modulations_callback(struct encoder enc[static 1]);
+volatile void* apply_modulations_callback(struct encoder enc[static 1]); /* todo rename this to reflect what it does */
 
 void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc);
 void handle_display(struct display *d, uint8_t distortion_level, struct encoder *e, uint8_t osc);
-
-bool debounce(volatile struct gpio *g, uint32_t _state);
-
-bool button_press(volatile struct button *b);
-
-bool toggle_state(struct led *l);
-
-void start_blinker(struct display *d, bool yes_or_no);
