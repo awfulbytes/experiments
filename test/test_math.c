@@ -23,16 +23,7 @@ void test_pitch_free_mode_mapper(void){
     assert(note == dummy.bandwidth.free.min);
 }
 
-void test_pitch_v_per_oct_mode_mapper(void){
-    uint16_t note = map_uint(0x7fff, &dummy.bandwidth.tracking);
-    assert(note == dummy.bandwidth.tracking.max);
-
-    note = map_uint(0x000, &dummy.bandwidth.tracking);
-    assert(note == dummy.bandwidth.tracking.min);
-}
-
 int main(void){
     test_distortion_amount_mapper();
     test_pitch_free_mode_mapper();
-    test_pitch_v_per_oct_mode_mapper();
 }

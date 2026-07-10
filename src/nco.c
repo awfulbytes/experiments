@@ -5,8 +5,7 @@ void apply_pd_alg(volatile struct nco nco[static 1]){
 }
 
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-void generate_half_signal(uint16_t sector_length,
-                          volatile struct nco     nco[static 1]){
+void generate_half_signal(uint16_t sector_length, volatile struct nco nco[static 1]){
     register uint32_t index, n_index, fract;
     register uint16_t a, b, y;
     register int16_t  diff;
@@ -39,15 +38,12 @@ void generate_half_signal(uint16_t sector_length,
     nco->phase.done_update = false;
 }
 
-uint16_t map_uint(uint16_t value,
-                  volatile struct limits boundaries[static 1]) {
+uint16_t map_uint(uint16_t value, volatile struct limits boundaries[static 1]) {
     uint16_t range = boundaries->max - boundaries->min;
     return (uint16_t)(boundaries->min + U16DIVBY32767((value * range))) /* / boundaries->cv_raw_max) */;
 }
 
-bool stage_pending_inc(volatile        uint16_t      note,
-                       volatile struct nco           nco[static 1],
-                       const           uint32_t      sample_rate){
+bool stage_pending_inc(volatile uint16_t note, volatile struct nco nco[static 1], const uint32_t sample_rate){
     if(note > nco->bandwidth.free.max)
         return false;
 
@@ -63,7 +59,7 @@ void fmmcpy32 (const void* src, void* dst, uint16_t length) {
     }
 }
 
-inline void update_data_buff(const volatile  uint32_t data[static 128], uint32_t buffer_sector[static 128], uint16_t sector_length) {
+inline void update_data_buff(const volatile uint32_t data[static 128], uint32_t buffer_sector[static 128], uint16_t sector_length){
     fmmcpy32((const void*)data, buffer_sector, sector_length);
 }
 
