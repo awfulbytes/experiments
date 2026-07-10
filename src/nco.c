@@ -39,8 +39,7 @@ void generate_half_signal(uint16_t sector_length, volatile struct nco nco[static
 }
 
 uint16_t map_uint(uint16_t value, volatile struct limits boundaries[static 1]) {
-    uint16_t range = boundaries->max - boundaries->min;
-    return (uint16_t)(boundaries->min + U16DIVBY32767((value * range))) /* / boundaries->cv_raw_max) */;
+    return (uint16_t)(boundaries->min + U16DIVBY32767((value * (boundaries->max - boundaries->min))));
 }
 
 bool stage_pending_inc(volatile uint16_t note, volatile struct nco nco[static 1], const uint32_t sample_rate){
