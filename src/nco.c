@@ -55,7 +55,7 @@ bool stage_pending_inc(volatile        uint16_t      note,
     return true;
 }
 
-void fmmcpy32 (void* dst, const void* src, uint16_t length) {
+void fmmcpy32 (const void* src, void* dst, uint16_t length) {
     uint32_t* d = dst;
     const uint32_t* s = src;
     for (uint8_t z=0; z < length; ++z) {
@@ -63,10 +63,8 @@ void fmmcpy32 (void* dst, const void* src, uint16_t length) {
     }
 }
 
-inline void update_data_buff(const volatile  uint32_t data[static 128],
-                             uint32_t                 buffer_sector[static 128],
-                             uint16_t                 sector_length) {
-    fmmcpy32(buffer_sector, (const void*) data, sector_length);
+inline void update_data_buff(const volatile  uint32_t data[static 128], uint32_t buffer_sector[static 128], uint16_t sector_length) {
+    fmmcpy32((const void*)data, buffer_sector, sector_length);
 }
 
 void align_phase(volatile struct nco *o[2]){
