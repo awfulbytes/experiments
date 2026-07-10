@@ -4,7 +4,7 @@
 #include "ui.h"
 #include "nco.h"
 
-extern volatile void* apply_modulations_callback(struct encoder enc[static 1], struct nco o[static 1]);
+extern volatile void* apply_modulations_callback(struct encoder enc[static 1]);
 struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc=0, .pending_update=true,},
                     .mode=free,
                     .distortion.amount=64,
@@ -43,7 +43,7 @@ void emulate_encoder_ccw(struct encoder *distortion_encoder){
 void test_cw_encoder(void){
     
     emulate_encoder_cw(&osc_0_pd_enc);
-    apply_modulations_callback(&osc_0_pd_enc, &l_osc);
+    apply_modulations_callback(&osc_0_pd_enc);
 
     if (!(osc_0_pd_enc.direction == cw)) {
         fprintf(stderr,  "FAIL: Clockwise direction should be true!!\n");
@@ -53,7 +53,7 @@ void test_cw_encoder(void){
 
 void test_ccw_encoder(void){
     emulate_encoder_ccw(&osc_0_pd_enc);
-    apply_modulations_callback(&osc_0_pd_enc, &l_osc);
+    apply_modulations_callback(&osc_0_pd_enc);
 }
 
 

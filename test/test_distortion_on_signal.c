@@ -1,24 +1,25 @@
+#pragma GCC diagnostic ignored "-Woverflow"
+#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+
+#define TEST
+// #define wtf
+
 #include "nco.h"
 #include "nco_general_stuff.h"
 #include "overseer.h"
 #include <stdio.h>
-#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
 #include "ui.h"
 #include <assert.h>
 
-#define dac_clk       192000
+struct display display = {0};
+
+#define dac_clk       144000
 #define adc_clk        44000
 uint32_t double_buffer[256] = {0};
 
 void emulate_distortion_on(struct nco *nco){
     nco->distortion.on = true;
     nco->phase.pending_update = true;
-}
-
-void emulate_distortion_change(struct encoder *enc){
-    enc->A.flag = 'i';
-    enc->B.value[0] = 0;
-    enc->B.value[1] = 1;
 }
 
 void emulate_dac_interrupt(){
@@ -28,8 +29,6 @@ void emulate_dac_interrupt(){
     for(uint8_t u=0; u < 128; ++u){
         merged_dual_buffer[u] =
             l_osc.data_buff[u] << 16U | l_osc.data_buff[u];
-            /* construct_dual_dac_reg(cosmos.oscillators[1]->data_buff[u], */
-            /*                        cosmos.oscillators[0]->data_buff[u]); */
     }
     update_data_buff(merged_dual_buffer, double_buffer, 128);
     update_data_buff(merged_dual_buffer, double_buffer + 128, 128);
@@ -37,7 +36,6 @@ void emulate_dac_interrupt(){
 
 
 int main(){
-    struct   encoder dummy_enc;
     struct overworld data = {
         .pitch_cv                                      = 0xfff,
         ._cv_0_pitch                                   = 0x000,
@@ -45,27 +43,33 @@ int main(){
         .dac1_clock                                    = dac_clk,
     };
     struct overseer seer = { .oscillators[0]=&l_osc, ._data = &data };
-    /* dummy_enc.increment = entrance; */
-    for( ;data._cv_0_pitch <= 0x7fff; ++data._cv_0_pitch){
-        printf("cv-value:\t%x\n", data._cv_0_pitch);
+    uint32_t accum = 0;
+    uint32_t indexed = 0x0; /* controlles the pitch attribute of overworld */
+
+    for( ;; ){
+        if(indexed == 0x7fff)
+            break;
+
         emulate_distortion_on(&l_osc);
-        emulate_distortion_change(&dummy_enc);
+        assert(l_osc.distortion.on == true);
 
-        apply_modulations_callback(&dummy_enc, &l_osc);
-        /* emulate_dac_interrupt(); */
+        data._cv_0_pitch = indexed;
 
-        assert(l_osc.mode != free);
-
-        /* assert(l_osc.phase.inc >= l_osc.phase.pending_update_inc); */
-        tune(&seer, 0);
-        assert(l_osc.phase.done_update != l_osc.phase.pending_update);
-
-        emulate_dac_interrupt();
-
-        assert(l_osc.mode != free);
-        /* assert(initialized_incremet_value > l_osc.phase.pending_update_inc); */
-        assert(l_osc.phase.done_update    == false);
+        tune(&seer, 0, &display);
+        assert(l_osc.phase.done_update == true);
         assert(l_osc.phase.pending_update == false);
+
+        if(l_osc.phase.inc == l_osc.phase.pending_update_inc){
+            accum += 1;
+#ifdef wtf
+            printf("\npending and applyed increments are the same!\n\n");
+            printf("distortion:\t\t%x \naccumulator:\t%x\n\n", l_osc.distortion.distortion_value, l_osc.phase.accum);
+#endif
+        }
+        emulate_dac_interrupt();
+        assert(l_osc.phase.done_update == false);
+
+        ++indexed;
     }
-    ++l_osc.distortion.distortion_value;
+    printf("how many times we got equal increments:\t%d/%d", accum, indexed);
 }

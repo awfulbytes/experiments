@@ -10,7 +10,7 @@ struct nco l_osc = {.phase = {.accum = 0, .inc = 0x01000000, .pending_update_inc
                     .mode=tracking,
                     .curr_wave_ptr=sine_wave,
                     .distortion.amount=64,
-                    .distortion.on=true,
+                    .distortion.on=false,
                     .distortion.distortion_value=0,
                     .bandwidth={.free.min=100, .free.max=14000, .free.cv_raw_max=0xfff,
                                 .tracking.min=220, .tracking.max=1661, .tracking.cv_raw_max=0xfff},
