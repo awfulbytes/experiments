@@ -153,7 +153,7 @@ void EXTI4_15_IRQHandler(void) {
     if(check_pend(osc_0_pd_enc.A.it_settings, EXTI->RPR1)){
         osc_0_pd_enc.B.value[1] = read_gpio(&osc_0_pd_enc.B.pin);
         if(runtime == on){ /* hack */
-            apply_modulations_callback(&osc_0_pd_enc);
+            encoder_selection(&osc_0_pd_enc);
             l_osc.phase.pending_update = true;
         }
         clear_pending(osc_0_pd_enc.A.it_settings, EXTI->RPR1);
@@ -166,7 +166,7 @@ void EXTI4_15_IRQHandler(void) {
     if(check_pend(osc_1_pd_enc.A.it_settings, EXTI->RPR1)){
         osc_1_pd_enc.B.value[1] = read_gpio(&osc_1_pd_enc.B.pin);
         if (runtime == on){ /* hack */
-            apply_modulations_callback(&osc_1_pd_enc);
+            encoder_selection(&osc_1_pd_enc);
             r_osc.phase.pending_update = true;
         }
         clear_pending(osc_1_pd_enc.A.it_settings, EXTI->RPR1);

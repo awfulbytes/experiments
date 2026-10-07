@@ -42,15 +42,17 @@ struct distortion_info{
     uint8_t change;
 };
 
+#define             osc_numb  2    // number of oscillators (i.e DAC channels)
+#define             led_numb  6    // number of leds for our primitive display
 struct display {
-    current_view view[2];
-    tuner_view tuner_view[2];
-    display_lock locks[2];
-    uint16_t shift_registers[2];
-    uint8_t octave_shifts[2];
-    uint8_t backwards_jump[2];
-    struct led leds[6];
-    struct distortion_info distortion[2];
+    current_view view[osc_numb];
+    tuner_view tuner_view[osc_numb];
+    display_lock locks[osc_numb];
+    uint16_t shift_registers[osc_numb];
+    uint8_t octave_shifts[osc_numb];
+    uint8_t backwards_jump[osc_numb];
+    struct led leds[led_numb];
+    struct distortion_info distortion[osc_numb];
     struct timer *blinky;
 };
 
@@ -98,7 +100,7 @@ bool button_press(volatile struct button *b);
 bool toggle_state(struct led *l);
 void start_blinker(struct display *d, bool yes_or_no);
 
-volatile void* apply_modulations_callback(struct encoder enc[static 1]); /* todo rename this to reflect what it does */
+volatile void* encoder_selection(struct encoder enc[static 1]);
 
 void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc);
 void handle_display(struct display *d, uint8_t distortion_level, struct encoder *e, uint8_t osc);

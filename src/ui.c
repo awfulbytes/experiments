@@ -46,7 +46,7 @@ static void handle_wave_selection(struct encoder *e, volatile enum direction dir
     e->virtual_wave_button.flag = 'i';
 }
 
-volatile void* apply_modulations_callback(struct encoder enc[static 1]){
+volatile void* encoder_selection(struct encoder enc[static 1]){
     handle_wave_selection(enc, extract_encoder_direction(enc));
     return (void*)0;
 }
@@ -91,7 +91,7 @@ void start_blinker(struct display *d, bool yes_or_no){
 }
 
 static inline void render_display(struct display *d){
-    for(uint8_t l=0; l < 6; ++l){
+    for(uint8_t l=0; l < led_numb; ++l){
         write_gpio(&d->leds[l].pin, d->leds[l].state);
     }
 }
@@ -100,7 +100,8 @@ void handle_display(struct display *d, uint8_t distortion_level, struct encoder 
     uint8_t mm_register = d->shift_registers[osc];
     uint8_t current_wave = e->virtual_wave_button.state;
 
-    for(uint8_t a=0; a < 5; ++a){
+    /* ignore the last led and modify any other from 0-4 (i.e first 5 leds) */
+    for(uint8_t a=0; a < (led_numb - 1); ++a){
         d->leds[a].state = false;
     }
     switch(d->locks[osc]){
