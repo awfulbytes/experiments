@@ -78,7 +78,8 @@ struct nco l_osc = {.phase = {.accum = 0,
                                                            .cv_raw_max = 0x7fff},
                                            .modify       = true,
                                            .modifier     = 1,
-                                           .on           = false};
+                                           .on           = false}
+};
 
 struct nco r_osc = {.phase = {.accum = 0,
                               .inc = 0x01000000,

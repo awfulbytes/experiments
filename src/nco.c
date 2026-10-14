@@ -26,7 +26,7 @@ void generate_half_signal(uint16_t sector_length, volatile struct nco nco[static
 #ifdef TEST
         dbg_info_nco(nco, fract, diff);
 #endif // TEST
-        if(diff>2000 || diff<-2000)
+        if((diff>2000 || diff<-2000) && !nco->distortion.on)
             nco->data_buff[y] = a;
         else{
             fract   = ((uint64_t)((nco->phase.accum) * (1<<7)) >> 16);
