@@ -10,9 +10,9 @@ generate_half_signal(uint16_t sector_length, volatile struct nco nco[static 1]){
                 index = compute_lut_index(nco->phase.accum);
 
                 if(index    == nco->dstr.amount
-                   && index != 0 && nco->dstr.on) {
-                        nco->dstr.value =
-                                nco->phase.inc << nco->dstr.modifier;
+                   && index != 0
+                   && nco->dstr.on) {
+                        nco->dstr.value = (nco->phase.inc << nco->dstr.modifier);
 
                         /* hack:: make additive or subtractive it makes nice sounds */
                         nco->phase.inc -= nco->dstr.value;
