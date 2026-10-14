@@ -1,9 +1,5 @@
 #include "nco.h"
 
-void apply_pd_alg(volatile struct nco nco[static 1]){
-    nco->distortion.distortion_value = nco->phase.inc << 1;
-}
-
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 void generate_half_signal(uint16_t sector_length, volatile struct nco nco[static 1]){
     register uint32_t index, n_index, fract;
@@ -14,8 +10,11 @@ void generate_half_signal(uint16_t sector_length, volatile struct nco nco[static
         index   = compute_lut_index(nco->phase.accum);
 
         if (index==nco->distortion.amount && index!=0 && nco->distortion.on) {
-            apply_pd_alg(nco);
-            // hack:: make additive or subtractive it makes nice sounds
+            // apply_pd_alg(nco);
+
+            /* bug:: needs to be more stable! */
+            nco->distortion.distortion_value = nco->phase.inc << nco->distortion.modifier;
+            /* hack:: make additive or subtractive it makes nice sounds */
             nco->phase.inc -= nco->distortion.distortion_value;
         }
 

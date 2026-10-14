@@ -42,13 +42,39 @@ static void handle_wave_selection(struct encoder *e, volatile enum direction dir
         --e->virtual_wave_button.state;
         break;
     }
+    /* bug:: test if this wraps ok with more waves!! */
     e->virtual_wave_button.state &= (WAVE_CTR - 1);
     e->virtual_wave_button.flag = 'i';
 }
 
-volatile void* encoder_selection(struct encoder enc[static 1]){
-    handle_wave_selection(enc, extract_encoder_direction(enc));
-    return (void*)0;
+static void
+handle_distortion_modifier(struct encoder *e, volatile enum direction dir){
+        switch (dir) {
+        case cw:
+                if(e->distortion_modifier < 8)
+                        ++e->distortion_modifier;
+                else
+                        e->distortion_modifier = 8;
+                break;
+
+        case ccw:
+                if(e->distortion_modifier <= 8)
+                        --e->distortion_modifier;
+                else if(e->distortion_modifier > 8)
+                        e->distortion_modifier = 0;
+                break;
+    }
+}
+
+/* ensure *not inlining* by arm-none-eabi-gcc */
+volatile void*
+encoder_selection(struct encoder enc[static 1], bool distortion_or_wave){
+        enum direction dir = extract_encoder_direction(enc);
+        if(!distortion_or_wave)
+                handle_wave_selection(enc, dir);
+        else
+                handle_distortion_modifier(enc, dir);
+        return (void*)0;
 }
 
 void set_flip_switch(struct flip_switch *f, uint8_t pin_idx){
@@ -72,31 +98,38 @@ void config_display(struct display *d){
     }
 }
 
-static bool extract_bit(uint8_t number, uint8_t bit){
+static bool
+extract_bit(uint8_t number, uint8_t bit){
     return ((number & (1U<<bit)) != 0);
 }
 
 #define discard_upper_3b_of_8b     (~0xfe0U)
 #define span_in_binary(z)          ((~(0xffU<<(z))) & (0x1fU))
-void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc){
-    d->shift_registers[osc] = (
-        (uint16_t)(span_in_binary(span_amount) << (d->octave_shifts[osc] - d->backwards_jump[osc]))) & discard_upper_3b_of_8b;
+void
+octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc){
+        d->shift_registers[osc] =
+                ((uint16_t)(span_in_binary(span_amount)
+                            << (d->octave_shifts[osc] /* - d->backwards_jump[osc] */)))
+                & discard_upper_3b_of_8b;
 }
 
-void start_blinker(struct display *d, bool yes_or_no){
-    if(yes_or_no)
-        (d->blinky->id->DIER) |= (TIM_DIER_UIE); /*enable*/
-    else
-        (d->blinky->id->DIER) &= ~(TIM_DIER_UIE); /*disable*/
+void
+start_blinker(struct display *d, bool yes_or_no){
+        if(yes_or_no)
+                (d->blinky->id->DIER) |= (TIM_DIER_UIE); /*enable*/
+        else
+                (d->blinky->id->DIER) &= ~(TIM_DIER_UIE); /*disable*/
 }
 
-static inline void render_display(struct display *d){
-    for(uint8_t l=0; l < led_numb; ++l){
-        write_gpio(&d->leds[l].pin, d->leds[l].state);
-    }
+static inline void
+render_display(struct display *d){
+        for(uint8_t l=0; l < led_numb; ++l){
+                write_gpio(&d->leds[l].pin, d->leds[l].state);
+        }
 }
 
-void handle_display(struct display *d, uint8_t distortion_level, struct encoder *e, uint8_t osc){
+void
+handle_display(struct display *d, uint8_t distortion_level, struct encoder *e, uint8_t osc){
     uint8_t mm_register = d->shift_registers[osc];
     uint8_t current_wave = e->virtual_wave_button.state;
 
@@ -105,17 +138,17 @@ void handle_display(struct display *d, uint8_t distortion_level, struct encoder 
         d->leds[a].state = false;
     }
     switch(d->locks[osc]){
-        case mode_lock:
+    case mode_lock:
             d->view[osc] = wave;
             break;
-        case tuner_lock:
+    case tuner_lock:
             d->view[osc] = tuning;
             break;
-        case unlocked_view:
+    case unlocked_view:
             ;
     }
     switch(d->view[osc]){
-        case tuning:
+    case tuning:
             if(d->tuner_view[osc] == recording){
                 d->octave_shifts[osc] = d->backwards_jump[osc] = 0;
                 d->leds[5].state = true;
@@ -128,22 +161,22 @@ void handle_display(struct display *d, uint8_t distortion_level, struct encoder 
             }
             break;
 
-        case dist:
+    case dist:
             d->leds[5].state = false;
             if(distortion_level > d->distortion[osc].twenty_percent)
                 d->distortion[osc].change = U8DIVBY25(distortion_level);
 
-            for(uint8_t k=0; k < d->distortion[osc].change; ++k){
-                d->leds[k].state = true;
+            for (uint8_t k = 0; k < d->distortion[osc].change; ++k) {
+              d->leds[k].state = true;
             }
             break;
 
-        case wave:
+    case wave:
             d->leds[5].state = false;
             d->leds[current_wave].state = true;
             break;
 
-        case diatonic:
+    case diatonic:
             d->leds[5].state = false;
             d->leds[4].state = true;
             break;

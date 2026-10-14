@@ -19,6 +19,7 @@ struct encoder {
     struct encoder_channel A, B;
     enum direction direction;
     volatile struct button virtual_wave_button;
+    volatile uint8_t distortion_modifier;
 };
 
 struct flip_switch {
@@ -100,7 +101,7 @@ bool button_press(volatile struct button *b);
 bool toggle_state(struct led *l);
 void start_blinker(struct display *d, bool yes_or_no);
 
-volatile void* encoder_selection(struct encoder enc[static 1]);
+volatile void* encoder_selection(struct encoder enc[static 1], bool distortion_or_wave);
 
 void octave_recorder(struct display *d, uint8_t span_amount, uint8_t osc);
 void handle_display(struct display *d, uint8_t distortion_level, struct encoder *e, uint8_t osc);

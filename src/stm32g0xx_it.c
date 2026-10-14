@@ -85,10 +85,14 @@ void TIM3_IRQHandler(void){
         if(osc_0_pd_enc.virtual_wave_button.flag == 0x69){
             l_osc.curr_wave_ptr = waves_bank[osc_0_pd_enc.virtual_wave_button.state];
             osc_0_pd_enc.virtual_wave_button.flag = 'D';
+        } else {
+            l_osc.distortion.modifier = osc_0_pd_enc.distortion_modifier;
         }
         if(osc_1_pd_enc.virtual_wave_button.flag == 0x69){
             r_osc.curr_wave_ptr = waves_bank[osc_1_pd_enc.virtual_wave_button.state];
             osc_1_pd_enc.virtual_wave_button.flag = 'D';
+        } else {
+            r_osc.distortion.modifier = osc_1_pd_enc.distortion_modifier;
         }
 
         if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[1])){
@@ -153,7 +157,7 @@ void EXTI4_15_IRQHandler(void) {
     if(check_pend(osc_0_pd_enc.A.it_settings, EXTI->RPR1)){
         osc_0_pd_enc.B.value[1] = read_gpio(&osc_0_pd_enc.B.pin);
         if(runtime == on){ /* hack */
-            encoder_selection(&osc_0_pd_enc);
+            encoder_selection(&osc_0_pd_enc, (l_osc.distortion.modify && l_osc.distortion.on));
             l_osc.phase.pending_update = true;
         }
         clear_pending(osc_0_pd_enc.A.it_settings, EXTI->RPR1);
@@ -166,7 +170,7 @@ void EXTI4_15_IRQHandler(void) {
     if(check_pend(osc_1_pd_enc.A.it_settings, EXTI->RPR1)){
         osc_1_pd_enc.B.value[1] = read_gpio(&osc_1_pd_enc.B.pin);
         if (runtime == on){ /* hack */
-            encoder_selection(&osc_1_pd_enc);
+            encoder_selection(&osc_1_pd_enc, (r_osc.distortion.modify && r_osc.distortion.on));
             r_osc.phase.pending_update = true;
         }
         clear_pending(osc_1_pd_enc.A.it_settings, EXTI->RPR1);
@@ -188,12 +192,16 @@ void EXTI4_15_IRQHandler(void) {
     if(check_pend(switch2_dev_rev0.it[0], EXTI->RPR1)){
         switch2_dev_rev0._state[0] = read_gpio(&switch2_dev_rev0.pins[0]);
         /*                    test                    */
+        if(l_osc.distortion.on)
+            l_osc.distortion.modify = true;
         clear_pending(switch2_dev_rev0.it[0], EXTI->RPR1);
     }
 
     if(check_pend(switch2_dev_rev0.it[1], EXTI->RPR1)){
         switch2_dev_rev0._state[1] = read_gpio(&switch2_dev_rev0.pins[1]);
         /*                    test                    */
+        if(l_osc.distortion.on)
+            l_osc.distortion.modify = false;
         clear_pending(switch2_dev_rev0.it[1], EXTI->RPR1);
     }
 
