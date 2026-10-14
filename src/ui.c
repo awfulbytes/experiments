@@ -54,20 +54,16 @@ static void
 handle_distortion_modifier(struct encoder *e, volatile enum direction dir){
         switch (dir) {
         case cw:
-                if(e->distortion_modifier < 6){
+                if(e->distortion_modifier < 6)
                         ++e->distortion_modifier;
-                        break;
-                }
-                else if(e->distortion_modifier >= 7){
+                else
                         e->distortion_modifier = 6;
-                        break;
-                }
                 break;
 
         case ccw:
                 if(e->distortion_modifier <= 6)
                         --e->distortion_modifier;
-                else if(e->distortion_modifier >= 7)
+                else
                         e->distortion_modifier = 0;
                 break;
         }
