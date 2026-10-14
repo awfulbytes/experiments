@@ -62,7 +62,7 @@ void main(void) {
 
         uint8_t rendered = 0;
         handle_display(&display,
-                       cosmos.oscillators[rendered]->distortion.amount,
+                       cosmos.oscillators[rendered]->dstr.amount,
                        (rendered == 0) ? &osc_0_pd_enc : &osc_1_pd_enc,
                        rendered);
     }

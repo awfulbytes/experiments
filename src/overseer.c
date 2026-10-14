@@ -48,8 +48,8 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
 
         register uint16_t note =
             (seer->selected->mode == free)
-            ? map_uint(pitch_raw_digital, &seer->selected->bandwidth.free)
-            : map_uint(pitch_raw_digital, &seer->selected->bandwidth.tracking);
+            ? map_uint(pitch_raw_digital, &seer->selected->bw.free)
+            : map_uint(pitch_raw_digital, &seer->selected->bw.tracking);
 
         switch(seer->selected->tempered.type) {
             case none:
@@ -86,7 +86,7 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
                 break;
         }
 
-        if(seer->selected->distortion.on){
+        if(seer->selected->dstr.on){
             d->view[osc_idx] = dist;
             tune_distortion(seer->selected, seer->_data);
         }
@@ -99,7 +99,7 @@ void tune(struct overseer *seer, uint8_t osc_idx, struct display *d){
 
 static inline void tune_distortion(volatile struct nco osc[static 1], volatile struct overworld *data){
     uint16_t tmp = (osc->in_the_house.report == 0) ? data->osc_0_cv_distortion_amount : data->osc_1_cv_distortion_ammount;
-    osc->distortion.amount = map_uint(tmp, &osc->distortion.level_range);
+    osc->dstr.amount = map_uint(tmp, &osc->dstr.level_range);
 }
 
 void merge_signals_dual_dac_mode(volatile struct nco *o[2], uint32_t dual_buffer[128], uint8_t table_size){

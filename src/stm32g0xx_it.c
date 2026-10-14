@@ -86,13 +86,13 @@ void TIM3_IRQHandler(void){
             l_osc.curr_wave_ptr = waves_bank[osc_0_pd_enc.virtual_wave_button.state];
             osc_0_pd_enc.virtual_wave_button.flag = 'D';
         } else {
-            l_osc.distortion.modifier = osc_0_pd_enc.distortion_modifier;
+            l_osc.dstr.modifier = osc_0_pd_enc.distortion_modifier;
         }
         if(osc_1_pd_enc.virtual_wave_button.flag == 0x69){
             r_osc.curr_wave_ptr = waves_bank[osc_1_pd_enc.virtual_wave_button.state];
             osc_1_pd_enc.virtual_wave_button.flag = 'D';
         } else {
-            r_osc.distortion.modifier = osc_1_pd_enc.distortion_modifier;
+            r_osc.dstr.modifier = osc_1_pd_enc.distortion_modifier;
         }
 
         if(l_osc.tempered.rec & read_gpio(&octave_switch.pins[1])){
@@ -121,12 +121,12 @@ void TIM3_IRQHandler(void){
 }
 
 static inline void handle_osc_distortion(struct nco nco[static 1]){
-    if(!nco->distortion.on){
+    if(!nco->dstr.on){
 #ifdef encoder_leds
         GPIOB->ODR |= (1 << 3);
         GPIOB->ODR &= ~(1 << 5);
 #endif // encoder_leds
-        nco->distortion.on = true;
+        nco->dstr.on = true;
         display.view[nco->in_the_house.report] = dist;
         cosmos.sync = false;
     }
@@ -135,7 +135,7 @@ static inline void handle_osc_distortion(struct nco nco[static 1]){
         GPIOB->ODR &= ~(1 << 3);
         GPIOB->ODR |= (1 << 5);
 #endif // encoder_leds
-        nco->distortion.on = false;
+        nco->dstr.on = false;
         display.view[nco->in_the_house.report] = tuning;
         cosmos.sync = true;
     }
@@ -157,7 +157,7 @@ void EXTI4_15_IRQHandler(void) {
     if(check_pend(osc_0_pd_enc.A.it_settings, EXTI->RPR1)){
         osc_0_pd_enc.B.value[1] = read_gpio(&osc_0_pd_enc.B.pin);
         if(runtime == on){ /* hack */
-            encoder_selection(&osc_0_pd_enc, (l_osc.distortion.modify && l_osc.distortion.on));
+            encoder_selection(&osc_0_pd_enc, (l_osc.dstr.modify && l_osc.dstr.on));
             l_osc.phase.pending_update = true;
         }
         clear_pending(osc_0_pd_enc.A.it_settings, EXTI->RPR1);
@@ -170,7 +170,7 @@ void EXTI4_15_IRQHandler(void) {
     if(check_pend(osc_1_pd_enc.A.it_settings, EXTI->RPR1)){
         osc_1_pd_enc.B.value[1] = read_gpio(&osc_1_pd_enc.B.pin);
         if (runtime == on){ /* hack */
-            encoder_selection(&osc_1_pd_enc, (r_osc.distortion.modify && r_osc.distortion.on));
+            encoder_selection(&osc_1_pd_enc, (r_osc.dstr.modify && r_osc.dstr.on));
             r_osc.phase.pending_update = true;
         }
         clear_pending(osc_1_pd_enc.A.it_settings, EXTI->RPR1);
@@ -192,16 +192,16 @@ void EXTI4_15_IRQHandler(void) {
     if(check_pend(switch2_dev_rev0.it[0], EXTI->RPR1)){
         switch2_dev_rev0._state[0] = read_gpio(&switch2_dev_rev0.pins[0]);
         /*                    test                    */
-        if(l_osc.distortion.on)
-            l_osc.distortion.modify = true;
+        if(l_osc.dstr.on)
+            l_osc.dstr.modify = true;
         clear_pending(switch2_dev_rev0.it[0], EXTI->RPR1);
     }
 
     if(check_pend(switch2_dev_rev0.it[1], EXTI->RPR1)){
         switch2_dev_rev0._state[1] = read_gpio(&switch2_dev_rev0.pins[1]);
         /*                    test                    */
-        if(l_osc.distortion.on)
-            l_osc.distortion.modify = false;
+        if(l_osc.dstr.on)
+            l_osc.dstr.modify = false;
         clear_pending(switch2_dev_rev0.it[1], EXTI->RPR1);
     }
 

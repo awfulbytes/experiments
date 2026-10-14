@@ -9,13 +9,13 @@ generate_half_signal(uint16_t sector_length, volatile struct nco nco[static 1]){
         for (; y < sector_length; ++y) {
                 index = compute_lut_index(nco->phase.accum);
 
-                if(index    == nco->distortion.amount
-                   && index != 0 && nco->distortion.on) {
-                        nco->distortion.value =
-                                nco->phase.inc << nco->distortion.modifier;
+                if(index    == nco->dstr.amount
+                   && index != 0 && nco->dstr.on) {
+                        nco->dstr.value =
+                                nco->phase.inc << nco->dstr.modifier;
 
                         /* hack:: make additive or subtractive it makes nice sounds */
-                        nco->phase.inc -= nco->distortion.value;
+                        nco->phase.inc -= nco->dstr.value;
                 }
 
                 n_index = index + 1;
@@ -26,7 +26,7 @@ generate_half_signal(uint16_t sector_length, volatile struct nco nco[static 1]){
 #ifdef TEST
                 dbg_info_nco(nco, fract, diff);
 #endif
-                if((diff>2000 || diff<-2000) && !nco->distortion.on)
+                if((diff>2000 || diff<-2000) && !nco->dstr.on)
                         nco->data_buff[y] = a;
                 else {
                         fract = ((uint64_t)((nco->phase.accum) * (1 << 7)) >> 16);
@@ -44,7 +44,7 @@ map_uint(uint16_t value, volatile struct limits boundaries[static 1]) {
 }
 
 bool stage_pending_inc(volatile uint16_t note, volatile struct nco nco[static 1], const uint32_t sample_rate){
-    if(note > nco->bandwidth.free.max)
+    if(note > nco->bw.free.max)
         return false;
 
     nco->phase.pending_update_inc = compute_nco_increment(note, sample_rate);
