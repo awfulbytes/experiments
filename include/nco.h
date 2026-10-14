@@ -84,10 +84,12 @@ void     generate_half_signal(uint16_t sector_length, volatile struct nco nco[st
 uint16_t map_uint(uint16_t adc_value, volatile struct limits boundaries[static 1]);
 bool     stage_pending_inc(volatile uint16_t note, volatile struct nco nco[static 1], const uint32_t sample_rate);
 
-inline static uint64_t compute_nco_increment(uint16_t note, const uint32_t sample_rate){
-    int32_t tmp = ((note * (1<<16))/sample_rate);
-    return (tmp << 16);
+inline static uint64_t
+compute_nco_increment(uint16_t note, const uint32_t sample_rate){
+        int32_t tmp = ((note * (1 << 16)) / sample_rate);
+        return (tmp << 16);
 }
+
 inline static uint32_t
 compute_lut_index(uint32_t accum){
         return (uint32_t) (((uint64_t) accum * (1<<7))>>32);
@@ -96,7 +98,9 @@ compute_lut_index(uint32_t accum){
 void align_phase(volatile struct nco *o[2]);
 void sync_fcw(volatile struct nco *o[2]);
 
-void update_data_buff (const volatile uint32_t data[static 128], uint32_t buffer_sector[static 128], uint16_t sector_length);
+void update_data_buff (const volatile uint32_t data[static 128],
+                       uint32_t                buffer_sector[static 128],
+                       uint16_t                sector_length);
 
 #ifdef TEST
 #include <stdio.h>
