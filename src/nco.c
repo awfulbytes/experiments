@@ -27,10 +27,10 @@ generate_half_signal(uint16_t sector_length, volatile struct nco nco[static 1]){
                 dbg_info_nco(nco, fract, diff);
 #endif
                 if((diff>2000 || diff<-2000) && !nco->dstr.on)
-                        nco->data_buff[y] = a;
+                        nco->data_[y] = a;
                 else {
                         fract = ((uint64_t)((nco->phase.accum) * (1 << 7)) >> 16);
-                        nco->data_buff[y] = (a + ((uint16_t)(((diff * fract) >> 16))));
+                        nco->data_[y] = (a + ((uint16_t)(((diff * fract) >> 16))));
                 }
                 nco->phase.accum += nco->phase.inc;
         }

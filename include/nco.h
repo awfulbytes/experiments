@@ -70,7 +70,7 @@ typedef struct sanity {
 struct nco {
         struct         phasor           phase;
         volatile       freq_modes_e     mode;
-        volatile       uint16_t         data_buff[128];
+        volatile       uint16_t         data_[128];
         struct         phase_distortion dstr;
         struct         bandwidth        bw;
         sanity_t                        in_the_house;
