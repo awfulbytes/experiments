@@ -46,7 +46,7 @@ struct phase_distortion{
     volatile bool     on;
     volatile uint16_t amount;
     struct   limits   level_range;
-    volatile uint32_t distortion_value;
+    volatile uint32_t value;
     volatile bool     modify;
     volatile uint8_t  modifier;
 };
