@@ -91,16 +91,17 @@ bool toggle_state(struct led *l){
     return !l->state;
 }
 
-void config_display(struct display *d){
-    uint8_t led_am = 6;
-    for(uint8_t a = 0; a < led_am; ++a){
-        config_led(&d->leds[a]);
-    }
+void
+config_display(struct display *d){
+        uint8_t led_am = 6, a = 0;
+        for(; a < led_am; ++a){
+                config_led(&d->leds[a]);
+        }
 }
 
 static bool
 extract_bit(uint8_t number, uint8_t bit){
-    return ((number & (1U<<bit)) != 0);
+        return ((number & (1U<<bit)) != 0);
 }
 
 #define discard_upper_3b_of_8b     (~0xfe0U)
@@ -123,64 +124,66 @@ start_blinker(struct display *d, bool yes_or_no){
 
 static inline void
 render_display(struct display *d){
-        for(uint8_t l=0; l < led_numb; ++l){
+        uint8_t l = 0;
+        for(; l < led_numb; ++l){
                 write_gpio(&d->leds[l].pin, d->leds[l].state);
         }
 }
 
 void
 handle_display(struct display *d, uint8_t distortion_level, struct encoder *e, uint8_t osc){
-    uint8_t mm_register = d->shift_registers[osc];
-    uint8_t current_wave = e->virtual_wave_button.state;
+        uint8_t mm_register  = d->shift_registers[osc],
+                current_wave = e->virtual_wave_button.state;
+        uint8_t a = 0, k = 0, j = 0;
 
-    /* ignore the last led and modify any other from 0-4 (i.e first 5 leds) */
-    for(uint8_t a=0; a < (led_numb - 1); ++a){
-        d->leds[a].state = false;
-    }
-    switch(d->locks[osc]){
-    case mode_lock:
-            d->view[osc] = wave;
-            break;
-    case tuner_lock:
-            d->view[osc] = tuning;
-            break;
-    case unlocked_view:
-            ;
-    }
-    switch(d->view[osc]){
-    case tuning:
-            if(d->tuner_view[osc] == recording){
-                d->octave_shifts[osc] = d->backwards_jump[osc] = 0;
-                d->leds[5].state = true;
-                start_blinker(d, false);
-            }else{
-                start_blinker(d, true);
-            }
-            for(uint8_t j=0; j<5; ++j){
-                d->leds[j].state = extract_bit(mm_register, j);
-            }
-            break;
+        /* ignore the last led and modify any other from 0-4 (i.e first 5 leds) */
+        for(; a < (led_numb - 1); ++a){
+                d->leds[a].state = false;
+        }
+        switch(d->locks[osc]){
+        case mode_lock:
+                d->view[osc] = wave;
+                break;
+        case tuner_lock:
+                d->view[osc] = tuning;
+                break;
+        case unlocked_view:
+                ;
+        }
+        switch(d->view[osc]){
+        case tuning:
+                if(d->tuner_view[osc] == recording){
+                        d->octave_shifts[osc] = d->backwards_jump[osc] = 0;
+                        d->leds[5].state = true;
+                        start_blinker(d, false);
+                }else{
+                        start_blinker(d, true);
+                }
+                for(; j<5; ++j){
+                        d->leds[j].state = extract_bit(mm_register, j);
+                }
+                break;
 
-    case dist:
-            d->leds[5].state = false;
-            if(distortion_level > d->distortion[osc].twenty_percent)
-                d->distortion[osc].change = U8DIVBY25(distortion_level);
+        case dist:
+                d->leds[5].state = false;
+                if(distortion_level > d->distortion[osc].twenty_percent)
+                        d->distortion[osc].change = U8DIVBY25(distortion_level);
 
-            for (uint8_t k = 0; k < d->distortion[osc].change; ++k) {
-              d->leds[k].state = true;
-            }
-            break;
+                for (; k < d->distortion[osc].change; ++k) {
+                        d->leds[k].state = true;
+                }
+                break;
 
-    case wave:
-            d->leds[5].state = false;
-            d->leds[current_wave].state = true;
-            break;
+        case wave:
+                d->leds[5].state = false;
+                d->leds[current_wave].state = true;
+                break;
 
-    case diatonic:
-            d->leds[5].state = false;
-            d->leds[4].state = true;
-            break;
-    }
+        case diatonic:
+                d->leds[5].state = false;
+                d->leds[4].state = true;
+                break;
+        }
 
-    render_display(d);
+        render_display(d);
 }

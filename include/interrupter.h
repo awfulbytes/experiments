@@ -247,7 +247,7 @@ struct encoder osc_0_pd_enc = {.A = {.pin = {.port_id=GPIOC, .id=4, .pin_id=LL_G
                                      .value = {0}, .it_settings = {0}, .flag = 'D'},
 
                                .direction=cw,
-                               .distortion_modifier = 1,
+                               .distortion_modifier = 0,
                                .virtual_wave_button = {.flag = 'D', .state=SINE}};
 
 struct encoder osc_1_pd_enc = {.A = {.pin = {.port_id=GPIOC, .pin_id=LL_GPIO_PIN_6, .id=6, .mode = LL_GPIO_MODE_INPUT, .pull = LL_GPIO_PULL_UP},
