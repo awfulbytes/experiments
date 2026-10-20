@@ -15,8 +15,9 @@ static inline uint8_t decode_quad_enc(struct encoder *enc){
     return (enc->B.value[0] << 1) | enc->B.value[1];
 }
 
-static inline enum direction extract_encoder_direction(struct encoder enc[static 1]){
-    return (decode_quad_enc(enc) == 1) ? cw : ccw;
+static inline enum direction
+extract_encoder_direction(struct encoder enc[static 1]){
+        return (decode_quad_enc(enc) == 1) ? ccw : cw;
 }
 
 inline char read_gpio(volatile struct gpio *pin) {
