@@ -26,7 +26,9 @@ generate_half_signal(uint16_t sector_length, volatile struct nco nco[static 1]){
 #ifdef TEST
                 dbg_info_nco(nco, fract, diff);
 #endif
-                if((diff>2000 || diff<-2000) && !nco->dstr.on)
+                if((diff>3600 || diff<-3600) && !nco->dstr.on)
+                    /*  ^^^^^         ^^^^^             test this! */
+                    /* 3600/4060 = 0.8866995074 !! */
                         nco->data_[y] = a;
                 else {
                         fract = ((uint64_t)((nco->phase.accum) * (1 << 7)) >> 16);
@@ -40,7 +42,8 @@ generate_half_signal(uint16_t sector_length, volatile struct nco nco[static 1]){
 uint16_t
 map_uint(uint16_t value, volatile struct limits boundaries[static 1]) {
         return (uint16_t)(boundaries->min
-                          + U16DIVBY32767((value * (boundaries->max - boundaries->min))));
+                          + U16DIVBY32767((value * (boundaries->max
+                                                    - boundaries->min))));
 }
 
 bool stage_pending_inc(volatile uint16_t note, volatile struct nco nco[static 1], const uint32_t sample_rate){
