@@ -27,8 +27,6 @@ generate_half_signal(uint16_t sector_length, volatile struct nco nco[static 1]){
                 dbg_info_nco(nco, fract, diff);
 #endif
                 if((diff>3600 || diff<-3600) && !nco->dstr.on)
-                    /*  ^^^^^         ^^^^^             test this! */
-                    /* 3600/4060 = 0.8866995074 !! */
                         nco->data_[y] = a;
                 else {
                         fract = ((uint64_t)((nco->phase.accum) * (1 << 7)) >> 16);
