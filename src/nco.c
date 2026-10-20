@@ -44,24 +44,30 @@ map_uint(uint16_t value, volatile struct limits boundaries[static 1]) {
                                                     - boundaries->min))));
 }
 
-bool stage_pending_inc(volatile uint16_t note, volatile struct nco nco[static 1], const uint32_t sample_rate){
-    if(note > nco->bw.free.max)
-        return false;
+bool
+stage_pending_inc(volatile uint16_t note, volatile struct nco nco[static 1],
+                  const uint32_t sample_rate){
+        if(note > nco->bw.free.max)
+                return false;
 
-    nco->phase.pending_update_inc = compute_nco_increment(note, sample_rate);
-    return true;
+        nco->phase.pending_update_inc = compute_nco_increment(note, sample_rate);
+        return true;
 }
 
-void fmmcpy32 (const void* src, void* dst, uint16_t length) {
-    uint32_t* d = dst;
-    const uint32_t* s = src;
-    for (uint8_t z=0; z < length; ++z) {
-        d[z] = s[z];
-    }
+void
+fmmcpy32(const void* src, void* dst, uint16_t length){
+        const uint32_t *s = src;
+        uint32_t       *d = dst;
+        uint8_t         z = 0;
+        for (; z < length; ++z) {
+                d[z] = s[z];
+        }
 }
 
-inline void update_data_buff(const volatile uint32_t data[static 128], uint32_t buffer_sector[static 128], uint16_t sector_length){
-    fmmcpy32((const void*)data, buffer_sector, sector_length);
+inline void
+update_data_buff(const volatile uint32_t *data, uint32_t *buffer_sector,
+                 uint16_t sector_length){
+        fmmcpy32((const void*)data, buffer_sector, sector_length);
 }
 
 void align_phase(volatile struct nco *o[2]){

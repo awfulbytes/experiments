@@ -98,9 +98,10 @@ compute_lut_index(uint32_t accum){
 void align_phase(volatile struct nco *o[2]);
 void sync_fcw(volatile struct nco *o[2]);
 
-void update_data_buff (const volatile uint32_t data[static 128],
-                       uint32_t                buffer_sector[static 128],
-                       uint16_t                sector_length);
+void
+update_data_buff(const volatile uint32_t *data,
+                 uint32_t                *buffer_sector,
+                 uint16_t                 sector_length);
 
 #ifdef TEST
 #include <stdio.h>
